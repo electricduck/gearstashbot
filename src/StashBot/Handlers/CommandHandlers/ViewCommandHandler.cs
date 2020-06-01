@@ -136,6 +136,7 @@ namespace StashBot.Handlers.CommandHandlers
 
             var selectedQueuedItem = queueItems.SelectedQueuedItem;
             var previousQueuedItem = queueItems.PreviousQueuedItem;
+            var nextQueuedItem = queueItems.NextQueuedItem;
             var controlKeyboard = queueItems.Keyboard;
 
             bool canDeleteThisQueueItem = false;
@@ -170,7 +171,14 @@ namespace StashBot.Handlers.CommandHandlers
 
             if (canDeleteThisQueueItem)
             {
-                await InvokeChange(callbackQueryEventArgs, previousQueuedItem.Id);
+                int idToNavigateTo = previousQueuedItem.Id;
+
+                if(queueItems.IsEarliestItem)
+                {
+                    idToNavigateTo = nextQueuedItem.Id; 
+                }
+
+                await InvokeChange(callbackQueryEventArgs, idToNavigateTo);
             }
         }
 
@@ -193,6 +201,9 @@ namespace StashBot.Handlers.CommandHandlers
                 QueueItem previousQueuedItem = (previousIndex < minIndex) ? queue[maxIndex] : queue[previousIndex];
                 QueueItem nextQueuedItem = (nextIndex > maxIndex) ? queue[minIndex] : queue[nextIndex];
 
+                bool isEarliestItem = (previousIndex < minIndex);
+                bool isLatestItem = (nextIndex > maxIndex);
+
                 var caption = QueueService.GetQueueCaption(selectedQueuedItem, true).CaptionText;
 
                 var keyboard = GenerateKeyboard(
@@ -204,6 +215,8 @@ namespace StashBot.Handlers.CommandHandlers
                 returnModel.SelectedQueuedItem = selectedQueuedItem;
                 returnModel.PreviousQueuedItem = previousQueuedItem;
                 returnModel.NextQueuedItem = nextQueuedItem;
+                returnModel.IsEarliestItem = isEarliestItem;
+                returnModel.IsLatestItem = isLatestItem;
                 returnModel.Keyboard = keyboard;
                 returnModel.Caption = caption;
                 returnModel.HasItems = true;
