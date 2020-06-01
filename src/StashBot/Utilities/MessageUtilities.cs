@@ -46,6 +46,13 @@ namespace StashBot.Utilities
             Console.ForegroundColor = ConsoleColor.White;
         }
 
+        public static void PrintHackMessage(string title)
+        {
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            Console.WriteLine($"🔨 Hack: {title}");
+            Console.ForegroundColor = ConsoleColor.White;
+        }
+
         public static void PrintInfoMessage(string title, string description = "")
         {
             Console.ForegroundColor = ConsoleColor.Blue;
