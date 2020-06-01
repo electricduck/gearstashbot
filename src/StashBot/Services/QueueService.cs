@@ -23,9 +23,9 @@ namespace StashBot.Services
 
                 while (true)
                 {
+                    Thread.Sleep(sleepTime);
                     postsInQueue = QueueData.CountQueuedQueueItems();
                     PostQueueItem();
-                    Thread.Sleep(sleepTime);
                 }
             });
         }
@@ -158,7 +158,9 @@ namespace StashBot.Services
 
             if (url.StartsWith("https://twitter.com") || url.StartsWith("https://mobile.twitter"))
             {
-                itemToQueue = TwitterScrapeService.ScrapeTwitterUrl(
+                TwitterScrapeService _twitterScrapeService = new TwitterScrapeService();
+
+                itemToQueue = _twitterScrapeService.ScrapeTwitterUrl(
                     url,
                     mediaIndex,
                     name
