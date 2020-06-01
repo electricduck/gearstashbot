@@ -89,5 +89,3 @@ Language: <code>{userLanguageCode}</code>";
         }
     }
 }
-
-//System.Environment.OSVersion.Version.ToString()
