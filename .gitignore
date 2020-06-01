@@ -356,3 +356,4 @@ MigrationBackup/
 
 # Other files
 stashbot.db
+appsettings.json
