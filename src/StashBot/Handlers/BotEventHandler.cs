@@ -123,25 +123,28 @@ namespace StashBot.Handlers
                                 }
                                 break;
                             case "post":
-                                PostCommandHandlerReturn postCommandHandlerReturn = PostCommandHandler.Invoke(arguments, userId, userName, user);
-                                switch (postCommandHandlerReturn.Status)
+                                Task.Run(() =>
                                 {
-                                    case PostCommandHandlerReturn.PostCommandReturnStatus.Duplicate:
-                                        MessageUtilities.SendWarningMessage("This has already been queued", telegramMessageEvent);
-                                        break;
-                                    case PostCommandHandlerReturn.PostCommandReturnStatus.NotAuthorized:
-                                        MessageUtilities.SendWarningMessage("You do not have permission to queue new posts", telegramMessageEvent);
-                                        break;
-                                    case PostCommandHandlerReturn.PostCommandReturnStatus.NotFound:
-                                        MessageUtilities.SendWarningMessage("This link contains no media or does not exist", telegramMessageEvent);
-                                        break;
-                                    case PostCommandHandlerReturn.PostCommandReturnStatus.ServiceNotSupported:
-                                        MessageUtilities.SendWarningMessage("This service is not supported", telegramMessageEvent);
-                                        break;
-                                    case PostCommandHandlerReturn.PostCommandReturnStatus.Success:
-                                        MessageUtilities.SendSuccessMessage("Post successfully queued", telegramMessageEvent);
-                                        break;
-                                }
+                                    PostCommandHandlerReturn postCommandHandlerReturn = PostCommandHandler.Invoke(arguments, userId, userName, user);
+                                    switch (postCommandHandlerReturn.Status)
+                                    {
+                                        case PostCommandHandlerReturn.PostCommandReturnStatus.Duplicate:
+                                            MessageUtilities.SendWarningMessage("This has already been queued", telegramMessageEvent);
+                                            break;
+                                        case PostCommandHandlerReturn.PostCommandReturnStatus.NotAuthorized:
+                                            MessageUtilities.SendWarningMessage("You do not have permission to queue new posts", telegramMessageEvent);
+                                            break;
+                                        case PostCommandHandlerReturn.PostCommandReturnStatus.NotFound:
+                                            MessageUtilities.SendWarningMessage("This link contains no media or does not exist", telegramMessageEvent);
+                                            break;
+                                        case PostCommandHandlerReturn.PostCommandReturnStatus.ServiceNotSupported:
+                                            MessageUtilities.SendWarningMessage("This service is not supported", telegramMessageEvent);
+                                            break;
+                                        case PostCommandHandlerReturn.PostCommandReturnStatus.Success:
+                                            MessageUtilities.SendSuccessMessage("Post successfully queued", telegramMessageEvent);
+                                            break;
+                                    }
+                                });
                                 break;
                             /*case "user":
                                 UserCommandHandlerReturn userCommandHandlerReturn = UserCommandHandler.Invoke(
