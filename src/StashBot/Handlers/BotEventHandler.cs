@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using Telegram.Bot.Args;
 using StashBot.Data;
 using StashBot.Handlers.CommandHandlers;
@@ -34,65 +35,74 @@ namespace StashBot.Handlers
 
                         switch (command)
                         {
-                            case "view":
-                                var viewCommandResult = ViewCommandHandler.Invoke(telegramMessageEvent);
-                                if (viewCommandResult.Success)
+                            case "catpls":
+                                Task.Run(() =>
                                 {
-                                    if (!viewCommandResult.HasPermission)
+                                    var catPlsCommandResult = CatPlsCommandHandler.Invoke();
+                                    if (catPlsCommandResult.Success)
                                     {
-                                        MessageUtilities.SendWarningMessage("You do not have permission to view the queue", telegramMessageEvent);
+                                        TelegramApiService.SendPhoto(
+                                            catPlsCommandResult.SendPhotoArguments,
+                                            Program.BotClient,
+                                            telegramMessageEvent
+                                        );
                                     }
-                                    else
+                                });
+                                break;
+
+                            case "info":
+                                Task.Run(() =>
+                                {
+                                    var infoCommandResult = InfoCommandHandler.Invoke(telegramMessageEvent);
+                                    if (infoCommandResult.Success)
                                     {
-                                        if (viewCommandResult.Status == ViewInvokeReturnStatus.FoundQueuedPosts)
+                                        TelegramApiService.SendTextMessage(
+                                            infoCommandResult.SendTextMessageArguments,
+                                            Program.BotClient,
+                                            telegramMessageEvent
+                                        );
+                                    }
+                                });
+                                break;
+
+                            case "view":
+                                Task.Run(() =>
+                                {
+                                    var viewCommandResult = ViewCommandHandler.Invoke(telegramMessageEvent);
+                                    if (viewCommandResult.Success)
+                                    {
+                                        if (!viewCommandResult.HasPermission)
                                         {
-                                            if (viewCommandResult.SendPhotoArguments != null)
+                                            MessageUtilities.SendWarningMessage("You do not have permission to view the queue", telegramMessageEvent);
+                                        }
+                                        else
+                                        {
+                                            if (viewCommandResult.Status == ViewInvokeReturnStatus.FoundQueuedPosts)
                                             {
-                                                TelegramApiService.SendPhoto(
+                                                if (viewCommandResult.SendPhotoArguments != null)
+                                                {
+                                                    TelegramApiService.SendPhoto(
                                                     viewCommandResult.SendPhotoArguments,
                                                     Program.BotClient,
                                                     telegramMessageEvent
                                                 );
-                                            }
-                                            else
-                                            {
-                                                TelegramApiService.SendVideo(
+                                                }
+                                                else
+                                                {
+                                                    TelegramApiService.SendVideo(
                                                     viewCommandResult.SendVideoArguments,
                                                     Program.BotClient,
                                                     telegramMessageEvent
                                                 );
+                                                }
+                                            }
+                                            else
+                                            {
+                                                MessageUtilities.SendWarningMessage("Nothing is queued", telegramMessageEvent);
                                             }
                                         }
-                                        else
-                                        {
-                                            MessageUtilities.SendWarningMessage("Nothing is queued", telegramMessageEvent);
-                                        }
                                     }
-                                }
-                                break;
-
-                            case "catpls":
-                                var catPlsCommandResult = CatPlsCommandHandler.Invoke();
-                                if (catPlsCommandResult.Success)
-                                {
-                                    TelegramApiService.SendPhoto(
-                                        catPlsCommandResult.SendPhotoArguments,
-                                        Program.BotClient,
-                                        telegramMessageEvent
-                                    );
-                                }
-                                break;
-
-                            case "info":
-                                var infoCommandResult = InfoCommandHandler.Invoke(telegramMessageEvent);
-                                if (infoCommandResult.Success)
-                                {
-                                    TelegramApiService.SendTextMessage(
-                                        infoCommandResult.SendTextMessageArguments,
-                                        Program.BotClient,
-                                        telegramMessageEvent
-                                    );
-                                }
+                                });
                                 break;
 
                             case "err":
