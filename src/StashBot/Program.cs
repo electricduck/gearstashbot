@@ -66,8 +66,6 @@ namespace StashBot
                 {
                     MessageUtilities.PrintInfoMessage("Polling has been disabled in the configuration");
                 }
-
-                QueueService.PollQueue();
             }
             catch (Exception e)
             {

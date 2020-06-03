@@ -20,21 +20,47 @@ namespace StashBot.Services
             {
                 try
                 {
-                    int sleepTime = AppSettings.Config_PostInterval;
+                    double sleepTimeFromConfig = AppSettings.Config_PostInterval;
+                    double sleepTime = sleepTimeFromConfig;
                     int postsInQueue = QueueData.CountQueuedQueueItems();
                     QueueItem soonestQueuedItem = QueueData.GetSoonestQueuedQueueItem();
+                    QueueItem latestQueuedItemSinceFirstStart = QueueData.GetLatestPostedQueueItem();
+                    bool continueOnFromPreviousStart = true;
 
                     while (true)
                     {
                         if (postsInQueue == 0)
                         {
+                            continueOnFromPreviousStart = false;
                             Thread.Sleep(60000);
                             postsInQueue = QueueData.CountQueuedQueueItems();
                         }
                         else
                         {
-                            Thread.Sleep(sleepTime);
+                            if (continueOnFromPreviousStart)
+                            {
+                                var adjustedSleepTime = (DateTime.UtcNow - latestQueuedItemSinceFirstStart.PostedAt).TotalMilliseconds;
+                                adjustedSleepTime = sleepTime - adjustedSleepTime;
+
+                                if(adjustedSleepTime >= 0)
+                                {
+                                    sleepTime = adjustedSleepTime;
+                                }
+                                else
+                                {
+                                    PostQueueItem(soonestQueuedItem);
+                                }
+                            }
+                            else
+                            {
+                                sleepTime = sleepTimeFromConfig;
+                            }
+
+                            continueOnFromPreviousStart = false;
+
+                            Thread.Sleep((int)sleepTime);
                             PostQueueItem(soonestQueuedItem);
+
                             postsInQueue = QueueData.CountQueuedQueueItems();
                             soonestQueuedItem = QueueData.GetSoonestQueuedQueueItem();
                         }
