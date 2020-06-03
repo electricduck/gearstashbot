@@ -32,8 +32,7 @@ namespace StashBot.Handlers.CommandHandlers
 
             int queueAmountInt = QueueData.CountQueuedQueueItems();
             string queueAmount = queueAmountInt.ToString();
-            int queueSleepTime = QueueUtilities.GetSleepTime(queueAmountInt);
-            string queueApproxDays = TimeSpan.FromMilliseconds(queueAmountInt*queueSleepTime).TotalDays.ToString("0");
+            string queueApproxDays = TimeSpan.FromMilliseconds(queueAmountInt*AppSettings.Config_PostInterval).TotalDays.ToString("0.00"); // BUG: This breaks after a large amount of days and starts showing a negative value
 
             string runtime = Assembly
                 .GetEntryAssembly()?

@@ -20,8 +20,8 @@ namespace StashBot.Services
             {
                 try
                 {
-                    int postsInQueue = QueueData.CountQueuedQueueItems();
-                    int sleepTime = QueueUtilities.GetSleepTime(postsInQueue);
+                    int postsInQueue = 0;
+                    int sleepTime = AppSettings.Config_PostInterval;
 
                     while (true)
                     {

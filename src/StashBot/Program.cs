@@ -90,9 +90,9 @@ namespace StashBot
 
             AppSettings.ApiKeys_Telegram = configuration.GetSection("apiKeys")["telegram"];
             AppSettings.Config_ChannelId = Convert.ToInt64(configuration.GetSection("config")["channel"]);
-            AppSettings.Config_MaxPosts = Convert.ToInt32(configuration.GetSection("config")["maxPosts"]);
             AppSettings.Config_Owner = configuration.GetSection("config")["owner"];
             AppSettings.Config_Poll = Convert.ToBoolean(configuration.GetSection("config")["poll"]);
+            AppSettings.Config_PostInterval = Convert.ToInt32(configuration.GetSection("config")["postInterval"]);
         }
     }
 }

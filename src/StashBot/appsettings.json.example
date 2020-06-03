@@ -4,8 +4,8 @@
     },
     "config": {
         "channel": -1000000000000,
-        "maxPosts": 48,
         "owner": "ownerUsername",
-        "poll": true
+        "poll": true,
+        "postInterval": 30000
     }
 }
