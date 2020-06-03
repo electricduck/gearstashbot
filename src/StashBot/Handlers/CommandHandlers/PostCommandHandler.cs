@@ -20,15 +20,15 @@ namespace StashBot.Handlers.CommandHandlers
             if (AuthorData.CanAuthorQueue(user.Id))
             {
                 if (
-                    arguments[0].StartsWith("https://mobile.twitter") ||
-                    arguments[0].StartsWith("https://twitter") ||
+                    arguments[0].StartsWith("https://mobile.twitter.com") ||
+                    arguments[0].StartsWith("https://twitter.com") ||
                     arguments[0].StartsWith("https://instagram.com") ||
                     arguments[0].StartsWith("https://www.instagram.com")
                 ) // TODO: Don't check here; only in the QueueService
                 {
                     queueServiceReturn = QueueService.QueueLink(
                         url: arguments[0],
-                        mediaIndex: (arguments.Length == 2) ? (Convert.ToInt32(arguments[1]) - 1) : 1,
+                        mediaIndex: (arguments.Length == 2) ? (Convert.ToInt32(arguments[1]) - 1) : 0,
                         author: user
                     );
 

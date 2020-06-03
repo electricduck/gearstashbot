@@ -170,12 +170,13 @@ namespace StashBot.Services
             QueueItem itemToQueue = null;
 
             if (
-                url.StartsWith("https://mobile.twitter") ||
-                url.StartsWith("https://twitter")
+                url.StartsWith("https://mobile.twitter.com") ||
+                url.StartsWith("https://twitter.com")
             )
             {
                 TwitterScrapeService _twitterScrapeService = new TwitterScrapeService();
-                itemToQueue = _twitterScrapeService.ScrapeTwitterUrl(url, mediaIndex, customName);
+                //itemToQueue = _twitterScrapeService.ScrapeTwitterUrl(url, mediaIndex, customName);
+                itemToQueue = _twitterScrapeService.ScrapeNitterUrl(url, mediaIndex, customName);
             }
             else if (
                 url.StartsWith("https://instagram.com") ||

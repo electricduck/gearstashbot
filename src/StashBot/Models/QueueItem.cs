@@ -39,7 +39,6 @@ namespace StashBot.Models
         public enum MediaType
         {
             Image,
-            Gif,
             Video
         }
     }
