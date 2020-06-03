@@ -71,13 +71,13 @@ namespace StashBot.Data
             }
         }
 
-        public static QueueItem GetFirstQueueItem()
+        public static QueueItem GetLatestPostedQueueItem()
         {
             using (var db = new StashBotDbContext())
             {
                 return db.Queue
-                    .Where(q => q.Status == QueueItem.QueueStatus.Queued)
-                    .OrderBy(q => q.PostedAt)
+                    .Where(q => q.Status == QueueItem.QueueStatus.Posted)
+                    .OrderByDescending(q => q.PostedAt)
                     .FirstOrDefault();
             }
         }
@@ -103,6 +103,17 @@ namespace StashBot.Data
                     .FirstOrDefault();
 
                 return item;
+            }
+        }
+
+        public static QueueItem GetSoonestQueuedQueueItem()
+        {
+            using (var db = new StashBotDbContext())
+            {
+                return db.Queue
+                    .Where(q => q.Status == QueueItem.QueueStatus.Queued)
+                    .OrderBy(q => q.QueuedAt)
+                    .FirstOrDefault();
             }
         }
 

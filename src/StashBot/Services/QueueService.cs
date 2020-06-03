@@ -20,8 +20,9 @@ namespace StashBot.Services
             {
                 try
                 {
-                    int postsInQueue = QueueData.CountQueuedQueueItems();
                     int sleepTime = AppSettings.Config_PostInterval;
+                    int postsInQueue = QueueData.CountQueuedQueueItems();
+                    QueueItem soonestQueuedItem = QueueData.GetSoonestQueuedQueueItem();
 
                     while (true)
                     {
@@ -33,8 +34,9 @@ namespace StashBot.Services
                         else
                         {
                             Thread.Sleep(sleepTime);
-                            PostQueueItem();
+                            PostQueueItem(soonestQueuedItem);
                             postsInQueue = QueueData.CountQueuedQueueItems();
+                            soonestQueuedItem = QueueData.GetSoonestQueuedQueueItem();
                         }
                     }
                 }
@@ -45,10 +47,8 @@ namespace StashBot.Services
             });
         }
 
-        public static void PostQueueItem()
+        public static void PostQueueItem(QueueItem post)
         {
-            var post = QueueData.GetFirstQueueItem();
-
             if (post != null)
             {
                 DateTime postedAt = DateTime.UtcNow;
