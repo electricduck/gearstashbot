@@ -1,11 +1,12 @@
 using System;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Telegram.Bot.Args;
 using StashBot.Data;
+using StashBot.Exceptions;
 using StashBot.Handlers.CommandHandlers;
 using StashBot.Models;
 using StashBot.Models.ReturnModels.CommandHandlerReturnModels;
-using StashBot.Models.ReturnModels.ReturnStatusEnums;
 using StashBot.Services;
 using StashBot.Utilities;
 
@@ -17,15 +18,17 @@ namespace StashBot.Handlers
         {
             Task.Run(() =>
             {
+                string command = null;
+                string[] arguments = null;
+
                 try
                 {
                     if (telegramMessageEvent.Message.Text != null)
                     {
-
                         string messageText = telegramMessageEvent.Message.Text.ToString();
 
-                        string command = null;
-                        string[] arguments = null;
+                        Regex commandAndArgumentsRegex = new Regex(@"^([\/][a-z]{1,10})([ ])*([\/a-zA-Z0-9_:., ]*)$");
+                        Match parsedCommand = commandAndArgumentsRegex.Match(messageText);
 
                         TelegramUser user = new TelegramUser {
                             Id = TelegramUtilities.GetUserId(telegramMessageEvent),
@@ -36,14 +39,19 @@ namespace StashBot.Handlers
 
                         if (messageText.StartsWith("/"))
                         {
-                            command = messageText.Split(" ")[0].Replace("/", "").ToLower();
-                            arguments = (messageText.Substring(messageText.IndexOf(' ') + 1)).Split(" ");
+                            command = parsedCommand.Groups[1].Value.Replace("/", "");
+                            arguments = parsedCommand.Groups[3].Value.Split(" ");
+
+                            if(String.IsNullOrEmpty(arguments[0].ToString()))
+                            {
+                                arguments = null;
+                            }
 
                             switch (command)
                             {
                                 case "catpls":
                                     var catPlsCommandResult = CatPlsCommandHandler.Invoke();
-                                    if (catPlsCommandResult.Success)
+                                    if (catPlsCommandResult != null)
                                     {
                                         TelegramApiService.SendPhoto(
                                             catPlsCommandResult.SendPhotoArguments,
@@ -55,7 +63,7 @@ namespace StashBot.Handlers
 
                                 case "info":
                                     var infoCommandResult = InfoCommandHandler.Invoke(telegramMessageEvent);
-                                    if (infoCommandResult.Success)
+                                    if (infoCommandResult != null)
                                     {
                                         TelegramApiService.SendTextMessage(
                                             infoCommandResult.SendTextMessageArguments,
@@ -66,44 +74,29 @@ namespace StashBot.Handlers
                                     break;
 
                                 case "view":
-                                    var viewCommandResult = ViewCommandHandler.Invoke(telegramMessageEvent);
-                                    if (viewCommandResult.Success)
+                                    var viewCommandResult = ViewCommandHandler.Invoke(
+                                        arguments: arguments,
+                                        telegramMessageEvent: telegramMessageEvent
+                                    );
+                                    if (viewCommandResult != null)
                                     {
-                                        if (!viewCommandResult.HasPermission)
+                                        if (viewCommandResult.SendPhotoArguments != null)
                                         {
-                                            MessageUtilities.SendWarningMessage("You do not have permission to view the queue", telegramMessageEvent);
+                                            TelegramApiService.SendPhoto(
+                                                viewCommandResult.SendPhotoArguments,
+                                                Program.BotClient,
+                                                telegramMessageEvent
+                                            );
                                         }
-                                        else
+                                        else if(viewCommandResult.SendVideoArguments != null)
                                         {
-                                            if (viewCommandResult.Status == ViewInvokeReturnStatus.FoundQueuedPosts)
-                                            {
-                                                if (viewCommandResult.SendPhotoArguments != null)
-                                                {
-                                                    TelegramApiService.SendPhoto(
-                                                    viewCommandResult.SendPhotoArguments,
-                                                    Program.BotClient,
-                                                    telegramMessageEvent
-                                                );
-                                                }
-                                                else
-                                                {
-                                                    TelegramApiService.SendVideo(
-                                                    viewCommandResult.SendVideoArguments,
-                                                    Program.BotClient,
-                                                    telegramMessageEvent
-                                                );
-                                                }
-                                            }
-                                            else
-                                            {
-                                                MessageUtilities.SendWarningMessage("Nothing is queued", telegramMessageEvent);
-                                            }
+                                            TelegramApiService.SendVideo(
+                                                viewCommandResult.SendVideoArguments,
+                                                Program.BotClient,
+                                                telegramMessageEvent
+                                            );
                                         }
                                     }
-                                    break;
-
-                                case "err":
-                                    throw new Exception("Manually triggered exception");
                                     break;
 
                                 case "start":
@@ -121,6 +114,9 @@ namespace StashBot.Handlers
                                         MessageUtilities.SendSuccessMessage($"Created first author with all permissions,", telegramMessageEvent);
                                     }
                                     break;
+
+                                case "err":
+                                    throw new Exception("Manually triggered exception");
 
                                 // TODO: Change below cases to match with above cases
                                 case "flush":
@@ -206,6 +202,14 @@ namespace StashBot.Handlers
                         }
 
                     }
+                }
+                catch(ArgumentException)
+                {
+                    MessageUtilities.SendWarningMessage($"Invalid arguments: see <code>/help {command}</code> for details", telegramMessageEvent);
+                }
+                catch(CommandHandlerException e)
+                {
+                    MessageUtilities.SendWarningMessage(e.Message, telegramMessageEvent);
                 }
                 catch (Exception e)
                 {

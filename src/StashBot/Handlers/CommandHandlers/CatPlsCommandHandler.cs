@@ -1,14 +1,14 @@
 using StashBot.Models.ArgumentModels;
-using StashBot.Models.ReturnModels.CatPlsCommandHandlerReturns;
+using StashBot.Models.ReturnModels;
 using StashBot.Utilities;
 
 namespace StashBot.Handlers.CommandHandlers
 {
     public class CatPlsCommandHandler
     {
-        public static CatPlsInvokeReturn Invoke()
+        public static CommandHandlerReturn Invoke()
         {
-            CatPlsInvokeReturn returnModel = new CatPlsInvokeReturn {};
+            CommandHandlerReturn returnModel = new CommandHandlerReturn {};
 
             string height = GeneratorUtilities.GenerateRandomNumber(250, 1000).ToString();
             string width = GeneratorUtilities.GenerateRandomNumber(250, 1000).ToString();

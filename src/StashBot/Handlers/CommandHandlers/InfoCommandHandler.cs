@@ -12,9 +12,9 @@ namespace StashBot.Handlers.CommandHandlers
 {
     public class InfoCommandHandler
     {
-        public static ReturnModelBase Invoke(MessageEventArgs telegramMessageEvent)
+        public static CommandHandlerReturn Invoke(MessageEventArgs telegramMessageEvent)
         {
-            ReturnModelBase returnModel = new ReturnModelBase { };
+            CommandHandlerReturn returnModel = new CommandHandlerReturn { };
 
             var thisProcess = System.Diagnostics.Process.GetCurrentProcess();
 

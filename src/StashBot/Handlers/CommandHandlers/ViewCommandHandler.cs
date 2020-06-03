@@ -7,9 +7,10 @@ using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 using StashBot.Data;
+using StashBot.Exceptions;
 using StashBot.Models;
 using StashBot.Models.ArgumentModels;
-using StashBot.Models.ReturnModels.ReturnStatusEnums;
+using StashBot.Models.ReturnModels;
 using StashBot.Models.ReturnModels.ViewCommandHandlerReturns;
 using StashBot.Services;
 using StashBot.Utilities;
@@ -18,16 +19,30 @@ namespace StashBot.Handlers.CommandHandlers
 {
     public class ViewCommandHandler
     {
-        public static ViewInvokeReturn Invoke(
-            MessageEventArgs telegramMessageEvent,
-            int queueItemId = 0
+        public static CommandHandlerReturn Invoke(
+            string[] arguments,
+            MessageEventArgs telegramMessageEvent
         )
         {
-            ViewInvokeReturn returnModel = new ViewInvokeReturn { };
+            CommandHandlerReturn returnModel = new CommandHandlerReturn { };
+
+            bool showAllItems = false;
+
+            if(arguments != null)
+            {
+                /*if(arguments[0].ToString() == "all")
+                {
+                    showAllItems = true;
+                }
+                else
+                {
+                    throw new ArgumentException();
+                }*/
+            }
 
             if (AuthorData.CanAuthorQueue(TelegramUtilities.GetUserId(telegramMessageEvent)))
             {
-                var queueItems = GetQueueItems(queueItemId);
+                var queueItems = GetQueueItems(0, showAllItems);
 
                 if (queueItems.HasItems)
                 {
@@ -54,17 +69,15 @@ namespace StashBot.Handlers.CommandHandlers
                             };
                             break;
                     }
-
-                    returnModel.Status = ViewInvokeReturnStatus.FoundQueuedPosts;
                 }
                 else
                 {
-                    returnModel.Status = ViewInvokeReturnStatus.NothingQueued;
+                    throw new CommandHandlerException("Nothing is queued");
                 }
             }
             else
             {
-                returnModel.HasPermission = false;
+                throw new CommandHandlerException("You do not have permission to view the queue");
             }
 
             return returnModel;
@@ -182,11 +195,11 @@ namespace StashBot.Handlers.CommandHandlers
             }
         }
 
-        private static GetQueueItemsReturn GetQueueItems(int id)
+        private static GetQueueItemsReturn GetQueueItems(int id = 0, bool showAllItems = false)
         {
             GetQueueItemsReturn returnModel = new GetQueueItemsReturn { };
 
-            List<QueueItem> queue = QueueData.ListQueuedQueueItems();
+            List<QueueItem> queue = showAllItems ? QueueData.ListQueueItems() : QueueData.ListQueuedQueueItems();
 
             if (queue.Count() > 0)
             {

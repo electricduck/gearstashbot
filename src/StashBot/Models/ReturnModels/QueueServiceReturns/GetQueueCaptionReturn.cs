@@ -1,7 +1,7 @@
 
 namespace StashBot.Models.ReturnModels.QueueServiceReturns
 {
-    public class GetQueueCaptionReturn : ReturnModelBase
+    public class GetQueueCaptionReturn
     {
         public string CaptionText { get; set; }
     }

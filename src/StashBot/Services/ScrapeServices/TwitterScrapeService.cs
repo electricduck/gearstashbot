@@ -9,7 +9,7 @@ namespace StashBot.Services.ScrapeServices
     public class TwitterScrapeService
     {
         private string service = "Twitter";
-        private string nitterUrl = "https://nitter.zyrio.app";
+        private string nitterUrl = "https://nitter.net";
 
         // TODO: Handle the possibility Twitter allows mixed video/image albums
         public QueueItem ScrapeTwitterUrl(string url, int mediaIndex, string customName)
