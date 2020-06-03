@@ -188,7 +188,7 @@ namespace StashBot.Services
 
             if (itemToQueue != null)
             {
-                var duplicate = QueueData.GetQueueItemBySourceUrl(itemToQueue.MediaUrl);
+                var duplicate = QueueData.GetQueueItemBySourceUrl(itemToQueue.SourceUrl);
 
                 if (duplicate != null)
                 {
