@@ -20,14 +20,22 @@ namespace StashBot.Services
             {
                 try
                 {
-                    int postsInQueue = 0;
+                    int postsInQueue = QueueData.CountQueuedQueueItems();
                     int sleepTime = AppSettings.Config_PostInterval;
 
                     while (true)
                     {
-                        Thread.Sleep(sleepTime);
-                        postsInQueue = QueueData.CountQueuedQueueItems();
-                        PostQueueItem();
+                        if (postsInQueue == 0)
+                        {
+                            Thread.Sleep(60000);
+                            postsInQueue = QueueData.CountQueuedQueueItems();
+                        }
+                        else
+                        {
+                            Thread.Sleep(sleepTime);
+                            PostQueueItem();
+                            postsInQueue = QueueData.CountQueuedQueueItems();
+                        }
                     }
                 }
                 catch (Exception e)
