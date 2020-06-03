@@ -239,8 +239,8 @@ namespace StashBot.Handlers.CommandHandlers
             bool isLatestItem
         )
         {
-            string earlierButton = isEarliestItem ? "Latest ⏩" : "⬅️ Earlier";
-            string laterButton = isLatestItem ? "⏪ Earliest" : "Later ➡️";
+            string earlierButton = isEarliestItem ? "Latest ⏩" : "⬅️ Sooner";
+            string laterButton = isLatestItem ? "⏪ Soonest" : "Later ➡️";
 
             return new InlineKeyboardMarkup(new[]
             {
