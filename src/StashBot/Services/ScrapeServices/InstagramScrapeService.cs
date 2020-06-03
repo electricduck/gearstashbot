@@ -4,17 +4,16 @@ using StashBot.Models;
 
 namespace StashBot.Services.ScrapeServices
 {
-    public class TwitterScrapeService
+    public class InstagrmScrapeService
     {
-        private string service = "Twitter";
+        private string service = "Instagram";
 
-        public QueueItem ScrapeTwitterUrl(string url, int mediaIndex, string customName)
+        public QueueItem ScrapeInstagramUrl(string url)
         {
             QueueItem returnItem = null;
 
-            url = url.Replace("https://mobile.twitter", "https://twitter");
-
-            if (url.StartsWith("https://twitter.com"))
+            if (url.StartsWith("https://instagram.com") ||
+                url.StartsWith("https://www.instagram.com"))
             {
                 var galleryDlOutput = GalleryDlService.GetJsonFromUrl(url);
 
@@ -29,12 +28,12 @@ namespace StashBot.Services.ScrapeServices
 
                 foreach (var item in galleryDlOutput.Children())
                 {
-                    if(item[0].ToString() == "ValueError")
+                    if (item[0].ToString() == "ValueError")
                     {
                         throw new Exception($"Failed to download item from {service}");
                     }
 
-                    if(item[0].ToString() == "HttpError")
+                    if (item[0].ToString() == "HttpError")
                     {
                         throw new Exception($"Failed to connect to {service}");
                     }
@@ -42,17 +41,12 @@ namespace StashBot.Services.ScrapeServices
                     switch (Convert.ToInt32(item[0]))
                     {
                         case 2:
-                            name = item[0].Next["author"]["nick"].ToString();
-                            source = item[0].Next["tweet_id"].ToString(0);
-                            username = item[0].Next["author"]["name"].ToString();
+                            name = item[0].Next["username"].ToString();
+                            source = item[0].Next["shortcode"].ToString();
+                            username = item[0].Next["username"].ToString();
                             break;
                         case 3:
-                            media.Add(YoutubeDlService.GetExtractedPathFromUrl(url));
-                            mediaType = QueueItem.MediaType.Video;
-                            hasMedia = true;
-                            break;
-                        case 7:
-                            media.Add(item[1][0].ToString().Replace(":orig", ""));
+                            media.Add(item[1].ToString());
                             mediaType = QueueItem.MediaType.Image;
                             hasMedia = true;
                             break;
@@ -61,11 +55,10 @@ namespace StashBot.Services.ScrapeServices
 
                 if (hasMedia)
                 {
-                    name = String.IsNullOrEmpty(customName) ? name : customName;
-                    source = $"https://twitter.com/{username}/status/{source}";
-                    username = $"https://twitter.com/{username}";
+                    source = $"https://www.instagram.com/p/{source}/";
+                    username = $"https://www.instagram.com/{username}/";
 
-                    var selectedMedia = (mediaIndex + 1 > media.Count) ? media[0] : media[mediaIndex];
+                    var selectedMedia = media[0];
 
                     returnItem = new QueueItem
                     {

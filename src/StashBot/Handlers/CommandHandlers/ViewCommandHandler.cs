@@ -160,7 +160,7 @@ namespace StashBot.Handlers.CommandHandlers
 
             if (canDeleteThisQueueItem)
             {
-                QueueService.RemoveItem(selectedQueuedItem.Id);
+                QueueService.RemoveQueueItem(selectedQueuedItem.Id);
                 statusText = MessageUtilities.CreateSuccessMessage($"Deleted #{selectedQueuedItem.Id} from queue");
             }
 
@@ -209,7 +209,9 @@ namespace StashBot.Handlers.CommandHandlers
                 var keyboard = GenerateKeyboard(
                     selectedQueuedItem.Id,
                     previousQueuedItem.Id,
-                    nextQueuedItem.Id
+                    nextQueuedItem.Id,
+                    isEarliestItem,
+                    isLatestItem
                 );
 
                 returnModel.SelectedQueuedItem = selectedQueuedItem;
@@ -232,15 +234,20 @@ namespace StashBot.Handlers.CommandHandlers
         private static InlineKeyboardMarkup GenerateKeyboard(
             int currentId,
             int previousId,
-            int nextId
+            int nextId,
+            bool isEarliestItem,
+            bool isLatestItem
         )
         {
+            string earlierButton = isEarliestItem ? "Latest ⏩" : "⬅️ Earlier";
+            string laterButton = isLatestItem ? "⏪ Earliest" : "Later ➡️";
+
             return new InlineKeyboardMarkup(new[]
             {
                 new []
                 {
-                    InlineKeyboardButton.WithCallbackData("⬅️ Earlier", $"view_prev:{previousId.ToString()}"),
-                    InlineKeyboardButton.WithCallbackData("Later ➡️", $"view_next:{nextId.ToString()}"),
+                    InlineKeyboardButton.WithCallbackData(earlierButton, $"view_prev:{previousId.ToString()}"),
+                    InlineKeyboardButton.WithCallbackData(laterButton, $"view_next:{nextId.ToString()}"),
                 },
                 new []
                 {

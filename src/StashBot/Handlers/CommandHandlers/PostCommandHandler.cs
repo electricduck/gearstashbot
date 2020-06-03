@@ -1,5 +1,6 @@
 using System;
 using StashBot.Data;
+using StashBot.Models;
 using StashBot.Models.ReturnModels.CommandHandlerReturnModels;
 using StashBot.Models.ReturnModels.ServiceReturnModels;
 using StashBot.Services;
@@ -10,48 +11,26 @@ namespace StashBot.Handlers.CommandHandlers
     {
         public static PostCommandHandlerReturn Invoke(
             string[] arguments,
-            int authorId,
-            string authorName,
-            string authorUsername
+            TelegramUser user
         )
         {
             PostCommandHandlerReturn returnModel = new PostCommandHandlerReturn { };
             QueueServiceReturn queueServiceReturn = null;
 
-            if (AuthorData.CanAuthorQueue(authorId))
+            if (AuthorData.CanAuthorQueue(user.Id))
             {
                 if (
                     arguments[0].StartsWith("https://mobile.twitter") ||
-                    arguments[0].StartsWith("https://twitter")
-                )
+                    arguments[0].StartsWith("https://twitter") ||
+                    arguments[0].StartsWith("https://instagram.com") ||
+                    arguments[0].StartsWith("https://www.instagram.com")
+                ) // TODO: Don't check here; only in the QueueService
                 {
-                    switch (arguments.Length)
-                    {
-                        // TODO: Parse this better
-                        case 1:
-                            queueServiceReturn = QueueService.QueueLinkPost(
-                                url: arguments[0],
-                                authorId: authorId,
-                                authorName: authorName,
-                                authorUsername: authorUsername
-                            );
-                            break;
-                        case 2:
-                            queueServiceReturn = QueueService.QueueLinkPost(
-                                url: arguments[0],
-                                authorId: authorId,
-                                authorName: authorName,
-                                authorUsername: authorName,
-                                mediaIndex: (Convert.ToInt32(arguments[1]) - 1)
-                            );
-                            break;
-                            /*case 3:
-                                QueueService.PostLink(arguments[0],
-                                    mediaIndex: (Convert.ToInt32(arguments[1]) + 1),
-                                    name: arguments[2]
-                                );
-                                break;*/
-                    }
+                    queueServiceReturn = QueueService.QueueLink(
+                        url: arguments[0],
+                        mediaIndex: (arguments.Length == 2) ? (Convert.ToInt32(arguments[1]) - 1) : 1,
+                        author: user
+                    );
 
                     switch (queueServiceReturn.Status)
                     {

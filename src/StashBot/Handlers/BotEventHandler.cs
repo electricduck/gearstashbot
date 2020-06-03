@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Telegram.Bot.Args;
 using StashBot.Data;
 using StashBot.Handlers.CommandHandlers;
+using StashBot.Models;
 using StashBot.Models.ReturnModels.CommandHandlerReturnModels;
 using StashBot.Models.ReturnModels.ReturnStatusEnums;
 using StashBot.Services;
@@ -14,30 +15,33 @@ namespace StashBot.Handlers
     {
         public static void Bot_OnMessage(object sender, MessageEventArgs telegramMessageEvent)
         {
-            if (telegramMessageEvent.Message.Text != null)
+            Task.Run(() =>
             {
                 try
                 {
-                    string messageText = telegramMessageEvent.Message.Text.ToString();
-
-                    string command = null;
-                    string[] arguments = null;
-
-                    string user = TelegramUtilities.GetUser(telegramMessageEvent);
-                    int userId = TelegramUtilities.GetUserId(telegramMessageEvent);
-                    string userName = TelegramUtilities.GetUserName(telegramMessageEvent);
-                    string userLanguage = TelegramUtilities.GetUserLanguageCode(telegramMessageEvent);
-
-                    if (messageText.StartsWith("/"))
+                    if (telegramMessageEvent.Message.Text != null)
                     {
-                        command = messageText.Split(" ")[0].Replace("/", "").ToLower();
-                        arguments = (messageText.Substring(messageText.IndexOf(' ') + 1)).Split(" ");
 
-                        switch (command)
+                        string messageText = telegramMessageEvent.Message.Text.ToString();
+
+                        string command = null;
+                        string[] arguments = null;
+
+                        TelegramUser user = new TelegramUser {
+                            Id = TelegramUtilities.GetUserId(telegramMessageEvent),
+                            Language = TelegramUtilities.GetUserLanguageCode(telegramMessageEvent),
+                            Name = TelegramUtilities.GetUserName(telegramMessageEvent),
+                            Username = TelegramUtilities.GetUser(telegramMessageEvent)
+                        };
+
+                        if (messageText.StartsWith("/"))
                         {
-                            case "catpls":
-                                Task.Run(() =>
-                                {
+                            command = messageText.Split(" ")[0].Replace("/", "").ToLower();
+                            arguments = (messageText.Substring(messageText.IndexOf(' ') + 1)).Split(" ");
+
+                            switch (command)
+                            {
+                                case "catpls":
                                     var catPlsCommandResult = CatPlsCommandHandler.Invoke();
                                     if (catPlsCommandResult.Success)
                                     {
@@ -47,12 +51,9 @@ namespace StashBot.Handlers
                                             telegramMessageEvent
                                         );
                                     }
-                                });
-                                break;
+                                    break;
 
-                            case "info":
-                                Task.Run(() =>
-                                {
+                                case "info":
                                     var infoCommandResult = InfoCommandHandler.Invoke(telegramMessageEvent);
                                     if (infoCommandResult.Success)
                                     {
@@ -62,12 +63,9 @@ namespace StashBot.Handlers
                                             telegramMessageEvent
                                         );
                                     }
-                                });
-                                break;
+                                    break;
 
-                            case "view":
-                                Task.Run(() =>
-                                {
+                                case "view":
                                     var viewCommandResult = ViewCommandHandler.Invoke(telegramMessageEvent);
                                     if (viewCommandResult.Success)
                                     {
@@ -102,30 +100,43 @@ namespace StashBot.Handlers
                                             }
                                         }
                                     }
-                                });
-                                break;
+                                    break;
 
-                            case "err":
-                                throw new Exception("Manually triggered exception");
-                                break;
+                                case "err":
+                                    throw new Exception("Manually triggered exception");
+                                    break;
 
-                            // TODO: Change below cases to match with above cases
-                            case "flush":
-                                FlushCommandHandlerReturn flushCommandHandlerReturn = FlushCommandHandler.Invoke(userId);
-                                switch (flushCommandHandlerReturn.Status)
-                                {
-                                    case FlushCommandHandlerReturn.FlushCommandReturnStatus.NotAuthorized:
-                                        MessageUtilities.SendWarningMessage("You do not have permission to flush removed posts", telegramMessageEvent);
-                                        break;
-                                    case FlushCommandHandlerReturn.FlushCommandReturnStatus.Success:
-                                        MessageUtilities.SendSuccessMessage("Flushed removed posts", telegramMessageEvent);
-                                        break;
-                                }
-                                break;
-                            case "post":
-                                Task.Run(() =>
-                                {
-                                    PostCommandHandlerReturn postCommandHandlerReturn = PostCommandHandler.Invoke(arguments, userId, userName, user);
+                                case "start":
+                                    int authorCount = AuthorData.CountAuthors();
+                                    if (authorCount == 0)
+                                    {
+                                        AuthorData.CreateAuthor(user.Id);
+
+                                        AuthorData.SetAuthorDeleteOthersPermission(user.Id, true);
+                                        AuthorData.SetAuthorFlushQueuePermission(user.Id, true);
+                                        AuthorData.SetAuthorManageAuthorsPermission(user.Id, true);
+                                        AuthorData.SetAuthorQueuePermission(user.Id, true);
+
+                                        MessageUtilities.PrintInfoMessage($"Created first author ({user.Id}) with all permissions");
+                                        MessageUtilities.SendSuccessMessage($"Created first author with all permissions,", telegramMessageEvent);
+                                    }
+                                    break;
+
+                                // TODO: Change below cases to match with above cases
+                                case "flush":
+                                    FlushCommandHandlerReturn flushCommandHandlerReturn = FlushCommandHandler.Invoke(user.Id);
+                                    switch (flushCommandHandlerReturn.Status)
+                                    {
+                                        case FlushCommandHandlerReturn.FlushCommandReturnStatus.NotAuthorized:
+                                            MessageUtilities.SendWarningMessage("You do not have permission to flush removed posts", telegramMessageEvent);
+                                            break;
+                                        case FlushCommandHandlerReturn.FlushCommandReturnStatus.Success:
+                                            MessageUtilities.SendSuccessMessage("Flushed removed posts", telegramMessageEvent);
+                                            break;
+                                    }
+                                    break;
+                                case "post":
+                                    PostCommandHandlerReturn postCommandHandlerReturn = PostCommandHandler.Invoke(arguments, user);
                                     switch (postCommandHandlerReturn.Status)
                                     {
                                         case PostCommandHandlerReturn.PostCommandReturnStatus.Duplicate:
@@ -144,71 +155,63 @@ namespace StashBot.Handlers
                                             MessageUtilities.SendSuccessMessage("Post successfully queued", telegramMessageEvent);
                                             break;
                                     }
-                                });
-                                break;
-                            /*case "user":
-                                UserCommandHandlerReturn userCommandHandlerReturn = UserCommandHandler.Invoke(
-                                    arguments[0],
-                                    (arguments.Length >= 2 ? arguments[1] : String.Empty),
-                                    (arguments.Length >= 3 ? arguments[2] : String.Empty),
-                                    (arguments.Length == 4 ? arguments[3] : String.Empty),
-                                    telegramMessageEvent
-                                );
-                                switch (userCommandHandlerReturn.Status)
-                                {
-                                    case UserCommandHandlerReturn.UserCommandReturnStatus.GotUser:
-                                        TelegramApiService.SendTextMessage(
-                                            userCommandHandlerReturn.SendTextMessageArguments,
-                                            Program.BotClient,
+                                    break;
+                                    /*case "user":
+                                        UserCommandHandlerReturn userCommandHandlerReturn = UserCommandHandler.Invoke(
+                                            arguments[0],
+                                            (arguments.Length >= 2 ? arguments[1] : String.Empty),
+                                            (arguments.Length >= 3 ? arguments[2] : String.Empty),
+                                            (arguments.Length == 4 ? arguments[3] : String.Empty),
                                             telegramMessageEvent
                                         );
-                                        break;
-                                    case UserCommandHandlerReturn.UserCommandReturnStatus.CannotChangeForSelf:
-                                        MessageUtilities.SendWarningMessage("You cannot change this permission for yourself", telegramMessageEvent);
-                                        break;
-                                    case UserCommandHandlerReturn.UserCommandReturnStatus.CannotDeleteSelf:
-                                        MessageUtilities.SendWarningMessage("You cannot delete yourself", telegramMessageEvent);
-                                        break;
-                                    case UserCommandHandlerReturn.UserCommandReturnStatus.CreatedUser:
-                                        MessageUtilities.SendSuccessMessage("Successfully created user", telegramMessageEvent);
-                                        break;
-                                    case UserCommandHandlerReturn.UserCommandReturnStatus.DeletedUser:
-                                        MessageUtilities.SendSuccessMessage("Successfully deleted user", telegramMessageEvent);
-                                        break;
-                                    case UserCommandHandlerReturn.UserCommandReturnStatus.EditedUserPermissions:
-                                        MessageUtilities.SendSuccessMessage("Successfully edited user permission", telegramMessageEvent);
-                                        break;
-                                    case UserCommandHandlerReturn.UserCommandReturnStatus.InvalidArgs:
-                                        MessageUtilities.SendWarningMessage("Invalid arguments: see /help", telegramMessageEvent); // TODO: Help
-                                        break;
-                                    case UserCommandHandlerReturn.UserCommandReturnStatus.Unauthorized:
-                                        MessageUtilities.SendWarningMessage("You do not have permission to manage users", telegramMessageEvent);
-                                        break;
-                                    case UserCommandHandlerReturn.UserCommandReturnStatus.UserAlreadyExists:
-                                        MessageUtilities.SendWarningMessage("This ID already exists", telegramMessageEvent);
-                                        break;
-                                    case UserCommandHandlerReturn.UserCommandReturnStatus.UserNotFound:
-                                        MessageUtilities.SendWarningMessage("This ID could not be found", telegramMessageEvent);
-                                        break;
-                                }
-                                break;*/
-                            case "start":
-                                int authorCount = AuthorData.CountAuthors();
-                                if (authorCount == 0)
-                                {
-                                    AuthorData.CreateAuthor(userId);
-                                    AuthorData.SetAuthorManageAuthorsPermission(userId, true);
-                                    MessageUtilities.PrintInfoMessage($"Created first author ({userId}) with 'CanManageAuthors' permission");
-                                }
-                                break;
+                                        switch (userCommandHandlerReturn.Status)
+                                        {
+                                            case UserCommandHandlerReturn.UserCommandReturnStatus.GotUser:
+                                                TelegramApiService.SendTextMessage(
+                                                    userCommandHandlerReturn.SendTextMessageArguments,
+                                                    Program.BotClient,
+                                                    telegramMessageEvent
+                                                );
+                                                break;
+                                            case UserCommandHandlerReturn.UserCommandReturnStatus.CannotChangeForSelf:
+                                                MessageUtilities.SendWarningMessage("You cannot change this permission for yourself", telegramMessageEvent);
+                                                break;
+                                            case UserCommandHandlerReturn.UserCommandReturnStatus.CannotDeleteSelf:
+                                                MessageUtilities.SendWarningMessage("You cannot delete yourself", telegramMessageEvent);
+                                                break;
+                                            case UserCommandHandlerReturn.UserCommandReturnStatus.CreatedUser:
+                                                MessageUtilities.SendSuccessMessage("Successfully created user", telegramMessageEvent);
+                                                break;
+                                            case UserCommandHandlerReturn.UserCommandReturnStatus.DeletedUser:
+                                                MessageUtilities.SendSuccessMessage("Successfully deleted user", telegramMessageEvent);
+                                                break;
+                                            case UserCommandHandlerReturn.UserCommandReturnStatus.EditedUserPermissions:
+                                                MessageUtilities.SendSuccessMessage("Successfully edited user permission", telegramMessageEvent);
+                                                break;
+                                            case UserCommandHandlerReturn.UserCommandReturnStatus.InvalidArgs:
+                                                MessageUtilities.SendWarningMessage("Invalid arguments: see /help", telegramMessageEvent); // TODO: Help
+                                                break;
+                                            case UserCommandHandlerReturn.UserCommandReturnStatus.Unauthorized:
+                                                MessageUtilities.SendWarningMessage("You do not have permission to manage users", telegramMessageEvent);
+                                                break;
+                                            case UserCommandHandlerReturn.UserCommandReturnStatus.UserAlreadyExists:
+                                                MessageUtilities.SendWarningMessage("This ID already exists", telegramMessageEvent);
+                                                break;
+                                            case UserCommandHandlerReturn.UserCommandReturnStatus.UserNotFound:
+                                                MessageUtilities.SendWarningMessage("This ID could not be found", telegramMessageEvent);
+                                                break;
+                                        }
+                                        break;*/
+                            }
                         }
+
                     }
                 }
                 catch (Exception e)
                 {
                     MessageUtilities.SendErrorMessage(e, telegramMessageEvent);
                 }
-            }
+            });
         }
 
         public async static void Bot_OnCallbackQuery(object sender, CallbackQueryEventArgs callbackQueryEventArgs)

@@ -18,14 +18,21 @@ namespace StashBot.Services
         {
             Task.Run(() =>
             {
-                int postsInQueue = 0;
-                int sleepTime = AppSettings.Config_PostInterval;
-
-                while (true)
+                try
                 {
-                    Thread.Sleep(sleepTime);
-                    postsInQueue = QueueData.CountQueuedQueueItems();
-                    PostQueueItem();
+                    int postsInQueue = 0;
+                    int sleepTime = AppSettings.Config_PostInterval;
+
+                    while (true)
+                    {
+                        Thread.Sleep(sleepTime);
+                        postsInQueue = QueueData.CountQueuedQueueItems();
+                        PostQueueItem();
+                    }
+                }
+                catch (Exception e)
+                {
+                    MessageUtilities.PrintErrorMessage(e, Guid.Empty);
                 }
             });
         }
@@ -72,7 +79,7 @@ namespace StashBot.Services
             bool advanced = false
         )
         {
-            GetQueueCaptionReturn returnModel = new GetQueueCaptionReturn {};
+            GetQueueCaptionReturn returnModel = new GetQueueCaptionReturn { };
 
             string creditText = "";
             string mediaTypeText = "";
@@ -88,9 +95,9 @@ namespace StashBot.Services
                     break;
             }
 
-            if(!String.IsNullOrEmpty(queueItem.Name))
+            if (!String.IsNullOrEmpty(queueItem.Name))
             {
-                if(!String.IsNullOrEmpty(queueItem.UsernameUrl))
+                if (!String.IsNullOrEmpty(queueItem.UsernameUrl))
                 {
                     creditText += $"👤 <a href=\"{queueItem.UsernameUrl}\">{queueItem.Name}</a>";
                 }
@@ -104,7 +111,7 @@ namespace StashBot.Services
                 creditText += $"👤 <i>(unknown)</i>";
             }
 
-            if(!String.IsNullOrEmpty(queueItem.SourceUrl))
+            if (!String.IsNullOrEmpty(queueItem.SourceUrl))
             {
                 string sourceName = String.IsNullOrEmpty(queueItem.SourceName) ? "source" : queueItem.SourceName;
 
@@ -114,11 +121,11 @@ namespace StashBot.Services
 
             returnModel.CaptionText = $"{mediaTypeText}{creditText}{sourceText}";
 
-            if(advanced)
+            if (advanced)
             {
                 var statusDateString = "";
 
-                switch(queueItem.Status)
+                switch (queueItem.Status)
                 {
                     case QueueItem.QueueStatus.Queued:
                         statusDateString = GenerateStatusDateStringForAdvancedCaption(queueItem.QueuedAt, QueueItem.QueueStatus.Queued);
@@ -144,32 +151,36 @@ namespace StashBot.Services
             return returnModel;
         }
 
-        public static QueueServiceReturn QueueLinkPost(
+        public static QueueServiceReturn QueueLink(
             string url,
-            int authorId,
-            string authorName,
-            string authorUsername,
+            TelegramUser author,
             int mediaIndex = 0,
-            string name = ""
+            string customName = ""
         )
         {
             QueueServiceReturn returnModel = new QueueServiceReturn { };
             QueueItem itemToQueue = null;
 
-            if (url.StartsWith("https://twitter.com") || url.StartsWith("https://mobile.twitter"))
+            if (
+                url.StartsWith("https://mobile.twitter") ||
+                url.StartsWith("https://twitter")
+            )
             {
                 TwitterScrapeService _twitterScrapeService = new TwitterScrapeService();
-
-                itemToQueue = _twitterScrapeService.ScrapeTwitterUrl(
-                    url,
-                    mediaIndex,
-                    name
-                );
+                itemToQueue = _twitterScrapeService.ScrapeTwitterUrl(url, mediaIndex, customName);
+            }
+            else if (
+                url.StartsWith("https://instagram.com") ||
+                url.StartsWith("https://www.instagram.com")
+            )
+            {
+                InstagrmScrapeService _instagramScrapeService = new InstagrmScrapeService();
+                itemToQueue = _instagramScrapeService.ScrapeInstagramUrl(url);
             }
 
             if (itemToQueue != null)
             {
-                var duplicate = QueueData.GetQueueItemBySourceUrl(itemToQueue.SourceUrl);
+                var duplicate = QueueData.GetQueueItemBySourceUrl(itemToQueue.MediaUrl);
 
                 if (duplicate != null)
                 {
@@ -177,10 +188,12 @@ namespace StashBot.Services
                 }
                 else
                 {
-                    itemToQueue.AuthorTelegramId = authorId;
-                    itemToQueue.AuthorTelegramName = authorName;
-                    itemToQueue.AuthorTelegramUsername = authorUsername;
+                    itemToQueue.AuthorTelegramId = author.Id;
+                    itemToQueue.AuthorTelegramName = author.Name;
+                    itemToQueue.AuthorTelegramUsername = author.Username;
+
                     QueueData.AddQueueItem(itemToQueue);
+
                     returnModel.Status = QueueServiceReturn.QueueServiceReturnStatus.Queued;
                 }
             }
@@ -192,7 +205,7 @@ namespace StashBot.Services
             return returnModel;
         }
 
-        public static void RemoveItem(
+        public static void RemoveQueueItem(
             int id
         )
         {
