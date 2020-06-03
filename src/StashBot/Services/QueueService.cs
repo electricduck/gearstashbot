@@ -175,8 +175,7 @@ namespace StashBot.Services
             )
             {
                 TwitterScrapeService _twitterScrapeService = new TwitterScrapeService();
-                //itemToQueue = _twitterScrapeService.ScrapeTwitterUrl(url, mediaIndex, customName);
-                itemToQueue = _twitterScrapeService.ScrapeNitterUrl(url, mediaIndex, customName);
+                itemToQueue = _twitterScrapeService.ScrapeTwitterUrl(url, mediaIndex, customName);
             }
             else if (
                 url.StartsWith("https://instagram.com") ||
