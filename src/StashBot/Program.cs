@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading;
 using Microsoft.Extensions.Configuration;
 using Telegram.Bot;
+using StashBot.Data;
 using StashBot.Handlers;
 using StashBot.Models;
 using StashBot.Services;
@@ -30,9 +31,7 @@ namespace StashBot
 
             BotClient = new TelegramBotClient(AppSettings.ApiKeys_Telegram);
 
-            bool isApiKeyValid = BotClient.TestApiAsync().Result;
-
-            if (isApiKeyValid)
+            if (BotClient.TestApiAsync().Result)
             {
                 MessageUtilities.PrintSuccessMessage("Telegram API key valid");
             }
@@ -41,6 +40,8 @@ namespace StashBot
                 MessageUtilities.PrintWarningMessage("Telegram API key invalid");
                 Environment.Exit(1);
             }
+
+            HelpData.CompileHelp();
 
             try
             {
@@ -71,13 +72,6 @@ namespace StashBot
             {
                 MessageUtilities.PrintErrorMessage(e, Guid.Empty);
             }
-
-            /*SendTextMessageArguments output = new SendTextMessageArguments {
-                //ChatId = -1001175466865,
-                ChatId = -1001250488587,
-                Text = "Test post. Please ignore."
-            };
-            TelegramApiService.SendTextMessage(output, BotClient, null);*/
 
             Thread.Sleep(int.MaxValue);
         }

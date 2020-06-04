@@ -2,12 +2,9 @@ using System;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Telegram.Bot.Args;
-using StashBot.Data;
 using StashBot.Exceptions;
 using StashBot.Handlers.CommandHandlers;
-using StashBot.Models;
 using StashBot.Models.ArgumentModels;
-using StashBot.Models.ReturnModels.CommandHandlerReturnModels;
 using StashBot.Utilities;
 
 namespace StashBot.Handlers
@@ -33,7 +30,7 @@ namespace StashBot.Handlers
 
                         if (messageText.StartsWith("/"))
                         {
-                            arguments.Command = parsedCommand.Groups[1].Value.Replace("/", "");
+                            arguments.Command = parsedCommand.Groups[1].Value.Replace("/", "").ToLower();
                             arguments.CommandArguments = parsedCommand.Groups[3].Value.Split(" ");
                             arguments.TelegramMessageEvent = telegramMessageEvent;
 
@@ -44,11 +41,11 @@ namespace StashBot.Handlers
 
                             switch (arguments.Command)
                             {
-                                case "start":
-                                    UserCommandHandler.InvokeSetup(arguments);
-                                    break;
                                 case "catpls":
                                     CatPlsCommandHandler.Invoke(arguments);
+                                    break;
+                                case "help":
+                                    HelpCommandHandler.Invoke(arguments);
                                     break;
                                 case "info":
                                     InfoCommandHandler.Invoke(arguments);
@@ -56,7 +53,11 @@ namespace StashBot.Handlers
                                 case "post":
                                     PostCommandHandler.Invoke(arguments);
                                     break;
+                                case "start":
+                                    UserCommandHandler.InvokeSetup(arguments);
+                                    break;
                                 case "tools":
+                                case "tool":
                                     ToolsCommandHandler.Invoke(arguments);
                                     break;
                                 case "user":

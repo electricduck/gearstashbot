@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using Telegram.Bot.Types.ReplyMarkups;
 using StashBot.Data;
+using StashBot.Models;
 using StashBot.Models.ArgumentModels;
 using StashBot.Services;
 using StashBot.Utilities;
@@ -9,6 +10,11 @@ namespace StashBot.Handlers.CommandHandlers
 {
     public class ToolsCommandHandler
     {
+        public static Help Help = new Help {
+            Command = "tools",
+            Description = "Extra tools to manage StashBot"
+        };
+
         public static void Invoke(CommandHandlerArguments arguments)
         {
             var toolsKeyboard = new InlineKeyboardMarkup(new[]

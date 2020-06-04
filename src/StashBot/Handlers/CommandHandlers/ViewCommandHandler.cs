@@ -16,6 +16,11 @@ namespace StashBot.Handlers.CommandHandlers
 {
     public class ViewCommandHandler
     {
+        public static Help Help = new Help {
+            Command = "view",
+            Description = "View and manage posts in queue"
+        };
+
         public static void Invoke(CommandHandlerArguments arguments)
         {
             bool showAllItems = false;

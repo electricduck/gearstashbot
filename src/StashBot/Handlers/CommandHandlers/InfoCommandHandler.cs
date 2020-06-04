@@ -11,6 +11,11 @@ namespace StashBot.Handlers.CommandHandlers
 {
     public class InfoCommandHandler
     {
+        public static Help Help = new Help {
+            Command = "info",
+            Description = "Return bot information and status"
+        };
+
         public static void Invoke(CommandHandlerArguments arguments)
         {
             var thisProcess = System.Diagnostics.Process.GetCurrentProcess();
