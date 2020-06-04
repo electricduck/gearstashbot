@@ -1,61 +1,51 @@
 using System;
 using StashBot.Data;
+using StashBot.Exceptions;
 using StashBot.Models;
+using StashBot.Models.ArgumentModels;
 using StashBot.Models.ReturnModels.CommandHandlerReturnModels;
 using StashBot.Models.ReturnModels.ServiceReturnModels;
 using StashBot.Services;
+using StashBot.Utilities;
 
 namespace StashBot.Handlers.CommandHandlers
 {
     public class PostCommandHandler
     {
-        public static PostCommandHandlerReturn Invoke(
-            string[] arguments,
-            TelegramUser user
-        )
+        public static void Invoke(CommandHandlerArguments arguments)
         {
-            PostCommandHandlerReturn returnModel = new PostCommandHandlerReturn { };
-            QueueServiceReturn queueServiceReturn = null;
-
-            if (AuthorData.CanAuthorQueue(user.Id))
+            if(arguments.CommandArguments == null)
             {
-                if (
-                    arguments[0].StartsWith("https://mobile.twitter.com") ||
-                    arguments[0].StartsWith("https://twitter.com") ||
-                    arguments[0].StartsWith("https://instagram.com") ||
-                    arguments[0].StartsWith("https://www.instagram.com")
-                ) // TODO: Don't check here; only in the QueueService
-                {
-                    queueServiceReturn = QueueService.QueueLink(
-                        url: arguments[0],
-                        mediaIndex: (arguments.Length == 2) ? (Convert.ToInt32(arguments[1]) - 1) : 0,
-                        author: user
-                    );
+                throw new ArgumentException();
+            }
 
-                    switch (queueServiceReturn.Status)
-                    {
-                        case QueueServiceReturn.QueueServiceReturnStatus.Duplicate:
-                            returnModel.Status = PostCommandHandlerReturn.PostCommandReturnStatus.Duplicate;
-                            break;
-                        case QueueServiceReturn.QueueServiceReturnStatus.Queued:
-                            returnModel.Status = PostCommandHandlerReturn.PostCommandReturnStatus.Success;
-                            break;
-                        case QueueServiceReturn.QueueServiceReturnStatus.SourceUrlNotFound:
-                            returnModel.Status = PostCommandHandlerReturn.PostCommandReturnStatus.NotFound;
-                            break;
-                    }
-                }
-                else
+            if (AuthorData.CanAuthorQueue(arguments.TelegramUser.Id))
+            {
+                QueueServiceReturn queueLinkStatus = QueueService.QueueLink(
+                    url: arguments.CommandArguments[0],
+                    mediaIndex: (arguments.CommandArguments.Length == 2) ? (Convert.ToInt32(arguments.CommandArguments[1]) - 1) : 0,
+                    user: arguments.TelegramUser
+                );
+
+                AuthorData.UpdateAuthorTelegramProfile(arguments.TelegramUser);
+
+                switch (queueLinkStatus.Status)
                 {
-                    returnModel.Status = PostCommandHandlerReturn.PostCommandReturnStatus.ServiceNotSupported;
+                    case QueueServiceReturn.QueueServiceReturnStatus.Queued:
+                        MessageUtilities.SendSuccessMessage("Post successfully queued", arguments.TelegramMessageEvent);
+                        break;
+                    case QueueServiceReturn.QueueServiceReturnStatus.Duplicate:
+                        throw new CommandHandlerException("This has already been queued");
+                    case QueueServiceReturn.QueueServiceReturnStatus.SourceUrlNotFound:
+                        throw new CommandHandlerException("This link contains no media or does not exist");
+                    case QueueServiceReturn.QueueServiceReturnStatus.ServiceNotSupported:
+                        throw new CommandHandlerException("This service is not supported");
                 }
             }
             else
             {
-                returnModel.Status = PostCommandHandlerReturn.PostCommandReturnStatus.NotAuthorized;
+                throw new CommandHandlerException("You do not have permission to queue new posts");
             }
-
-            return returnModel;
         }
     }
 }

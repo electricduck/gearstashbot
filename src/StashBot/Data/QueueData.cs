@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using StashBot.Models;
 
 namespace StashBot.Data
@@ -8,13 +9,17 @@ namespace StashBot.Data
     public class QueueData
     {
         public static void AddQueueItem(
-            QueueItem item
+            QueueItem item,
+            TelegramUser user
         )
         {
             using (var db = new StashBotDbContext())
             {
                 item.QueuedAt = DateTime.UtcNow;
                 item.Status = QueueItem.QueueStatus.Queued;
+                item.Author = db.Authors
+                    .Where(a => a.TelegramId == user.Id)
+                    .FirstOrDefault();
 
                 db.Queue.Add(item);
                 db.SaveChanges();
@@ -76,6 +81,7 @@ namespace StashBot.Data
             using (var db = new StashBotDbContext())
             {
                 return db.Queue
+                    .Include(q => q.Author)
                     .Where(q => q.Status == QueueItem.QueueStatus.Posted)
                     .OrderByDescending(q => q.PostedAt)
                     .FirstOrDefault();
@@ -87,6 +93,7 @@ namespace StashBot.Data
             using (var db = new StashBotDbContext())
             {
                 var item = db.Queue
+                    .Include(q => q.Author)
                     .Where(q => q.Id == id)
                     .FirstOrDefault();
 
@@ -99,6 +106,7 @@ namespace StashBot.Data
             using (var db = new StashBotDbContext())
             {
                 var item = db.Queue
+                    .Include(q => q.Author)
                     .Where(q => q.SourceUrl == sourceUrl)
                     .FirstOrDefault();
 
@@ -111,6 +119,7 @@ namespace StashBot.Data
             using (var db = new StashBotDbContext())
             {
                 return db.Queue
+                    .Include(q => q.Author)
                     .Where(q => q.Status == QueueItem.QueueStatus.Queued)
                     .OrderBy(q => q.QueuedAt)
                     .FirstOrDefault();
@@ -122,6 +131,7 @@ namespace StashBot.Data
             using (var db = new StashBotDbContext())
             {
                 var items = db.Queue
+                    .Include(q => q.Author)
                     .OrderBy(q => q.QueuedAt)
                     .ToList();
 
@@ -134,6 +144,7 @@ namespace StashBot.Data
             using (var db = new StashBotDbContext())
             {
                 var items = db.Queue
+                    .Include(q => q.Author)
                     .Where(q => q.Status == QueueItem.QueueStatus.Queued)
                     .OrderBy(q => q.QueuedAt)
                     .ToList();

@@ -39,7 +39,7 @@ namespace StashBot.Services.ScrapeServices
 
                     if (useNitter)
                     {
-                        extracted = FallbackToNitterScraper(url, mediaIndex, customName);
+                        extracted = ExtractViaNitter(url, mediaIndex, customName);
                         break;
                     }
                     else
@@ -102,7 +102,7 @@ namespace StashBot.Services.ScrapeServices
             return returnItem;
         }
 
-        private Scrape FallbackToNitterScraper(string url, int mediaIndex, string customName)
+        private Scrape ExtractViaNitter(string url, int mediaIndex, string customName)
         {
             Scrape returnModel = new Scrape { };
 

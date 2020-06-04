@@ -4,11 +4,11 @@ using StashBot.Models;
 
 namespace StashBot.Services.ScrapeServices
 {
-    public class InstagrmScrapeService
+    public class InstagramScrapeService
     {
         private string service = "Instagram";
 
-        public QueueItem ScrapeInstagramUrl(string url)
+        public QueueItem ScrapeInstagramUrl(string url, int mediaIndex)
         {
             QueueItem returnItem = null;
 
@@ -62,7 +62,9 @@ namespace StashBot.Services.ScrapeServices
 
                     returnItem = new QueueItem
                     {
-                        MediaUrl = selectedMedia,
+                        MediaUrl = (mediaIndex + 1 > media.Count || mediaIndex < 0) ?
+                            media[0] :
+                            media[mediaIndex],
                         Name = name,
                         SourceName = service,
                         SourceUrl = source,

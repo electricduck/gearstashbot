@@ -5,13 +5,15 @@ using Telegram.Bot.Types.Enums;
 using StashBot.Models.ArgumentModels;
 using StashBot.Utilities;
 
-namespace StashBot.Services {
+namespace StashBot.Services
+{
     public class TelegramApiService
     {
         public static async void SendPhoto(SendPhotoArguments args, ITelegramBotClient botClient, MessageEventArgs telegramMessageEvent)
         {
 
-            try {
+            try
+            {
                 await botClient.SendPhotoAsync(
                     caption: args.Caption,
                     chatId: ((args.ChatId != 0) ? args.ChatId : Convert.ToInt32(telegramMessageEvent.Message.Chat.Id)),
@@ -19,14 +21,17 @@ namespace StashBot.Services {
                     photo: args.Photo,
                     replyMarkup: args.ReplyMarkup
                 );
-            } catch (Exception e) {
+            }
+            catch (Exception e)
+            {
                 MessageUtilities.PrintErrorMessage(e, Guid.Empty);
             }
         }
 
         public static async void SendTextMessage(SendTextMessageArguments args, ITelegramBotClient botClient, MessageEventArgs telegramMessageEvent)
         {
-            try {
+            try
+            {
                 await botClient.SendTextMessageAsync(
                     chatId: ((args.ChatId != 0) ? args.ChatId : Convert.ToInt32(telegramMessageEvent.Message.Chat.Id)),
                     disableWebPagePreview: args.DisableWebPagePreview,
@@ -34,7 +39,9 @@ namespace StashBot.Services {
                     replyMarkup: args.ReplyMarkup,
                     text: args.Text
                 );
-            } catch (Exception e) {
+            }
+            catch (Exception e)
+            {
                 MessageUtilities.PrintErrorMessage(e, Guid.Empty);
             }
         }
@@ -42,7 +49,8 @@ namespace StashBot.Services {
         public static async void SendVideo(SendVideoArguments args, ITelegramBotClient botClient, MessageEventArgs telegramMessageEvent)
         {
 
-            try {
+            try
+            {
                 await botClient.SendVideoAsync(
                     caption: args.Caption,
                     chatId: ((args.ChatId != 0) ? args.ChatId : Convert.ToInt32(telegramMessageEvent.Message.Chat.Id)),
@@ -50,7 +58,9 @@ namespace StashBot.Services {
                     replyMarkup: args.ReplyMarkup,
                     video: args.Video
                 );
-            } catch (Exception e) {
+            }
+            catch (Exception e)
+            {
                 MessageUtilities.PrintErrorMessage(e, Guid.Empty);
             }
         }

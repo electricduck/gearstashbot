@@ -9,7 +9,8 @@ namespace StashBot.Models.ReturnModels.ServiceReturnModels
         {
             Duplicate = 1,
             Queued = 0,
-            SourceUrlNotFound = 2
+            SourceUrlNotFound = 2,
+            ServiceNotSupported = 3,
         }
     }
 }

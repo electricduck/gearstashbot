@@ -34,8 +34,17 @@ namespace StashBot.Migrations
                     b.Property<bool>("CanQueue")
                         .HasColumnType("INTEGER");
 
+                    b.Property<DateTime>("TelegramDetailsLastUpdatedAt")
+                        .HasColumnType("TEXT");
+
                     b.Property<long>("TelegramId")
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("TelegramName")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("TelegramUsername")
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -48,14 +57,8 @@ namespace StashBot.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("AuthorTelegramId")
+                    b.Property<int?>("AuthorId")
                         .HasColumnType("INTEGER");
-
-                    b.Property<string>("AuthorTelegramName")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("AuthorTelegramUsername")
-                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("DeletedAt")
                         .HasColumnType("TEXT");
@@ -89,7 +92,16 @@ namespace StashBot.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AuthorId");
+
                     b.ToTable("Queue");
+                });
+
+            modelBuilder.Entity("StashBot.Models.QueueItem", b =>
+                {
+                    b.HasOne("StashBot.Models.Author", "Author")
+                        .WithMany("QueueItems")
+                        .HasForeignKey("AuthorId");
                 });
 #pragma warning restore 612, 618
         }

@@ -23,9 +23,7 @@ namespace StashBot.Models
         public DateTime PostedAt { get; set; }
         public DateTime QueuedAt { get; set; }
 
-        public int AuthorTelegramId { get; set; }
-        public string AuthorTelegramName { get; set; }
-        public string AuthorTelegramUsername { get; set; }
+        public Author Author { get; set; }
 
         public enum QueueStatus
         {

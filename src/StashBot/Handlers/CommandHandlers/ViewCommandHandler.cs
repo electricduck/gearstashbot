@@ -1,8 +1,6 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Telegram.Bot.Args;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -10,7 +8,6 @@ using StashBot.Data;
 using StashBot.Exceptions;
 using StashBot.Models;
 using StashBot.Models.ArgumentModels;
-using StashBot.Models.ReturnModels;
 using StashBot.Models.ReturnModels.ViewCommandHandlerReturns;
 using StashBot.Services;
 using StashBot.Utilities;
@@ -19,28 +16,23 @@ namespace StashBot.Handlers.CommandHandlers
 {
     public class ViewCommandHandler
     {
-        public static CommandHandlerReturn Invoke(
-            string[] arguments,
-            MessageEventArgs telegramMessageEvent
-        )
+        public static void Invoke(CommandHandlerArguments arguments)
         {
-            CommandHandlerReturn returnModel = new CommandHandlerReturn { };
-
             bool showAllItems = false;
 
-            if(arguments != null)
+            /*if(arguments.CommandArguments != null)
             {
-                /*if(arguments[0].ToString() == "all")
+                if(arguments.CommandArguments[0].ToString() == "all")
                 {
                     showAllItems = true;
                 }
                 else
                 {
                     throw new ArgumentException();
-                }*/
-            }
+                }
+            }*/
 
-            if (AuthorData.CanAuthorQueue(TelegramUtilities.GetUserId(telegramMessageEvent)))
+            if (AuthorData.CanAuthorQueue(TelegramUtilities.GetUserId(arguments.TelegramMessageEvent)))
             {
                 var queueItems = GetQueueItems(0, showAllItems);
 
@@ -53,20 +45,28 @@ namespace StashBot.Handlers.CommandHandlers
                     switch (selectedQueuedItem.Type)
                     {
                         case QueueItem.MediaType.Image:
-                            returnModel.SendPhotoArguments = new SendPhotoArguments
-                            {
-                                Caption = caption,
-                                Photo = selectedQueuedItem.MediaUrl,
-                                ReplyMarkup = controlKeyboard
-                            };
+                            TelegramApiService.SendPhoto(
+                                new SendPhotoArguments
+                                {
+                                    Caption = caption,
+                                    Photo = selectedQueuedItem.MediaUrl,
+                                    ReplyMarkup = controlKeyboard
+                                },
+                                Program.BotClient,
+                                arguments.TelegramMessageEvent
+                            );
                             break;
                         case QueueItem.MediaType.Video:
-                            returnModel.SendVideoArguments = new SendVideoArguments
-                            {
-                                Caption = caption,
-                                ReplyMarkup = controlKeyboard,
-                                Video = selectedQueuedItem.MediaUrl
-                            };
+                            TelegramApiService.SendVideo(
+                                new SendVideoArguments
+                                {
+                                    Caption = caption,
+                                    ReplyMarkup = controlKeyboard,
+                                    Video = selectedQueuedItem.MediaUrl
+                                },
+                                Program.BotClient,
+                                arguments.TelegramMessageEvent
+                            );
                             break;
                     }
                 }
@@ -79,73 +79,83 @@ namespace StashBot.Handlers.CommandHandlers
             {
                 throw new CommandHandlerException("You do not have permission to view the queue");
             }
-
-            return returnModel;
         }
 
         public static async Task InvokeChange(
-            CallbackQueryEventArgs callbackQueryEventArgs,
+            CommandHandlerArguments arguments,
             int queueItemId = 0
         )
         {
-            var queueItems = GetQueueItems(queueItemId);
-
-            if (queueItems.HasItems)
+            if (AuthorData.CanAuthorQueue(arguments.TelegramUser.Id))
             {
-                var selectedQueuedItem = queueItems.SelectedQueuedItem;
-                var controlKeyboard = queueItems.Keyboard;
-                var caption = queueItems.Caption;
+                var queueItems = GetQueueItems(queueItemId);
 
-                switch (selectedQueuedItem.Type)
+                if (queueItems.HasItems)
                 {
-                    case QueueItem.MediaType.Image:
-                        await Program.BotClient.EditMessageMediaAsync(
-                            chatId: callbackQueryEventArgs.CallbackQuery.Message.Chat.Id,
-                            media: new InputMediaPhoto
-                            {
-                                Media = selectedQueuedItem.MediaUrl
-                            },
-                            messageId: callbackQueryEventArgs.CallbackQuery.Message.MessageId
-                        );
-                        break;
-                    case QueueItem.MediaType.Video:
-                        await Program.BotClient.EditMessageMediaAsync(
-                            chatId: callbackQueryEventArgs.CallbackQuery.Message.Chat.Id,
-                            media: new InputMediaVideo
-                            {
-                                Media = selectedQueuedItem.MediaUrl
-                            },
-                            messageId: callbackQueryEventArgs.CallbackQuery.Message.MessageId
-                        );
-                        break;
-                }
+                    var selectedQueuedItem = queueItems.SelectedQueuedItem;
+                    var controlKeyboard = queueItems.Keyboard;
+                    var caption = queueItems.Caption;
 
-                await Program.BotClient.EditMessageCaptionAsync(
-                    caption: caption,
-                    chatId: callbackQueryEventArgs.CallbackQuery.Message.Chat.Id,
-                    messageId: callbackQueryEventArgs.CallbackQuery.Message.MessageId,
-                    replyMarkup: controlKeyboard,
-                    parseMode: ParseMode.Html
-                );
+                    switch (selectedQueuedItem.Type)
+                    {
+                        case QueueItem.MediaType.Image:
+                            await Program.BotClient.EditMessageMediaAsync(
+                                chatId: arguments.TelegramCallbackQueryEvent.CallbackQuery.Message.Chat.Id,
+                                media: new InputMediaPhoto
+                                {
+                                    Media = selectedQueuedItem.MediaUrl
+                                },
+                                messageId: arguments.TelegramCallbackQueryEvent.CallbackQuery.Message.MessageId
+                            );
+                            break;
+                        case QueueItem.MediaType.Video:
+                            await Program.BotClient.EditMessageMediaAsync(
+                                chatId: arguments.TelegramCallbackQueryEvent.CallbackQuery.Message.Chat.Id,
+                                media: new InputMediaVideo
+                                {
+                                    Media = selectedQueuedItem.MediaUrl
+                                },
+                                messageId: arguments.TelegramCallbackQueryEvent.CallbackQuery.Message.MessageId
+                            );
+                            break;
+                    }
+
+                    await Program.BotClient.EditMessageCaptionAsync(
+                        caption: caption,
+                        chatId: arguments.TelegramCallbackQueryEvent.CallbackQuery.Message.Chat.Id,
+                        messageId: arguments.TelegramCallbackQueryEvent.CallbackQuery.Message.MessageId,
+                        replyMarkup: controlKeyboard,
+                        parseMode: ParseMode.Html
+                    );
+                }
+                else
+                {
+                    await Program.BotClient.DeleteMessageAsync(
+                        chatId: arguments.TelegramCallbackQueryEvent.CallbackQuery.Message.Chat.Id,
+                        messageId: arguments.TelegramCallbackQueryEvent.CallbackQuery.Message.MessageId
+                    );
+
+                    MessageUtilities.SendWarningMessage("Nothing is queued", arguments.TelegramCallbackQueryEvent);
+                }
             }
             else
             {
                 await Program.BotClient.DeleteMessageAsync(
-                    chatId: callbackQueryEventArgs.CallbackQuery.Message.Chat.Id,
-                    messageId: callbackQueryEventArgs.CallbackQuery.Message.MessageId
+                    chatId: arguments.TelegramCallbackQueryEvent.CallbackQuery.Message.Chat.Id,
+                    messageId: arguments.TelegramCallbackQueryEvent.CallbackQuery.Message.MessageId
                 );
 
-                MessageUtilities.SendWarningMessage("Nothing is queued", callbackQueryEventArgs);
+                throw new CommandHandlerException("You do not have permission to view the queue");
             }
         }
 
         public static async Task InvokeDelete(
-            CallbackQueryEventArgs callbackQueryEventArgs,
+            CommandHandlerArguments arguments,
             int queueItemId = 0
         )
         {
             var queueItems = GetQueueItems(queueItemId);
-            var userId = callbackQueryEventArgs.CallbackQuery.From.Id;
+            var userId = arguments.TelegramCallbackQueryEvent.CallbackQuery.From.Id;
 
             var selectedQueuedItem = queueItems.SelectedQueuedItem;
             var previousQueuedItem = queueItems.PreviousQueuedItem;
@@ -153,12 +163,11 @@ namespace StashBot.Handlers.CommandHandlers
             var controlKeyboard = queueItems.Keyboard;
 
             bool canDeleteThisQueueItem = false;
-            var statusText = MessageUtilities.CreateWarningMessage($"You do not have permission to remove this post"); ;
+            var statusText = MessageUtilities.CreateWarningMessage($"You do not have permission to remove this post");
 
             if (AuthorData.CanAuthorQueue(userId))
             {
-
-                if (selectedQueuedItem.AuthorTelegramId == userId)
+                if (selectedQueuedItem.Author.TelegramId == userId)
                 {
                     canDeleteThisQueueItem = true;
                 }
@@ -178,7 +187,7 @@ namespace StashBot.Handlers.CommandHandlers
             }
 
             await Program.BotClient.AnswerCallbackQueryAsync(
-                callbackQueryId: callbackQueryEventArgs.CallbackQuery.Id,
+                callbackQueryId: arguments.TelegramCallbackQueryEvent.CallbackQuery.Id,
                 text: statusText
             );
 
@@ -186,12 +195,12 @@ namespace StashBot.Handlers.CommandHandlers
             {
                 int idToNavigateTo = previousQueuedItem.Id;
 
-                if(queueItems.IsEarliestItem)
+                if (queueItems.IsEarliestItem)
                 {
-                    idToNavigateTo = nextQueuedItem.Id; 
+                    idToNavigateTo = nextQueuedItem.Id;
                 }
 
-                await InvokeChange(callbackQueryEventArgs, idToNavigateTo);
+                await InvokeChange(arguments, idToNavigateTo);
             }
         }
 
@@ -204,7 +213,7 @@ namespace StashBot.Handlers.CommandHandlers
             if (queue.Count() > 0)
             {
                 QueueItem selectedQueuedItem = (id == 0) ? queue[0] : queue.Where(q => q.Id == id).FirstOrDefault();
-                selectedQueuedItem = (selectedQueuedItem == null) ? queue[0] : selectedQueuedItem; 
+                selectedQueuedItem = (selectedQueuedItem == null) ? queue[0] : selectedQueuedItem;
 
                 int minIndex = 0;
                 int maxIndex = queue.Count() - 1;

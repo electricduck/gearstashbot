@@ -7,7 +7,15 @@ namespace StashBot
     {
         public DbSet<Author> Authors { get; set; }
         public DbSet<QueueItem> Queue { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder options)
             => options.UseSqlite("Data Source=stashbot.db");
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<QueueItem>()
+                .HasOne(qi => qi.Author)
+                .WithMany(a => a.QueueItems);
+        }
     }
 }

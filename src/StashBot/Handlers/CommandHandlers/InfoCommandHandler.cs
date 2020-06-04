@@ -1,21 +1,18 @@
 using System;
 using System.Reflection;
 using System.Runtime.Versioning;
-using Telegram.Bot.Args;
 using StashBot.Data;
 using StashBot.Models;
 using StashBot.Models.ArgumentModels;
-using StashBot.Models.ReturnModels;
+using StashBot.Services;
 using StashBot.Utilities;
 
 namespace StashBot.Handlers.CommandHandlers
 {
     public class InfoCommandHandler
     {
-        public static CommandHandlerReturn Invoke(MessageEventArgs telegramMessageEvent)
+        public static void Invoke(CommandHandlerArguments arguments)
         {
-            CommandHandlerReturn returnModel = new CommandHandlerReturn { };
-
             var thisProcess = System.Diagnostics.Process.GetCurrentProcess();
 
             string processMemoryUsage = Convert.ToDecimal(thisProcess.WorkingSet64 / 1000000).ToString();
@@ -24,8 +21,8 @@ namespace StashBot.Handlers.CommandHandlers
             string systemOpSys = "(Unknown OS)";
             string systemOpSysVersion = String.Empty;
             string systemTime = DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss zzz");
-            string userId = TelegramUtilities.GetUserId(telegramMessageEvent).ToString();
-            string userLanguageCode = TelegramUtilities.GetUserLanguageCode(telegramMessageEvent);
+            string userId = TelegramUtilities.GetUserId(arguments.TelegramMessageEvent).ToString();
+            string userLanguageCode = TelegramUtilities.GetUserLanguageCode(arguments.TelegramMessageEvent);
 
             TimeSpan timeSinceStart = DateTime.Now.ToUniversalTime().Subtract(processStartTime.ToUniversalTime());
             string uptime = timeSinceStart.ToString("d'd 'h'h 'm'm 's's'");
@@ -80,12 +77,14 @@ Time: <code>{systemTime}</code>
 ID: <code>{userId}</code>
 Language: <code>{userLanguageCode}</code>";
 
-            returnModel.SendTextMessageArguments = new SendTextMessageArguments
-            {
-                Text = outputText
-            };
-
-            return returnModel;
+            TelegramApiService.SendTextMessage(
+                new SendTextMessageArguments
+                {
+                    Text = outputText
+                },
+                Program.BotClient,
+                arguments.TelegramMessageEvent
+            );
         }
     }
 }

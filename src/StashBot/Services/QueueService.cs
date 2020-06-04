@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using StashBot.Data;
@@ -172,7 +171,7 @@ namespace StashBot.Services
                         break;
                 }
 
-                string authorNameLink = $"<a href=\"tg://user?id={queueItem.AuthorTelegramId}\">{queueItem.AuthorTelegramName}</a>";
+                string authorNameLink = $"<a href=\"tg://user?id={queueItem.Author.TelegramId}\">{queueItem.Author.TelegramName}</a>";
 
                 string advancedText = $@"—
 #️⃣ <b>ID:</b> {queueItem.Id}
@@ -187,7 +186,7 @@ namespace StashBot.Services
 
         public static QueueServiceReturn QueueLink(
             string url,
-            TelegramUser author,
+            TelegramUser user,
             int mediaIndex = 0,
             string customName = ""
         )
@@ -208,8 +207,13 @@ namespace StashBot.Services
                 url.StartsWith("https://www.instagram.com")
             )
             {
-                InstagrmScrapeService _instagramScrapeService = new InstagrmScrapeService();
-                itemToQueue = _instagramScrapeService.ScrapeInstagramUrl(url);
+                InstagramScrapeService _instagramScrapeService = new InstagramScrapeService();
+                itemToQueue = _instagramScrapeService.ScrapeInstagramUrl(url, mediaIndex);
+            }
+            else
+            {
+                returnModel.Status = QueueServiceReturn.QueueServiceReturnStatus.ServiceNotSupported;
+                return returnModel;
             }
 
             if (itemToQueue != null)
@@ -222,12 +226,7 @@ namespace StashBot.Services
                 }
                 else
                 {
-                    itemToQueue.AuthorTelegramId = author.Id;
-                    itemToQueue.AuthorTelegramName = author.Name;
-                    itemToQueue.AuthorTelegramUsername = author.Username;
-
-                    QueueData.AddQueueItem(itemToQueue);
-
+                    QueueData.AddQueueItem(itemToQueue, user);
                     returnModel.Status = QueueServiceReturn.QueueServiceReturnStatus.Queued;
                 }
             }

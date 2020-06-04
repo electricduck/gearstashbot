@@ -1,24 +1,24 @@
 using StashBot.Models.ArgumentModels;
-using StashBot.Models.ReturnModels;
+using StashBot.Services;
 using StashBot.Utilities;
 
 namespace StashBot.Handlers.CommandHandlers
 {
     public class CatPlsCommandHandler
     {
-        public static CommandHandlerReturn Invoke()
+        public static void Invoke(CommandHandlerArguments arguments)
         {
-            CommandHandlerReturn returnModel = new CommandHandlerReturn {};
-
             string height = GeneratorUtilities.GenerateRandomNumber(250, 1000).ToString();
             string width = GeneratorUtilities.GenerateRandomNumber(250, 1000).ToString();
 
-            returnModel.SendPhotoArguments = new SendPhotoArguments
-            {
-                Photo = $"https://placekitten.com/{height}/{width}"
-            };
-
-            return returnModel;
+            TelegramApiService.SendPhoto(
+                new SendPhotoArguments
+                {
+                    Photo = $"https://placekitten.com/{height}/{width}"
+                },
+                Program.BotClient,
+                arguments.TelegramMessageEvent
+            );
         }
     }
 }
