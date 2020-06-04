@@ -105,6 +105,9 @@ namespace StashBot.Handlers
                     case "tools_flush":
                         await ToolsCommandHandler.InvokeFlush(arguments);
                         break;
+                        case "tools_refreshprofile":
+                        await ToolsCommandHandler.InvokeRefreshProfile(arguments);
+                        break;
                     case "user_perm":
                         await UserCommandHandler.InvokeSetPermission(arguments);
                         break;

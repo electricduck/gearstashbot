@@ -1,12 +1,8 @@
 using System;
-using System.Threading.Tasks;
-using Telegram.Bot.Types.ReplyMarkups;
 using StashBot.Data;
 using StashBot.Exceptions;
-using StashBot.Models;
 using StashBot.Models.ArgumentModels;
 using StashBot.Services;
-using StashBot.Utilities;
 
 namespace StashBot.Handlers.CommandHandlers
 {

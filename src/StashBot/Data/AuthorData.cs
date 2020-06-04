@@ -124,6 +124,22 @@ namespace StashBot.Data
             }
         }
 
+        public static bool DoesAuthorExist(TelegramUser user)
+        {
+            using (var db = new StashBotDbContext())
+            {
+                Author author = db.Authors
+                    .FirstOrDefault(a => a.TelegramId == user.Id);
+
+                if(author != null)
+                {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        }
+
         public static Author GetAuthor(long telegramId, bool createIfNotExist = true)
         {
             using (var db = new StashBotDbContext())

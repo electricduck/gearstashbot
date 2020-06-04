@@ -24,7 +24,7 @@ namespace StashBot.Utilities
             {
                 Id = telegramCallbackQueryEvent.CallbackQuery.From.Id,
                 Language = telegramCallbackQueryEvent.CallbackQuery.From.LanguageCode,
-                Name = telegramCallbackQueryEvent.CallbackQuery.From.FirstName + " " + telegramCallbackQueryEvent.CallbackQuery.Message.From.LastName,
+                Name = telegramCallbackQueryEvent.CallbackQuery.From.FirstName + " " + telegramCallbackQueryEvent.CallbackQuery.From.LastName,
                 Username = "@" + telegramCallbackQueryEvent.CallbackQuery.From.Username
             };
         }

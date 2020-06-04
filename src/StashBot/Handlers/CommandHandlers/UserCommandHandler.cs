@@ -187,6 +187,10 @@ namespace StashBot.Handlers.CommandHandlers
             {
                 new []
                 {
+                    InlineKeyboardButton.WithCallbackData($"{canQueueStatus} Queue", $"user_perm:{author.TelegramId}:CanQueue:{!author.CanQueue}")
+                },
+                new []
+                {
                     InlineKeyboardButton.WithCallbackData($"{canDeleteOthersStatus} Delete Others", $"user_perm:{author.TelegramId}:CanDeleteOthers:{!author.CanDeleteOthers}")
                 },
                 new []
@@ -196,12 +200,7 @@ namespace StashBot.Handlers.CommandHandlers
                 new []
                 {
                     InlineKeyboardButton.WithCallbackData($"{canManageAuthorsStatus} Manage Authors", $"user_perm:{author.TelegramId}:CanManageAuthors:{!author.CanManageAuthors}")
-                },
-                new []
-                {
-                    InlineKeyboardButton.WithCallbackData($"{canQueueStatus} Queue", $"user_perm:{author.TelegramId}:CanQueue:{!author.CanQueue}")
                 }
-
             });
         }
     }

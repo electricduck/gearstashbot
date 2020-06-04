@@ -13,7 +13,7 @@ namespace StashBot.Handlers.CommandHandlers
     {
         public static Help Help = new Help {
             Command = "info",
-            Description = "Return bot information and status"
+            Description = "Bot information and status"
         };
 
         public static void Invoke(CommandHandlerArguments arguments)
