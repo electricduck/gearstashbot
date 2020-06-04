@@ -199,7 +199,7 @@ namespace StashBot.Handlers.CommandHandlers
                 },
                 new []
                 {
-                    InlineKeyboardButton.WithCallbackData($"{canManageAuthorsStatus} Manage Authors", $"user_perm:{author.TelegramId}:CanManageAuthors:{!author.CanManageAuthors}")
+                    InlineKeyboardButton.WithCallbackData($"{canManageAuthorsStatus} Manage Users", $"user_perm:{author.TelegramId}:CanManageAuthors:{!author.CanManageAuthors}")
                 }
             });
         }
