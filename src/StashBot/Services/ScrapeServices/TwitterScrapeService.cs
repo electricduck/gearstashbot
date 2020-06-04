@@ -42,32 +42,35 @@ namespace StashBot.Services.ScrapeServices
                         extracted = FallbackToNitterScraper(url, mediaIndex, customName);
                         break;
                     }
-
-                    switch (Convert.ToInt32(item[0]))
+                    else
                     {
-                        case 2:
-                            extracted.Name = item[0].Next["author"]["nick"].ToString();
-                            extracted.SourceUrl = item[0].Next["tweet_id"].ToString(0);
-                            extracted.Username = item[0].Next["author"]["name"].ToString();
-                            break;
-                        case 3:
-                            extracted.Media.Add(YoutubeDlService.GetExtractedPathFromUrl(url));
-                            extracted.Type = QueueItem.MediaType.Video;
-                            extracted.HasMedia = true;
-                            break;
-                        case 7:
-                            extracted.Media.Add(item[1][0].ToString().Replace(":orig", ""));
-                            extracted.Type = QueueItem.MediaType.Image;
-                            extracted.HasMedia = true;
-                            break;
+
+                        switch (Convert.ToInt32(item[0]))
+                        {
+                            case 2:
+                                extracted.Name = item[0].Next["author"]["nick"].ToString();
+                                extracted.SourceUrl = item[0].Next["tweet_id"].ToString(0);
+                                extracted.Username = item[0].Next["author"]["name"].ToString();
+                                break;
+                            case 3:
+                                extracted.Media.Add(YoutubeDlService.GetExtractedPathFromUrl(url));
+                                extracted.Type = QueueItem.MediaType.Video;
+                                extracted.HasMedia = true;
+                                break;
+                            case 7:
+                                extracted.Media.Add(item[1][0].ToString().Replace(":orig", ""));
+                                extracted.Type = QueueItem.MediaType.Image;
+                                extracted.HasMedia = true;
+                                break;
+                        }
                     }
                 }
 
                 if (extracted.HasMedia)
                 {
                     extracted.Name = String.IsNullOrEmpty(customName) ? extracted.Name : customName;
-                    extracted.SourceUrl = $"https://twitter.com/{extracted.Username}/status/{extracted.SourceId}";
-                    extracted.UsernameUrl = $"https://twitter.com/{extracted.Username}";
+                    extracted.SourceUrl = (extracted.SourceUrl != null) ? extracted.SourceUrl : $"https://twitter.com/{extracted.Username}/status/{extracted.SourceId}";
+                    extracted.UsernameUrl = (extracted.UsernameUrl != null) ? extracted.UsernameUrl : $"https://twitter.com/{extracted.Username}";
 
                     if (url.Contains("/photo/")) // NOTE: This will cause issues for the Twitter account @photo
                     {
@@ -117,7 +120,7 @@ namespace StashBot.Services.ScrapeServices
                 var documentNode = document.DocumentNode;
 
                 returnModel.Name = documentNode.SelectNodes("//div[contains(@class, 'main-tweet')]//a[contains(@class, 'fullname')]")[0].InnerText;
-                returnModel.UsernameUrl = "https://twitter.com/" + documentNode.SelectNodes("//div[contains(@class, 'main-tweet')]//a[contains(@class, 'username')]")[0].InnerText.Replace("@", "");
+                returnModel.Username = documentNode.SelectNodes("//div[contains(@class, 'main-tweet')]//a[contains(@class, 'username')]")[0].InnerText.Replace("@", "");
                 returnModel.SourceUrl = documentNode.SelectNodes("//div[contains(@class, 'nav-item')]//a[contains(@class, 'icon-bird')]")[0].Attributes["href"].Value;
 
                 HtmlNodeCollection extractedImages = documentNode.SelectNodes("//div[contains(@class, 'main-tweet')]//a[contains(@class, 'still-image')]");
