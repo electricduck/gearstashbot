@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using StashBot.Models;
 
 namespace StashBot.Data
@@ -109,18 +111,12 @@ namespace StashBot.Data
 
         }
 
-        public static void DeleteAuthor(long telegramId)
+        public static void DeleteAuthorRange(List<Author> authors)
         {
             using (var db = new StashBotDbContext())
             {
-                Author author = db.Authors
-                    .FirstOrDefault(a => a.TelegramId == telegramId);
-
-                if (author != null)
-                {
-                    db.Authors.Remove(author);
-                    db.SaveChanges();
-                }
+                db.Authors.RemoveRange(authors);
+                db.SaveChanges();
             }
         }
 
@@ -182,16 +178,26 @@ namespace StashBot.Data
 
         public static Author GetAuthorByTelegramUsername(string telegramUsername, bool addAt = true)
         {
-            if (addAt)
-            {
-                telegramUsername = $"@{telegramUsername}";
-            }
-
             using (var db = new StashBotDbContext())
             {
+                if (addAt)
+                {
+                    telegramUsername = $"@{telegramUsername}";
+                }
+
                 Author author = db.Authors
                         .FirstOrDefault(a => a.TelegramUsername == telegramUsername);
                 return author;
+            }
+        }
+
+        public static List<Author> GetAuthors()
+        {
+            using (var db = new StashBotDbContext())
+            {
+                return db.Authors
+                    .Include(a => a.QueueItems)
+                    .ToList();
             }
         }
 

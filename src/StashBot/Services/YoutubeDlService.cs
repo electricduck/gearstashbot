@@ -16,6 +16,7 @@ namespace StashBot.Services
 
         static string Invoke(string args)
         {
+            // TODO: Handle gallery-dl not installed
             var process = new Process()
             {
                 StartInfo = new ProcessStartInfo

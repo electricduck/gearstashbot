@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Bot.Types.ReplyMarkups;
 using StashBot.Exceptions;
@@ -28,14 +30,12 @@ namespace StashBot.Handlers.CommandHandlers
                     },
                     new []
                     {
-                        InlineKeyboardButton.WithCallbackData("🔄 Refresh Profile", $"tools_refreshprofile")
-                    }
-                    /*,
+                        InlineKeyboardButton.WithCallbackData("🔫 Purge Dangling Users", $"tools_purgeusers")
+                    },
                     new []
                     {
-                        InlineKeyboardButton.WithCallbackData("🔀 Shuffle Queue", $"tools_shuffle")
-                    },
-                    */
+                        InlineKeyboardButton.WithCallbackData("🔄 Refresh Profile", $"tools_refreshprofile")
+                    }
                 });
 
                 TelegramApiService.SendTextMessage(
@@ -58,22 +58,15 @@ namespace StashBot.Handlers.CommandHandlers
         {
             if (AuthorData.DoesAuthorExist(arguments.TelegramUser))
             {
-                string statusText = "";
-
                 if (AuthorData.CanAuthorFlushQueue(arguments.TelegramUser.Id))
                 {
                     QueueData.DeleteRemovedQueueItems();
-                    statusText = MessageUtilities.CreateSuccessMessage("Flushed removed posts");
+                    MessageUtilities.AlertSuccessMessage("Flushed removed posts", arguments.TelegramCallbackQueryEvent);
                 }
                 else
                 {
-                    statusText = MessageUtilities.CreateWarningMessage($"You do not have permission to flush removed posts");
+                    MessageUtilities.AlertWarningMessage($"You do not have permission to flush removed posts", arguments.TelegramCallbackQueryEvent);
                 }
-
-                await Program.BotClient.AnswerCallbackQueryAsync(
-                    callbackQueryId: arguments.TelegramCallbackQueryEvent.CallbackQuery.Id,
-                    text: statusText
-                );
             }
             else
             {
@@ -86,15 +79,69 @@ namespace StashBot.Handlers.CommandHandlers
             }
         }
 
+        public static void InvokePurgeUsers(CommandHandlerArguments arguments)
+        {
+            if (AuthorData.DoesAuthorExist(arguments.TelegramUser))
+            {
+                if (AuthorData.CanAuthorManageAuthors(arguments.TelegramUser.Id))
+                {
+                    Task.Run(() =>
+                    {
+                        try
+                        {
+                            List<Author> allAuthors = AuthorData.GetAuthors();
+                            List<Author> authorsToDelete = new List<Author>();
+
+                            foreach (var author in allAuthors)
+                            {
+                                int queueItemAmount = author.QueueItems.Count;
+
+                                if (
+                                    author.CanDeleteOthers == false &&
+                                    author.CanFlushQueue == false &&
+                                    author.CanManageAuthors == false &&
+                                    author.CanQueue == false &&
+                                    queueItemAmount == 0
+                                )
+                                {
+                                    authorsToDelete.Add(author);
+                                }
+                            }
+
+                            if (authorsToDelete.Count == 0)
+                            {
+                                MessageUtilities.AlertWarningMessage("No dangling users to purge", arguments.TelegramCallbackQueryEvent);
+                            }
+                            else
+                            {
+                                AuthorData.DeleteAuthorRange(authorsToDelete);
+                                MessageUtilities.AlertSuccessMessage($"Purged {authorsToDelete.Count} dangling users", arguments.TelegramCallbackQueryEvent);
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            MessageUtilities.SendErrorMessage(e, arguments.TelegramCallbackQueryEvent);
+                        }
+                    });
+                }
+                else
+                {
+                    MessageUtilities.AlertWarningMessage("You do not have permission to purge dangling users", arguments.TelegramCallbackQueryEvent);
+                    //throw new CommandHandlerAlertException("You do not have permission to purge dangling users");
+                }
+            }
+            else
+            {
+                throw new CommandHandlerException("You do not have permission to use tools");
+            }
+        }
+
         public async static Task InvokeRefreshProfile(CommandHandlerArguments arguments)
         {
             if (AuthorData.DoesAuthorExist(arguments.TelegramUser))
             {
                 Author refreshedAuthor = AuthorData.UpdateAuthorTelegramProfile(arguments.TelegramUser);
-                await Program.BotClient.AnswerCallbackQueryAsync(
-                    callbackQueryId: arguments.TelegramCallbackQueryEvent.CallbackQuery.Id,
-                    text: MessageUtilities.CreateSuccessMessage($"Refreshed profile. Hello {refreshedAuthor.TelegramName}!")
-                );
+                MessageUtilities.AlertSuccessMessage($"Refreshed profile. Hello {refreshedAuthor.TelegramName}!", arguments.TelegramCallbackQueryEvent);
             }
             else
             {

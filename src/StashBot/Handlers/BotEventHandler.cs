@@ -90,6 +90,8 @@ namespace StashBot.Handlers
         {
             CommandHandlerArguments arguments = new CommandHandlerArguments { };
 
+            // TODO: Task.Run this
+
             try
             {
                 Regex commandAndArgumentsRegex = new Regex(@"^([a-z_]{1,100})([:]){0,1}([\/a-zA-Z0-9_:.,@ ]*)$");
@@ -105,7 +107,10 @@ namespace StashBot.Handlers
                     case "tools_flush":
                         await ToolsCommandHandler.InvokeFlush(arguments);
                         break;
-                        case "tools_refreshprofile":
+                    case "tools_purgeusers":
+                        ToolsCommandHandler.InvokePurgeUsers(arguments);
+                        break;
+                    case "tools_refreshprofile":
                         await ToolsCommandHandler.InvokeRefreshProfile(arguments);
                         break;
                     case "user_perm":

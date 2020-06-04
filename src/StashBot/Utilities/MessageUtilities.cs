@@ -8,23 +8,20 @@ namespace StashBot.Utilities
 {
     public class MessageUtilities
     {
-        public static void PrintStartupMessage()
+        public static void AlertSuccessMessage(string successText, CallbackQueryEventArgs callbackQueryEventArgs)
         {
-            string figlet = @" ____  _            _     ____        _
-/ ___|| |_ __ _ ___| |__ | __ )  ___ | |_
-\___ \| __/ _` / __| '_ \|  _ \ / _ \| __|
- ___) | || (_| \__ | | | | |_) | (_) | |_
-|____/ \__\__,_|___|_| |_|____/ \___/ \__|
-==========================================";
+            Program.BotClient.AnswerCallbackQueryAsync(
+                callbackQueryId: callbackQueryEventArgs.CallbackQuery.Id,
+                text: CreateSuccessMessage(successText)
+            );
+        }
 
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine(figlet);
-            Console.ForegroundColor = ConsoleColor.Gray;
-            Console.WriteLine($"StashBot. Version {AppVersion.FullVersion}.");
-            Console.WriteLine($"Written by Ducky. Licensed under MIT.");
-            Console.ForegroundColor = ConsoleColor.DarkGray;
-            Console.WriteLine("---");
-            Console.ForegroundColor = ConsoleColor.White;
+        public static void AlertWarningMessage(string warningText, CallbackQueryEventArgs callbackQueryEventArgs)
+        {
+            Program.BotClient.AnswerCallbackQueryAsync(
+                callbackQueryId: callbackQueryEventArgs.CallbackQuery.Id,
+                text: CreateWarningMessage(warningText)
+            );
         }
 
         public static string CreateSuccessMessage(string successText)
@@ -61,6 +58,25 @@ namespace StashBot.Utilities
             if(!String.IsNullOrEmpty(description)) {
                 Console.WriteLine($"{description}");
             }
+            Console.ForegroundColor = ConsoleColor.White;
+        }
+
+        public static void PrintStartupMessage()
+        {
+            string figlet = @" ____  _            _     ____        _
+/ ___|| |_ __ _ ___| |__ | __ )  ___ | |_
+\___ \| __/ _` / __| '_ \|  _ \ / _ \| __|
+ ___) | || (_| \__ | | | | |_) | (_) | |_
+|____/ \__\__,_|___|_| |_|____/ \___/ \__|
+==========================================";
+
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine(figlet);
+            Console.ForegroundColor = ConsoleColor.Gray;
+            Console.WriteLine($"StashBot. Version {AppVersion.FullVersion}.");
+            Console.WriteLine($"Written by Ducky. Licensed under MIT.");
+            Console.ForegroundColor = ConsoleColor.DarkGray;
+            Console.WriteLine("---");
             Console.ForegroundColor = ConsoleColor.White;
         }
 
