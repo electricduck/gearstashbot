@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Bot.Types.ReplyMarkups;
 using StashBot.Data;
 using StashBot.Exceptions;
+using StashBot.I18n;
 using StashBot.Models;
 using StashBot.Models.ArgumentModels;
 using StashBot.Services;
@@ -60,7 +62,15 @@ namespace StashBot.Handlers.CommandHandlers
                         }
                         else
                         {
-                            throw new CommandHandlerException($"Cannot find <code>{arguments.CommandArguments[0]}</code>");
+                            throw new CommandHandlerException(
+                                Localization.GetPhrase(
+                                    Localization.Phrase.CannotFindAuthor,
+                                    arguments.TelegramUser,
+                                    new string[] {
+                                        arguments.CommandArguments[0]
+                                    }
+                                )
+                            );
                         }
                     }
                     else
@@ -89,7 +99,7 @@ namespace StashBot.Handlers.CommandHandlers
                 int queueCount = QueueData.CountQueueItems();
                 decimal queuePercentage = 0;
 
-                if(queueCount > 0)
+                if (queueCount > 0)
                 {
                     queuePercentage = ((decimal)authorPostCount / queueCount) * 100;
                 }
@@ -184,11 +194,47 @@ namespace StashBot.Handlers.CommandHandlers
         public static void InvokeSetup(CommandHandlerArguments arguments)
         {
             int authorCount = AuthorData.CountAuthors();
+
             if (authorCount == 0)
             {
-                AuthorData.CreateAuthor(arguments.TelegramUser);
-                AuthorData.SetAuthorManageAuthorsPermission(arguments.TelegramUser.Id, true);
-                MessageUtilities.SendSuccessMessage($"Welcome to StashBot! Set your permissions with <code>/user {arguments.TelegramUser.Id}</code>", arguments.TelegramMessageEvent);
+                Author author = AuthorData.CreateAuthor(arguments.TelegramUser);
+                AuthorData.SetAuthorManageAuthorsPermission(author.TelegramId, true);
+                MessageUtilities.SendSuccessMessage(
+                    Localization.GetPhrase(
+                        Localization.Phrase.WelcomeFirstAuthor,
+                        arguments.TelegramUser,
+                        new string[] {
+                            author.TelegramName,
+                            author.TelegramId.ToString()
+                        }
+                    ),
+                    arguments.TelegramMessageEvent);
+            }
+            else
+            {
+                if (!AuthorData.DoesAuthorExist(arguments.TelegramUser))
+                {
+                    Author newAuthor = AuthorData.CreateAuthor(arguments.TelegramUser);
+
+                    List<Author> authorsThatCanManageUsers = AuthorData
+                        .GetAuthors()
+                        .Where(a => a.CanManageAuthors == true)
+                        .ToList();
+
+                    foreach (Author authorThatCanManageUser in authorsThatCanManageUsers)
+                    {
+                        MessageUtilities.SendSuccessMessage(
+                            Localization.GetPhrase(
+                                Localization.Phrase.CreatedNewAuthor,
+                                arguments.TelegramUser,
+                                new string[] {
+                                    newAuthor.TelegramName,
+                                    newAuthor.TelegramId.ToString()
+                                }
+                            ),
+                        authorThatCanManageUser.TelegramId);
+                    }
+                }
             }
         }
 

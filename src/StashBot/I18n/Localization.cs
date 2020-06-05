@@ -14,6 +14,8 @@ namespace StashBot.I18n
             string phraseOutput = "(Phrase not found)";
             bool foundPhrase = false;
 
+            language = "en"; // HACK: Force English
+
             switch(language) {
                 case "de":
                     phrases = DeStrings.StringDictionary;
@@ -50,6 +52,9 @@ namespace StashBot.I18n
                 }
             }
 
+            phraseOutput = phraseOutput
+                .Replace("<br />", $"{Environment.NewLine}");
+
             if(foundPhrase) {
                 return phraseOutput;
             } else {
@@ -63,10 +68,12 @@ namespace StashBot.I18n
         }
 
         public enum Phrase
-        {
+        {   // Next: 18
             AlreadyBeenQueued = 11,
+            CannotFindAuthor = 17,
+            CreatedNewAuthor = 15,
             Delete = 8,
-            DeletedXFromQueue = 3,
+            DeletedFromQueue = 3,
             Later = 4,
             Latest = 7,
             LinkContainsNoMedia = 12,
@@ -77,7 +84,8 @@ namespace StashBot.I18n
             PostSuccessfullyQueued = 10,
             ServiceNotSupported = 13,
             Sooner = 5,
-            Soonest = 6
+            Soonest = 6,
+            WelcomeFirstAuthor = 16
         }
     }
 }

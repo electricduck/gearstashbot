@@ -93,7 +93,7 @@ namespace StashBot.Data
                 return db.Queue
                     .Include(q => q.Author)
                     .Where(q => q.Status == QueueItem.QueueStatus.Posted)
-                    .OrderByDescending(q => q.PostedAt)
+                    .OrderBy(q => q.PostedAt)
                     .FirstOrDefault();
             }
         }
@@ -142,7 +142,27 @@ namespace StashBot.Data
             {
                 var items = db.Queue
                     .Include(q => q.Author)
-                    .OrderBy(q => q.QueuedAt)
+                    .Where(q => 
+                        q.Status == QueueItem.QueueStatus.Created ||
+                        q.Status == QueueItem.QueueStatus.Disputed ||
+                        q.Status == QueueItem.QueueStatus.Posted ||
+                        q.Status == QueueItem.QueueStatus.Queued
+                    )
+                    .OrderByDescending(q => q.QueuedAt)
+                    .ToList();
+
+                return items;
+            }
+        }
+
+        public static List<QueueItem> ListPostedQueueItems()
+        {
+            using (var db = new StashBotDbContext())
+            {
+                var items = db.Queue
+                    .Include(q => q.Author)
+                    .Where(q => q.Status == QueueItem.QueueStatus.Posted)
+                    .OrderByDescending(q => q.PostedAt)
                     .ToList();
 
                 return items;
@@ -165,7 +185,8 @@ namespace StashBot.Data
 
         public static void SetQueueItemAsPosted(
             int id,
-            DateTime postedAt
+            DateTime postedAt,
+            int messageId
         ) {
             using (var db = new StashBotDbContext())
             {
@@ -173,6 +194,7 @@ namespace StashBot.Data
                     .Where(q => q.Id == id)
                     .FirstOrDefault();
 
+                item.MessageId = messageId;
                 item.PostedAt = postedAt;
                 item.Status = QueueItem.QueueStatus.Posted;
                 db.SaveChanges();

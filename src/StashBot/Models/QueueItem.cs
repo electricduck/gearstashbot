@@ -23,10 +23,13 @@ namespace StashBot.Models
         public DateTime PostedAt { get; set; }
         public DateTime QueuedAt { get; set; }
 
+        public int MessageId { get; set; }
+
         public Author Author { get; set; }
 
         public enum QueueStatus
         {
+            Any = 100,
             Created = 0,
             Queued = 2,
             Disputed = 4,

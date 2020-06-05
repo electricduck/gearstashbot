@@ -1,9 +1,10 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
 using StashBot.Data;
 using StashBot.Models;
-using StashBot.Models.ArgumentModels;
 using StashBot.Models.ReturnModels.QueueServiceReturns;
 using StashBot.Models.ReturnModels.ServiceReturnModels;
 using StashBot.Services.ScrapeServices;
@@ -38,19 +39,22 @@ namespace StashBot.Services
                         {
                             if (continueOnFromPreviousStart)
                             {
-                                var adjustedSleepTime = (DateTime.UtcNow - latestQueuedItemSinceFirstStart.PostedAt).TotalMilliseconds;
-                                adjustedSleepTime = sleepTime - adjustedSleepTime;
-
-                                if (adjustedSleepTime >= 0)
+                                if (latestQueuedItemSinceFirstStart != null)
                                 {
-                                    sleepTime = adjustedSleepTime;
-                                }
-                                else
-                                {
-                                    PostQueueItem(soonestQueuedItem);
+                                    var adjustedSleepTime = (DateTime.UtcNow - latestQueuedItemSinceFirstStart.PostedAt).TotalMilliseconds;
+                                    adjustedSleepTime = sleepTime - adjustedSleepTime;
 
-                                    queueCount = QueueData.CountQueuedQueueItems();
-                                    soonestQueuedItem = QueueData.GetSoonestQueuedQueueItem();
+                                    if (adjustedSleepTime >= 0)
+                                    {
+                                        sleepTime = adjustedSleepTime;
+                                    }
+                                    else
+                                    {
+                                        PostQueueItem(soonestQueuedItem);
+
+                                        queueCount = QueueData.CountQueuedQueueItems();
+                                        soonestQueuedItem = QueueData.GetSoonestQueuedQueueItem();
+                                    }
                                 }
 
                                 continueOnFromPreviousStart = false;
@@ -81,31 +85,29 @@ namespace StashBot.Services
             {
                 DateTime postedAt = DateTime.UtcNow;
                 var caption = GetQueueCaption(post);
+                Message message = null;
 
                 switch (post.Type)
                 {
                     case QueueItem.MediaType.Image:
-                        SendPhotoArguments photoMessage = new SendPhotoArguments
-                        {
-                            Caption = caption.CaptionText,
-                            ChatId = AppSettings.Config_ChannelId,
-                            Photo = post.MediaUrl
-                        };
-                        TelegramApiService.SendPhoto(photoMessage, Program.BotClient, null);
+                        message = Program.BotClient.SendPhotoAsync(
+                            caption: caption.CaptionText,
+                            chatId: AppSettings.Config_ChannelId,
+                            parseMode: ParseMode.Html,
+                            photo: post.MediaUrl
+                        ).Result;
                         break;
                     case QueueItem.MediaType.Video:
-                        SendVideoArguments videoMessage = new SendVideoArguments
-                        {
-                            Caption = caption.CaptionText,
-                            ChatId = AppSettings.Config_ChannelId,
-                            Video = post.MediaUrl
-                        };
-                        TelegramApiService.SendVideo(videoMessage, Program.BotClient, null);
+                        message = Program.BotClient.SendVideoAsync(
+                            caption: caption.CaptionText,
+                            chatId: AppSettings.Config_ChannelId,
+                            parseMode: ParseMode.Html,
+                            video: post.MediaUrl
+                        ).Result;
                         break;
                 }
 
-                QueueData.SetQueueItemAsPosted(post.Id, postedAt);
-
+                QueueData.SetQueueItemAsPosted(post.Id, postedAt, message.MessageId);
                 MessageUtilities.PrintSuccessMessage($"Posted #{post.Id} at {postedAt.ToString("yyyy-MM-dd hh:mm:ss zzz")}");
             }
         }
@@ -160,6 +162,7 @@ namespace StashBot.Services
             if (advanced)
             {
                 var statusDateString = "";
+                var messageIdString = "";
 
                 switch (queueItem.Status)
                 {
@@ -174,12 +177,16 @@ namespace StashBot.Services
                         break;
                 }
 
+                if(queueItem.MessageId != 0)
+                {
+                    messageIdString = $"{Environment.NewLine}#️⃣ <b>Message ID:</b> <code>{queueItem.MessageId}</code>";
+                }
+
                 string authorNameLink = $"<a href=\"tg://user?id={queueItem.Author.TelegramId}\">{queueItem.Author.TelegramName}</a>";
 
                 string advancedText = $@"—
-#️⃣ <b>ID:</b> <code>{queueItem.Id}</code>
 📩 <b>Poster:</b> {authorNameLink}{statusDateString}
-💡 <b>Status:</b> {queueItem.Status}";
+💡 <b>Status:</b> {queueItem.Status}{messageIdString}";
 
                 returnModel.CaptionText += $"{Environment.NewLine}{advancedText}";
             }

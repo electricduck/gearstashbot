@@ -32,7 +32,7 @@ namespace StashBot.Services
         {
             try
             {
-                await botClient.SendTextMessageAsync(
+                var test = await botClient.SendTextMessageAsync(
                     chatId: ((args.ChatId != 0) ? args.ChatId : Convert.ToInt32(telegramMessageEvent.Message.Chat.Id)),
                     disableWebPagePreview: args.DisableWebPagePreview,
                     parseMode: ParseMode.Html,

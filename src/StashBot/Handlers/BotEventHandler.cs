@@ -23,9 +23,10 @@ namespace StashBot.Handlers
                     {
                         string messageText = telegramMessageEvent.Message.Text.ToString();
 
-                        Regex commandAndArgumentsRegex = new Regex(@"^([\/][a-z]{1,100})([ ])*([\/a-zA-Z0-9_:.,@ ]*)$");
+                        Regex commandAndArgumentsRegex = new Regex(@"^([\/][a-z]{1,100})([ ])*([\/a-zA-Z0-9_:.,-@ ]*)$");
                         Match parsedCommand = commandAndArgumentsRegex.Match(messageText);
 
+                        arguments.Bot = Program.BotClient;
                         arguments.TelegramUser = TelegramUtilities.GetTelegramUser(telegramMessageEvent);
 
                         if (messageText.StartsWith("/"))
@@ -94,7 +95,7 @@ namespace StashBot.Handlers
 
             try
             {
-                Regex commandAndArgumentsRegex = new Regex(@"^([a-z_]{1,100})([:]){0,1}([\/a-zA-Z0-9_:.,@ ]*)$");
+                Regex commandAndArgumentsRegex = new Regex(@"^([a-z_]{1,100})([:]){0,1}([\/a-zA-Z0-9_:.,-@ ]*)$");
                 Match parsedCommand = commandAndArgumentsRegex.Match(telegramCallbackQueryEvent.CallbackQuery.Data);
 
                 arguments.Command = parsedCommand.Groups[1].Value;
@@ -116,6 +117,12 @@ namespace StashBot.Handlers
                     case "user_perm":
                         await UserCommandHandler.InvokeSetPermission(arguments);
                         break;
+                    case "view_del":
+                        await ViewCommandHandler.InvokeDelete(
+                            arguments,
+                            Convert.ToInt32(arguments.CommandArguments[0])
+                        );
+                        break;
                     case "view_next":
                     case "view_prev":
                         await ViewCommandHandler.InvokeChange(
@@ -123,11 +130,8 @@ namespace StashBot.Handlers
                             Convert.ToInt32(arguments.CommandArguments[0])
                         );
                         break;
-                    case "view_del":
-                        await ViewCommandHandler.InvokeDelete(
-                            arguments,
-                            Convert.ToInt32(arguments.CommandArguments[0])
-                        );
+                    case "view_view":
+                        ViewCommandHandler.Invoke(arguments);
                         break;
                 }
             }

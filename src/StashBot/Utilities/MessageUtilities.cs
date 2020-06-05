@@ -129,12 +129,16 @@ namespace StashBot.Utilities
             PrintErrorMessage(exception, errorGuid);
             TelegramApiService.SendTextMessage(output, Program.BotClient, null);
         }
-
         public static void SendSuccessMessage(string successText, MessageEventArgs telegramMessageEvent)
+        {
+            SendSuccessMessage(successText, telegramMessageEvent.Message.Chat.Id);
+        }
+
+        public static void SendSuccessMessage(string successText, long chatId)
         {
             SendTextMessageArguments output = new SendTextMessageArguments
             {
-                ChatId = telegramMessageEvent.Message.Chat.Id,
+                ChatId = chatId,
                 Text = CreateSuccessMessage(successText)
             };
 
