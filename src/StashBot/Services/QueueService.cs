@@ -41,7 +41,7 @@ namespace StashBot.Services
                                 var adjustedSleepTime = (DateTime.UtcNow - latestQueuedItemSinceFirstStart.PostedAt).TotalMilliseconds;
                                 adjustedSleepTime = sleepTime - adjustedSleepTime;
 
-                                if(adjustedSleepTime >= 0)
+                                if (adjustedSleepTime >= 0)
                                 {
                                     sleepTime = adjustedSleepTime;
                                 }
@@ -175,7 +175,7 @@ namespace StashBot.Services
 
                 string advancedText = $@"—
 #️⃣ <b>ID:</b> {queueItem.Id}
-✍️ <b>Author:</b> {authorNameLink}{statusDateString}
+📩 <b>Poster:</b> {authorNameLink}{statusDateString}
 💡 <b>Status:</b> {queueItem.Status}";
 
                 returnModel.CaptionText += $"{Environment.NewLine}{advancedText}";

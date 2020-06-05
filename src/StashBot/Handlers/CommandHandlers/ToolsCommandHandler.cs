@@ -16,7 +16,7 @@ namespace StashBot.Handlers.CommandHandlers
         public static Help Help = new Help
         {
             Command = "tools",
-            Description = "Extra tools to manage StashBot"
+            Description = "Extra tools to manage the bot"
         };
 
         public static void Invoke(CommandHandlerArguments arguments)
@@ -26,15 +26,15 @@ namespace StashBot.Handlers.CommandHandlers
                 var toolsKeyboard = new InlineKeyboardMarkup(new[] {
                     new []
                     {
+                        InlineKeyboardButton.WithCallbackData("🔄 Refresh Profile", $"tools_refreshprofile")
+                    },
+                    new []
+                    {
                         InlineKeyboardButton.WithCallbackData("🚽 Flush Removed Posts", $"tools_flush"),
                     },
                     new []
                     {
                         InlineKeyboardButton.WithCallbackData("🔫 Purge Dangling Users", $"tools_purgeusers")
-                    },
-                    new []
-                    {
-                        InlineKeyboardButton.WithCallbackData("🔄 Refresh Profile", $"tools_refreshprofile")
                     }
                 });
 

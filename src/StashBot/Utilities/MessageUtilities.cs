@@ -3,6 +3,7 @@ using Telegram.Bot.Args;
 using StashBot.Models;
 using StashBot.Models.ArgumentModels;
 using StashBot.Services;
+using StashBot.Utilities;
 
 namespace StashBot.Utilities
 {
@@ -73,7 +74,7 @@ namespace StashBot.Utilities
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine(figlet);
             Console.ForegroundColor = ConsoleColor.Gray;
-            Console.WriteLine($"StashBot. Version {AppVersion.FullVersion}.");
+            Console.WriteLine($"StashBot. Version {ReflectionUtilities.GetVersion()}.");
             Console.WriteLine($"Written by Ducky. Licensed under MIT.");
             Console.ForegroundColor = ConsoleColor.DarkGray;
             Console.WriteLine("---");

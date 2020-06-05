@@ -20,6 +20,8 @@ namespace StashBot.Handlers.CommandHandlers
         {
             var thisProcess = System.Diagnostics.Process.GetCurrentProcess();
 
+            var version = ReflectionUtilities.GetVersion();
+
             string processMemoryUsage = Convert.ToDecimal(thisProcess.WorkingSet64 / 1000000).ToString();
             DateTime processStartTime = thisProcess.StartTime;
             string systemHostname = System.Net.Dns.GetHostName();
@@ -63,7 +65,7 @@ namespace StashBot.Handlers.CommandHandlers
                 systemOpSysVersion = System.Environment.OSVersion.Version.ToString();
             }
 
-            string outputText = $@"<b>StashBot</b> | {AppVersion.FullVersion}
+            string outputText = $@"<b>StashBot</b> | {version}
 —
 <b>⚙️ Bot</b>
 Memory: <code>{processMemoryUsage}mb</code>
