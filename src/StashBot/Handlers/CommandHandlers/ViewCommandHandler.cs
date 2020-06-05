@@ -6,6 +6,7 @@ using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 using StashBot.Data;
 using StashBot.Exceptions;
+using StashBot.I18n;
 using StashBot.Models;
 using StashBot.Models.ArgumentModels;
 using StashBot.Models.ReturnModels.ViewCommandHandlerReturns;
@@ -39,7 +40,7 @@ namespace StashBot.Handlers.CommandHandlers
 
             if (AuthorData.CanAuthorQueue(TelegramUtilities.GetUserId(arguments.TelegramMessageEvent)))
             {
-                var queueItems = GetQueueItems(0, showAllItems);
+                var queueItems = GetQueueItems(arguments.TelegramUser, 0, showAllItems);
 
                 if (queueItems.HasItems)
                 {
@@ -77,12 +78,12 @@ namespace StashBot.Handlers.CommandHandlers
                 }
                 else
                 {
-                    throw new CommandHandlerException("Nothing is queued");
+                    throw new CommandHandlerException(Localization.GetPhrase(Localization.Phrase.NothingIsQueued, arguments.TelegramUser));
                 }
             }
             else
             {
-                throw new CommandHandlerException("You do not have permission to view the queue");
+                throw new CommandHandlerException(Localization.GetPhrase(Localization.Phrase.NoPermissionViewQueue, arguments.TelegramUser));
             }
         }
 
@@ -93,7 +94,7 @@ namespace StashBot.Handlers.CommandHandlers
         {
             if (AuthorData.CanAuthorQueue(arguments.TelegramUser.Id))
             {
-                var queueItems = GetQueueItems(queueItemId);
+                var queueItems = GetQueueItems(arguments.TelegramUser, queueItemId);
 
                 if (queueItems.HasItems)
                 {
@@ -140,7 +141,7 @@ namespace StashBot.Handlers.CommandHandlers
                         messageId: arguments.TelegramCallbackQueryEvent.CallbackQuery.Message.MessageId
                     );
 
-                    MessageUtilities.SendWarningMessage("Nothing is queued", arguments.TelegramCallbackQueryEvent);
+                    MessageUtilities.SendWarningMessage(Localization.GetPhrase(Localization.Phrase.NothingIsQueued, arguments.TelegramUser), arguments.TelegramCallbackQueryEvent);
                 }
             }
             else
@@ -150,7 +151,7 @@ namespace StashBot.Handlers.CommandHandlers
                     messageId: arguments.TelegramCallbackQueryEvent.CallbackQuery.Message.MessageId
                 );
 
-                throw new CommandHandlerException("You do not have permission to view the queue");
+                throw new CommandHandlerException(Localization.GetPhrase(Localization.Phrase.NoPermissionViewQueue, arguments.TelegramUser));
             }
         }
 
@@ -159,7 +160,7 @@ namespace StashBot.Handlers.CommandHandlers
             int queueItemId = 0
         )
         {
-            var queueItems = GetQueueItems(queueItemId);
+            var queueItems = GetQueueItems(arguments.TelegramUser, queueItemId);
             var userId = arguments.TelegramCallbackQueryEvent.CallbackQuery.From.Id;
 
             var selectedQueuedItem = queueItems.SelectedQueuedItem;
@@ -168,7 +169,7 @@ namespace StashBot.Handlers.CommandHandlers
             var controlKeyboard = queueItems.Keyboard;
 
             bool canDeleteThisQueueItem = false;
-            var statusText = MessageUtilities.CreateWarningMessage($"You do not have permission to remove this post");
+            var statusText = MessageUtilities.CreateWarningMessage(Localization.GetPhrase(Localization.Phrase.NoPermissionRemovePost, arguments.TelegramUser));
 
             if (AuthorData.CanAuthorQueue(userId))
             {
@@ -188,7 +189,13 @@ namespace StashBot.Handlers.CommandHandlers
             if (canDeleteThisQueueItem)
             {
                 QueueService.RemoveQueueItem(selectedQueuedItem.Id);
-                statusText = MessageUtilities.CreateSuccessMessage($"Deleted #{selectedQueuedItem.Id} from queue");
+                statusText = MessageUtilities.CreateSuccessMessage(
+                    Localization.GetPhrase(
+                        Localization.Phrase.DeletedXFromQueue, arguments.TelegramUser,
+                        new string[] {
+                            selectedQueuedItem.Id.ToString()
+                        }
+                ));
             }
 
             await Program.BotClient.AnswerCallbackQueryAsync(
@@ -209,7 +216,7 @@ namespace StashBot.Handlers.CommandHandlers
             }
         }
 
-        private static GetQueueItemsReturn GetQueueItems(int id = 0, bool showAllItems = false)
+        private static GetQueueItemsReturn GetQueueItems(TelegramUser user, int id = 0, bool showAllItems = false)
         {
             GetQueueItemsReturn returnModel = new GetQueueItemsReturn { };
 
@@ -240,7 +247,8 @@ namespace StashBot.Handlers.CommandHandlers
                     previousQueuedItem.Id,
                     nextQueuedItem.Id,
                     isEarliestItem,
-                    isLatestItem
+                    isLatestItem,
+                    user
                 );
 
                 returnModel.SelectedQueuedItem = selectedQueuedItem;
@@ -265,11 +273,18 @@ namespace StashBot.Handlers.CommandHandlers
             int previousId,
             int nextId,
             bool isEarliestItem,
-            bool isLatestItem
+            bool isLatestItem,
+            TelegramUser user
         )
         {
-            string earlierButton = isEarliestItem ? "Latest ⏩" : "⬅️ Sooner";
-            string laterButton = isLatestItem ? "⏪ Soonest" : "Later ➡️";
+            var deleteString = Localization.GetPhrase(Localization.Phrase.Delete, user);
+            var laterString = Localization.GetPhrase(Localization.Phrase.Later, user);
+            var latestString = Localization.GetPhrase(Localization.Phrase.Latest, user);
+            var soonerString = Localization.GetPhrase(Localization.Phrase.Sooner, user);
+            var soonestString = Localization.GetPhrase(Localization.Phrase.Soonest, user);
+
+            string earlierButton = isEarliestItem ? $"{latestString} ⏩" : $"⬅️ {soonerString}";
+            string laterButton = isLatestItem ? $"⏪ {soonestString}" : $"{laterString} ➡️";
 
             return new InlineKeyboardMarkup(new[]
             {
@@ -280,9 +295,7 @@ namespace StashBot.Handlers.CommandHandlers
                 },
                 new []
                 {
-                    InlineKeyboardButton.WithCallbackData("🗑 Delete", $"view_del:{currentId}"),
-                    /*InlineKeyboardButton.WithCallbackData("📩 Post", $"view_postNow:{currentId}"),
-                    InlineKeyboardButton.WithCallbackData("⬆️ Bump", $"view_bump:{currentId}")*/
+                    InlineKeyboardButton.WithCallbackData($"🗑 {deleteString}", $"view_del:{currentId}")
                 }
             });
         }

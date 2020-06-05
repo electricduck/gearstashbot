@@ -87,12 +87,16 @@ namespace StashBot.Handlers.CommandHandlers
                 string authorLastUpdatedText = author.TelegramDetailsLastUpdatedAt.ToString("dd-MMM-yy hh:mm:ss zz");
                 int authorPostCount = AuthorData.CountAuthorQueue(author.TelegramId);
                 int queueCount = QueueData.CountQueueItems();
-                decimal queuePercentage = ((decimal)authorPostCount / queueCount) * 100;
+                decimal queuePercentage = 0;
+
+                if(queueCount > 0)
+                {
+                    queuePercentage = ((decimal)authorPostCount / queueCount) * 100;
+                }
 
                 var userPermissionKeyboard = GetPermissionKeyboard(author);
                 var userDetailsText = $@"👤 <b>User:</b> <code>{authorId}</code>
 —
-<b>ID:</b> <code>{author.Id}</code>
 <b>Name:</b> {authorNameText}
 <b>Username:</b> {authorUsernameText}
 <b>Profile Updated:</b> {authorLastUpdatedText}

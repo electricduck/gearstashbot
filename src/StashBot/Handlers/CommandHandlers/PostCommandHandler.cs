@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using StashBot.Data;
 using StashBot.Exceptions;
+using StashBot.I18n;
 using StashBot.Models;
 using StashBot.Models.ArgumentModels;
 using StashBot.Models.ReturnModels.ServiceReturnModels;
@@ -15,7 +16,7 @@ namespace StashBot.Handlers.CommandHandlers
         public static Help Help = new Help {
             Arguments = new List<HelpArgument> {
               new HelpArgument {
-                  Explanation = "Post including photo/video",
+                  Explanation = "Link to post that includes photo/video",
                   Name = "Link",
                   Position = 1
               },
@@ -55,19 +56,19 @@ Supported services:
                 switch (queueLinkStatus.Status)
                 {
                     case QueueServiceReturn.QueueServiceReturnStatus.Queued:
-                        MessageUtilities.SendSuccessMessage("Post successfully queued", arguments.TelegramMessageEvent);
+                        MessageUtilities.SendSuccessMessage(Localization.GetPhrase(Localization.Phrase.PostSuccessfullyQueued, arguments.TelegramUser), arguments.TelegramMessageEvent);
                         break;
                     case QueueServiceReturn.QueueServiceReturnStatus.Duplicate:
-                        throw new CommandHandlerException("This has already been queued");
+                        throw new CommandHandlerException(Localization.GetPhrase(Localization.Phrase.AlreadyBeenQueued, arguments.TelegramUser));
                     case QueueServiceReturn.QueueServiceReturnStatus.SourceUrlNotFound:
-                        throw new CommandHandlerException("This link contains no media or does not exist");
+                        throw new CommandHandlerException(Localization.GetPhrase(Localization.Phrase.LinkContainsNoMedia, arguments.TelegramUser));
                     case QueueServiceReturn.QueueServiceReturnStatus.ServiceNotSupported:
-                        throw new CommandHandlerException("This service is not supported");
+                        throw new CommandHandlerException(Localization.GetPhrase(Localization.Phrase.ServiceNotSupported, arguments.TelegramUser));
                 }
             }
             else
             {
-                throw new CommandHandlerException("You do not have permission to queue new posts");
+                throw new CommandHandlerException(Localization.GetPhrase(Localization.Phrase.NoPermissionPostQueue, arguments.TelegramUser));
             }
         }
     }
