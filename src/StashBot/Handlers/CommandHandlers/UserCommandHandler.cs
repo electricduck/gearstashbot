@@ -13,7 +13,8 @@ namespace StashBot.Handlers.CommandHandlers
 {
     public class UserCommandHandler
     {
-        public static Help Help = new Help {
+        public static Help Help = new Help
+        {
             Arguments = new List<HelpArgument> {
               new HelpArgument {
                   Example = "63391517, @theducky",
@@ -28,12 +29,21 @@ namespace StashBot.Handlers.CommandHandlers
 
         public static void Invoke(CommandHandlerArguments arguments, bool reload = false)
         {
+            bool hasPermission = AuthorData.CanAuthorManageAuthors(arguments.TelegramUser.Id);
+
             if (arguments.CommandArguments == null)
             {
-                throw new ArgumentException();
+                if (hasPermission)
+                {
+                    arguments.CommandArguments = new string[] { arguments.TelegramUser.Id.ToString() };
+                }
+                else
+                {
+                    throw new ArgumentException();
+                }
             }
 
-            if (AuthorData.CanAuthorManageAuthors(arguments.TelegramUser.Id))
+            if (hasPermission)
             {
                 long authorId = 0;
                 string authorIdOrUsernameArgument = arguments.CommandArguments[0];
@@ -75,13 +85,18 @@ namespace StashBot.Handlers.CommandHandlers
                 string authorNameText = (String.IsNullOrEmpty(author.TelegramName)) ? "<i>(Not set)</i>" : author.TelegramName;
                 string authorUsernameText = (String.IsNullOrEmpty(author.TelegramUsername)) ? "<i>(Not set)</i>" : author.TelegramUsername;
                 string authorLastUpdatedText = author.TelegramDetailsLastUpdatedAt.ToString("dd-MMM-yy hh:mm:ss zz");
+                int authorPostCount = AuthorData.CountAuthorQueue(author.TelegramId);
+                int queueCount = QueueData.CountQueueItems();
+                decimal queuePercentage = ((decimal)authorPostCount / queueCount) * 100;
 
                 var userPermissionKeyboard = GetPermissionKeyboard(author);
                 var userDetailsText = $@"👤 <b>User:</b> <code>{authorId}</code>
 —
+<b>ID:</b> <code>{author.Id}</code>
 <b>Name:</b> {authorNameText}
 <b>Username:</b> {authorUsernameText}
-<b>Profile Updated:</b> {authorLastUpdatedText}";
+<b>Profile Updated:</b> {authorLastUpdatedText}
+<b>Posts:</b> {authorPostCount} ({queuePercentage.ToString("0.00")}%)";
 
                 TelegramApiService.SendTextMessage(
                     new SendTextMessageArguments

@@ -111,6 +111,19 @@ namespace StashBot.Data
 
         }
 
+        public static int CountAuthorQueue(long telegramId)
+        {
+            using (var db = new StashBotDbContext())
+            {
+                return db.Authors
+                    .Where(a => a.TelegramId == telegramId)
+                    .Include(a => a.QueueItems)
+                    .FirstOrDefault()
+                    .QueueItems
+                    .Count();
+            }
+        }
+
         public static void DeleteAuthorRange(List<Author> authors)
         {
             using (var db = new StashBotDbContext())

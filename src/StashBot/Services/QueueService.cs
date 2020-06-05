@@ -174,7 +174,7 @@ namespace StashBot.Services
                 string authorNameLink = $"<a href=\"tg://user?id={queueItem.Author.TelegramId}\">{queueItem.Author.TelegramName}</a>";
 
                 string advancedText = $@"—
-#️⃣ <b>ID:</b> {queueItem.Id}
+#️⃣ <b>ID:</b> <code>{queueItem.Id}</code>
 📩 <b>Poster:</b> {authorNameLink}{statusDateString}
 💡 <b>Status:</b> {queueItem.Status}";
 
@@ -247,7 +247,7 @@ namespace StashBot.Services
 
         private static string GenerateStatusDateStringForAdvancedCaption(DateTime date, Enum status)
         {
-            return $"{Environment.NewLine}{GeneratorUtilities.GenerateClockEmoji(date)} <b>{status}:</b> <code>{date.ToString("dd-MMM-yy hh:mm:ss zz")}</code>";
+            return $"{Environment.NewLine}{GeneratorUtilities.GenerateClockEmoji(date)} <b>{status}:</b> {date.ToString("dd-MMM-yy hh:mm:ss zz")}";
         }
     }
 }

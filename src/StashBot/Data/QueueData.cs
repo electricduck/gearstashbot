@@ -26,6 +26,16 @@ namespace StashBot.Data
             }
         }
 
+        public static int CountQueueItems()
+        {
+            using (var db = new StashBotDbContext())
+            {
+                return db.Queue
+                    .ToList()
+                    .Count();
+            }
+        }
+
         public static int CountQueuedQueueItems()
         {
             using (var db = new StashBotDbContext())
