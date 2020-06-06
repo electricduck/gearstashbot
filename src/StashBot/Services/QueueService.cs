@@ -47,14 +47,16 @@ namespace StashBot.Services
                                     if (adjustedSleepTime >= 0)
                                     {
                                         sleepTime = adjustedSleepTime;
+                                    } else {
+                                        sleepTime = 0;
                                     }
-                                    else
-                                    {
-                                        PostQueueItem(soonestQueuedItem);
 
-                                        queueCount = QueueData.CountQueuedQueueItems();
-                                        soonestQueuedItem = QueueData.GetSoonestQueuedQueueItem();
-                                    }
+                                    Thread.Sleep((int)sleepTime);
+
+                                    PostQueueItem(soonestQueuedItem);
+
+                                    queueCount = QueueData.CountQueuedQueueItems();
+                                    soonestQueuedItem = QueueData.GetSoonestQueuedQueueItem();
                                 }
 
                                 continueOnFromPreviousStart = false;
