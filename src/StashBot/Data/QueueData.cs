@@ -111,6 +111,19 @@ namespace StashBot.Data
             }
         }
 
+        public static QueueItem GetQueueItemByMessageId(int messageId)
+        {
+            using (var db = new StashBotDbContext())
+            {
+                var item = db.Queue
+                    .Include(q => q.Author)
+                    .Where(q => q.MessageId == messageId)
+                    .FirstOrDefault();
+
+                return item;
+            }
+        }
+
         public static QueueItem GetQueueItemBySourceUrl(string sourceUrl)
         {
             using (var db = new StashBotDbContext())
