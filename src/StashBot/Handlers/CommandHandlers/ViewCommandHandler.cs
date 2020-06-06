@@ -382,7 +382,8 @@ namespace StashBot.Handlers.CommandHandlers
                 },
                 GenerateStatusKeyboardButton(
                     postedStatus,
-                    queuedStatus
+                    queuedStatus,
+                    false
                 )
             });
         }
