@@ -86,6 +86,7 @@ namespace StashBot.Handlers.CommandHandlers
             var authorId = arguments.TelegramUser.Id;
 
             bool allowedToDeleteThisQueueItem = false;
+            bool deleted = true;
 
             var statusText = MessageUtilities.CreateWarningMessage(Localization.GetPhrase(Localization.Phrase.NoPermissionRemovePost, arguments.TelegramUser));
 
@@ -106,8 +107,6 @@ namespace StashBot.Handlers.CommandHandlers
 
             if (allowedToDeleteThisQueueItem)
             {
-                bool delete = true;
-
                 statusText = MessageUtilities.CreateSuccessMessage(
                     Localization.GetPhrase(Localization.Phrase.DeletedFromQueue, arguments.TelegramUser)
                 );
@@ -129,10 +128,10 @@ namespace StashBot.Handlers.CommandHandlers
                 catch (Exception)
                 {
                     statusText = MessageUtilities.CreateWarningMessage($"Unable to delete #{queueItemsData.SelectedQueuedItem.MessageId} from channel");
-                    delete = false;
+                    deleted = false;
                 }
 
-                if(delete) {
+                if(deleted) {
                     QueueService.RemoveQueueItem(queueItemsData.SelectedQueuedItem.Id);
                 }
             }
@@ -150,7 +149,7 @@ namespace StashBot.Handlers.CommandHandlers
 
             if (allowedToDeleteThisQueueItem)
             {
-                if (canDeleteThisQueueItem)
+                if (deleted)
                 {
                     int idToNavigateTo = queueItemsData.PreviousQueuedItem.Id;
 
