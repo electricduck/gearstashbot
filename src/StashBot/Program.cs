@@ -19,6 +19,23 @@ namespace StashBot
         {
             MessageUtilities.PrintStartupMessage();
 
+            if(!File.Exists("stashbot.db"))
+            {
+                MessageUtilities.PrintWarningMessage("Database does not exist. Please run 'dotnet ef database restore' to create");
+                Environment.Exit(1);
+            }
+
+            if(!Directory.Exists("_backup"))
+            {
+                Directory.CreateDirectory("_backup");
+            }
+
+            File.Copy(
+                "stashbot.db",
+                $"_backup/stashbot_{DateTime.Now.ToString("yyyyMMddHHmmss")}.db"  
+            );
+            MessageUtilities.PrintSuccessMessage("Backed up database");
+
             try
             {
                 SetupApp();
@@ -27,6 +44,7 @@ namespace StashBot
             catch (Exception e)
             {
                 MessageUtilities.PrintErrorMessage(e, Guid.Empty);
+                Environment.Exit(1);
             }
 
             BotClient = new TelegramBotClient(AppSettings.ApiKeys_Telegram);
@@ -54,6 +72,7 @@ namespace StashBot
             catch (Exception e)
             {
                 MessageUtilities.PrintErrorMessage(e, Guid.Empty);
+                Environment.Exit(1);
             }
 
             try
