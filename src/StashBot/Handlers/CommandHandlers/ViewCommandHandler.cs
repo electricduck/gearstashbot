@@ -123,6 +123,9 @@ namespace StashBot.Handlers.CommandHandlers
                             );
                             statusText = MessageUtilities.CreateSuccessMessage($"Deleted #{queueItemsData.SelectedQueuedItem.MessageId} from channel");
                         }
+                    } else {
+                        statusText = MessageUtilities.CreateWarningMessage($"Unable to delete #{queueItemsData.SelectedQueuedItem.MessageId} from channel");
+                        deleted = false;
                     }
                 }
                 catch (Exception)
