@@ -3,7 +3,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace StashBot.Models.ReturnModels.ViewCommandHandlerReturns
 {
-    public class GetQueueItemsReturn
+    public class GetQueueItemsDataReturn
     {
         public QueueItem SelectedQueuedItem { get; set; }
         public QueueItem PreviousQueuedItem { get; set; }

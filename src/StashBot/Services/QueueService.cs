@@ -179,9 +179,18 @@ namespace StashBot.Services
                         break;
                 }
 
-                if(queueItem.MessageId != 0)
+                if(queueItem.Status == QueueItem.QueueStatus.Posted)
                 {
-                    messageIdString = $"{Environment.NewLine}#️⃣ <b>Message ID:</b> <code>{queueItem.MessageId}</code>";
+                    messageIdString = $"{Environment.NewLine}#️⃣ <b>Message ID:</b> ";
+
+                    if(queueItem.MessageId != 0)
+                    {
+                        messageIdString += "<code>{queueItem.MessageId}</code>";
+                    }
+                    else
+                    {
+                        messageIdString += "<i>(None)</i>";
+                    }
                 }
 
                 string authorNameLink = $"<a href=\"tg://user?id={queueItem.Author.TelegramId}\">{queueItem.Author.TelegramName}</a>";

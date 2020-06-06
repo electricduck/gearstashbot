@@ -26,7 +26,6 @@ namespace StashBot.Handlers
                         Regex commandAndArgumentsRegex = new Regex(@"^([\/][a-z]{1,100})([ ])*([\/a-zA-Z0-9_:.,-@ ]*)$");
                         Match parsedCommand = commandAndArgumentsRegex.Match(messageText);
 
-                        arguments.Bot = Program.BotClient;
                         arguments.TelegramUser = TelegramUtilities.GetTelegramUser(telegramMessageEvent);
 
                         if (messageText.StartsWith("/"))
@@ -118,20 +117,10 @@ namespace StashBot.Handlers
                         await UserCommandHandler.InvokeSetPermission(arguments);
                         break;
                     case "view_del":
-                        await ViewCommandHandler.InvokeDelete(
-                            arguments,
-                            Convert.ToInt32(arguments.CommandArguments[0])
-                        );
+                        await ViewCommandHandler.InvokeDelete(arguments);
                         break;
-                    case "view_next":
-                    case "view_prev":
-                        await ViewCommandHandler.InvokeChange(
-                            arguments,
-                            Convert.ToInt32(arguments.CommandArguments[0])
-                        );
-                        break;
-                    case "view_view":
-                        ViewCommandHandler.Invoke(arguments);
+                    case "view_nav":
+                        await ViewCommandHandler.InvokeChange(arguments);
                         break;
                 }
             }
