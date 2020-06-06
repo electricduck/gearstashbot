@@ -185,7 +185,7 @@ namespace StashBot.Services
 
                     if(queueItem.MessageId != 0)
                     {
-                        messageIdString += "<code>{queueItem.MessageId}</code>";
+                        messageIdString += $"<code>{queueItem.MessageId}</code>";
                     }
                     else
                     {
