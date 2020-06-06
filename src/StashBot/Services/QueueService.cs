@@ -25,19 +25,19 @@ namespace StashBot.Services
                     int queueCount = QueueData.CountQueuedQueueItems();
                     QueueItem soonestQueuedItem = QueueData.GetSoonestQueuedQueueItem();
                     QueueItem latestQueuedItemSinceFirstStart = QueueData.GetLatestPostedQueueItem();
-                    bool continueOnFromPreviousStart = true;
+                    //bool continueOnFromPreviousStart = true;
 
                     while (true)
                     {
                         if (queueCount == 0)
                         {
-                            continueOnFromPreviousStart = false;
+                            //continueOnFromPreviousStart = false;
                             Thread.Sleep(60000);
                             queueCount = QueueData.CountQueuedQueueItems();
                         }
                         else
                         {
-                            if (continueOnFromPreviousStart)
+                            /*if (continueOnFromPreviousStart)
                             {
                                 if (latestQueuedItemSinceFirstStart != null)
                                 {
@@ -64,7 +64,7 @@ namespace StashBot.Services
                             else
                             {
                                 sleepTime = sleepTimeFromConfig;
-                            }
+                            }*/
 
                             Thread.Sleep((int)sleepTime);
                             PostQueueItem(soonestQueuedItem);
