@@ -107,19 +107,17 @@ namespace StashBot.Handlers.CommandHandlers
 
             if (allowedToDeleteThisQueueItem)
             {
-                statusText = MessageUtilities.CreateSuccessMessage(
-                    Localization.GetPhrase(Localization.Phrase.DeletedFromQueue, arguments.TelegramUser)
-                );
-
                 try
                 {
-                    if (queueItemsData.SelectedQueuedItem.MessageId != 0)
+                    if (queueItemsData.SelectedQueuedItem.Status == QueueItem.QueueStatus.Posted && queueItemsData.SelectedQueuedItem.MessageId != 0)
                     {
                         await Program.BotClient.DeleteMessageAsync(
                             chatId: Models.AppSettings.Config_ChannelId,
                             messageId: Convert.ToInt32(queueItemsData.SelectedQueuedItem.MessageId)
                         );
                         statusText = MessageUtilities.CreateSuccessMessage($"Deleted #{queueItemsData.SelectedQueuedItem.MessageId} from channel");
+                    } else {
+                        canDeleteThisQueueItem = false;
                     }
                 }
                 catch (Exception)
@@ -131,6 +129,13 @@ namespace StashBot.Handlers.CommandHandlers
                 if (canDeleteThisQueueItem)
                 {
                     QueueService.RemoveQueueItem(queueItemsData.SelectedQueuedItem.Id);
+                    statusText = MessageUtilities.CreateSuccessMessage(
+                        Localization.GetPhrase(Localization.Phrase.DeletedFromQueue, arguments.TelegramUser)
+                    );
+                }
+                else
+                {
+                    statusText = MessageUtilities.CreateWarningMessage($"Unable to delete from channel");
                 }
             }
             else
