@@ -85,27 +85,28 @@ namespace StashBot.Handlers.CommandHandlers
                 Convert.ToInt32(arguments.CommandArguments[0]));
             var authorId = arguments.TelegramUser.Id;
 
-            bool canDeleteThisQueueItem = false;
+            bool allowedToDeleteThisQueueItem = false;
+            bool canDeleteThisQueueItem = true;
+
             var statusText = MessageUtilities.CreateWarningMessage(Localization.GetPhrase(Localization.Phrase.NoPermissionRemovePost, arguments.TelegramUser));
-        
+
             if (AuthorData.CanAuthorQueue(authorId))
             {
                 if (queueItemsData.SelectedQueuedItem.Author.TelegramId == authorId)
                 {
-                    canDeleteThisQueueItem = true;
+                    allowedToDeleteThisQueueItem = true;
                 }
                 else
                 {
                     if (AuthorData.CanAuthorDeleteOthers(authorId))
                     {
-                        canDeleteThisQueueItem = true;
+                        allowedToDeleteThisQueueItem = true;
                     }
                 }
             }
 
-            if(canDeleteThisQueueItem)
+            if (allowedToDeleteThisQueueItem)
             {
-                QueueService.RemoveQueueItem(queueItemsData.SelectedQueuedItem.Id);
                 statusText = MessageUtilities.CreateSuccessMessage(
                     Localization.GetPhrase(Localization.Phrase.DeletedFromQueue, arguments.TelegramUser)
                 );
@@ -118,12 +119,18 @@ namespace StashBot.Handlers.CommandHandlers
                             chatId: Models.AppSettings.Config_ChannelId,
                             messageId: Convert.ToInt32(queueItemsData.SelectedQueuedItem.MessageId)
                         );
-                        statusText = MessageUtilities.CreateSuccessMessage($"Deleted {queueItemsData.SelectedQueuedItem.MessageId} from channel");
+                        statusText = MessageUtilities.CreateSuccessMessage($"Deleted #{queueItemsData.SelectedQueuedItem.MessageId} from channel");
                     }
                 }
                 catch (Exception)
                 {
-                    statusText = MessageUtilities.CreateWarningMessage($"Unable to delete {queueItemsData.SelectedQueuedItem.MessageId} from channel");
+                    statusText = MessageUtilities.CreateWarningMessage($"Unable to delete #{queueItemsData.SelectedQueuedItem.MessageId} from channel");
+                    canDeleteThisQueueItem = false;
+                }
+
+                if (canDeleteThisQueueItem)
+                {
+                    QueueService.RemoveQueueItem(queueItemsData.SelectedQueuedItem.Id);
                 }
             }
             else
@@ -138,22 +145,25 @@ namespace StashBot.Handlers.CommandHandlers
                 text: statusText
             );
 
-            if (canDeleteThisQueueItem)
+            if (allowedToDeleteThisQueueItem)
             {
-                int idToNavigateTo = queueItemsData.PreviousQueuedItem.Id;
-
-                if (queueItemsData.IsEarliestItem)
+                if (canDeleteThisQueueItem)
                 {
-                    idToNavigateTo = queueItemsData.NextQueuedItem.Id;
-                }
+                    int idToNavigateTo = queueItemsData.PreviousQueuedItem.Id;
 
-                await NavigateTo(
-                    arguments.TelegramCallbackQueryEvent.CallbackQuery.Message.Chat.Id,
-                    arguments.TelegramCallbackQueryEvent.CallbackQuery.Message.MessageId,
-                    arguments.TelegramUser,
-                    arguments.CommandArguments[1],
-                    idToNavigateTo
-                );
+                    if (queueItemsData.IsEarliestItem)
+                    {
+                        idToNavigateTo = queueItemsData.NextQueuedItem.Id;
+                    }
+
+                    await NavigateTo(
+                        arguments.TelegramCallbackQueryEvent.CallbackQuery.Message.Chat.Id,
+                        arguments.TelegramCallbackQueryEvent.CallbackQuery.Message.MessageId,
+                        arguments.TelegramUser,
+                        arguments.CommandArguments[1],
+                        idToNavigateTo
+                    );
+                }
             }
         }
 
@@ -320,7 +330,7 @@ namespace StashBot.Handlers.CommandHandlers
 
             var caption = "";
 
-            switch(status)
+            switch (status)
             {
                 case QueueItem.QueueStatus.Posted:
                     caption = MessageUtilities.CreateWarningMessage("Nothing has been posted");
@@ -578,25 +588,25 @@ namespace StashBot.Handlers.CommandHandlers
                 arguments.CommandArguments[1].ToString());
             var userId = arguments.TelegramCallbackQueryEvent.CallbackQuery.From.Id;
 
-            bool canDeleteThisQueueItem = false;
+            bool allowedToDeleteThisQueueItem = false;
             var statusText = MessageUtilities.CreateWarningMessage(Localization.GetPhrase(Localization.Phrase.NoPermissionRemovePost, arguments.TelegramUser));
 
             if (AuthorData.CanAuthorQueue(userId))
             {
                 if (queueItems.SelectedQueuedItem.Author.TelegramId == userId)
                 {
-                    canDeleteThisQueueItem = true;
+                    allowedToDeleteThisQueueItem = true;
                 }
                 else
                 {
                     if (AuthorData.CanAuthorDeleteOthers(userId))
                     {
-                        canDeleteThisQueueItem = true;
+                        allowedToDeleteThisQueueItem = true;
                     }
                 }
             }
 
-            if (canDeleteThisQueueItem)
+            if (allowedToDeleteThisQueueItem)
             {
                 QueueService.RemoveQueueItem(queueItems.SelectedQueuedItem.Id);
                 statusText = MessageUtilities.CreateSuccessMessage(
@@ -630,7 +640,7 @@ namespace StashBot.Handlers.CommandHandlers
                 text: statusText
             );
 
-            if (canDeleteThisQueueItem)
+            if (allowedToDeleteThisQueueItem)
             {
                 int idToNavigateTo = queueItems.PreviousQueuedItem.Id;
 
