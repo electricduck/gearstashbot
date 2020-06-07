@@ -340,7 +340,7 @@ namespace StashBot.Handlers.CommandHandlers
             bool queuedStatus = false
         )
         {
-            const string tick = "👁 ";
+            const string tick = "✔️ ";
 
             string postedStatusIcon = "📥 ";
             string queuedStatusIcon = "📤 ";
@@ -496,28 +496,61 @@ namespace StashBot.Handlers.CommandHandlers
                 var controlKeyboard = queueItemsData.Keyboard;
                 var caption = queueItemsData.Caption;
 
-                switch (selectedQueuedItem.Type)
+                try
                 {
-                    case QueueItem.MediaType.Image:
-                        await Program.BotClient.EditMessageMediaAsync(
-                            chatId: chatId,
-                            media: new InputMediaPhoto
-                            {
-                                Media = selectedQueuedItem.MediaUrl
-                            },
-                            messageId: messageId
-                        );
-                        break;
-                    case QueueItem.MediaType.Video:
-                        await Program.BotClient.EditMessageMediaAsync(
-                            chatId: chatId,
-                            media: new InputMediaVideo
-                            {
-                                Media = selectedQueuedItem.MediaUrl
-                            },
-                            messageId: messageId
-                        );
-                        break;
+                    switch (selectedQueuedItem.Type)
+                    {
+                        case QueueItem.MediaType.Image:
+                            await Program.BotClient.EditMessageMediaAsync(
+                                chatId: chatId,
+                                media: new InputMediaPhoto
+                                {
+                                    Media = selectedQueuedItem.MediaUrl
+                                },
+                                messageId: messageId
+                            );
+                            break;
+                        case QueueItem.MediaType.Video:
+                            await Program.BotClient.EditMessageMediaAsync(
+                                chatId: chatId,
+                                media: new InputMediaVideo
+                                {
+                                    Media = selectedQueuedItem.MediaUrl
+                                },
+                                messageId: messageId
+                            );
+                            break;
+                    }
+                }
+                catch (Exception e)
+                {
+                    switch(e.Message)
+                    {
+                        case "Bad Request: MEDIA_EMPTY":
+                        case "Bad Request: WEBPAGE_CURL_FAILED":
+                            await Program.BotClient.EditMessageMediaAsync(
+                                chatId: chatId,
+                                media: new InputMediaPhoto
+                                {
+                                    Media = placeholderImage
+                                },
+                                messageId: messageId
+                            );
+
+                            string errorMessage =  Localization.GetPhrase(
+                                Localization.Phrase.CannotFetchFile,
+                                user,
+                                new string[] {
+                                    selectedQueuedItem.MediaUrl,
+                                    e.Message.Replace("Bad Request: ", "")
+                                }
+                            );
+
+                            caption = MessageUtilities.CreateWarningMessage($"{errorMessage}{Environment.NewLine}—{Environment.NewLine}") + caption;
+                            break;
+                        default:
+                            throw;
+                    }
                 }
 
                 await Program.BotClient.EditMessageCaptionAsync(

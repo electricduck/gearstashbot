@@ -66,10 +66,11 @@ namespace StashBot.I18n
         }
 
         public enum Phrase
-        {   // Next: 54
+        {   // Next: 55
             AlreadyBeenQueued = 11,
             Author = 40,
             CannotDeleteXFromChannel = 22,
+            CannotFetchFile = 54,
             CannotFindAuthor = 17,
             CannotFindMessageX = 24,
             CannotRemovePermissionFromSelf = 32,

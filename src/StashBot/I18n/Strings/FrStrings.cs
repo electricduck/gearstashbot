@@ -8,6 +8,7 @@ namespace StashBot.I18n.Strings
             { Localization.Phrase.AlreadyBeenQueued, "Cela a déjà été mis en file d'attente" },
             { Localization.Phrase.Author, "Auteur" },
             { Localization.Phrase.CannotDeleteXFromChannel, "Ne peut pas supprimer le #[0] de la chaîne"},
+            { Localization.Phrase.CannotFetchFile, "Telegram ne peut pas télécharger ce fichier (<code>[1]</code>):<br />[0]"},
             { Localization.Phrase.CannotFindAuthor, "Impossible de trouver <code>[0]</code>" },
             { Localization.Phrase.CannotFindMessageX, "Impossible de trouver le message #<code>[0]</code>"},
             { Localization.Phrase.CannotRemovePermissionFromSelf, "Vous ne pouvez pas supprimer cette autorisation de vous-même"},

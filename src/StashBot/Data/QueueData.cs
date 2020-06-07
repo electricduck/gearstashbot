@@ -155,7 +155,7 @@ namespace StashBot.Data
             {
                 var items = db.Queue
                     .Include(q => q.Author)
-                    .Where(q => 
+                    .Where(q =>
                         q.Status == QueueItem.QueueStatus.Created ||
                         q.Status == QueueItem.QueueStatus.Disputed ||
                         q.Status == QueueItem.QueueStatus.Posted ||
@@ -200,7 +200,8 @@ namespace StashBot.Data
             int id,
             DateTime postedAt,
             int messageId
-        ) {
+        )
+        {
             using (var db = new StashBotDbContext())
             {
                 var item = db.Queue
@@ -210,6 +211,27 @@ namespace StashBot.Data
                 item.MessageId = messageId;
                 item.PostedAt = postedAt;
                 item.Status = QueueItem.QueueStatus.Posted;
+
+                db.SaveChanges();
+            }
+        }
+
+        public static void SetQueueItemAsPostFailed(
+            int id,
+            DateTime postedAt,
+            string failureReason = ""
+        )
+        {
+            using (var db = new StashBotDbContext())
+            {
+                var item = db.Queue
+                    .Where(q => q.Id == id)
+                    .FirstOrDefault();
+
+                item.PostedAt = postedAt;
+                item.PostFailureReason = failureReason;
+                item.Status = QueueItem.QueueStatus.PostFailed;
+
                 db.SaveChanges();
             }
         }

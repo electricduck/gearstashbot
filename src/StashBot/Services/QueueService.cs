@@ -89,29 +89,54 @@ namespace StashBot.Services
                 DateTime postedAt = DateTime.UtcNow;
                 var caption = GetQueueCaption(post);
                 Message message = null;
+                bool failed = false;
+                string failureReason = "";
 
-                switch (post.Type)
+                try
                 {
-                    case QueueItem.MediaType.Image:
-                        message = Program.BotClient.SendPhotoAsync(
-                            caption: caption.CaptionText,
-                            chatId: AppSettings.Config_ChannelId,
-                            parseMode: ParseMode.Html,
-                            photo: post.MediaUrl
-                        ).Result;
-                        break;
-                    case QueueItem.MediaType.Video:
-                        message = Program.BotClient.SendVideoAsync(
-                            caption: caption.CaptionText,
-                            chatId: AppSettings.Config_ChannelId,
-                            parseMode: ParseMode.Html,
-                            video: post.MediaUrl
-                        ).Result;
-                        break;
+                    switch (post.Type)
+                    {
+                        case QueueItem.MediaType.Image:
+                            message = Program.BotClient.SendPhotoAsync(
+                                caption: caption.CaptionText,
+                                chatId: AppSettings.Config_ChannelId,
+                                parseMode: ParseMode.Html,
+                                photo: post.MediaUrl
+                            ).Result;
+                            break;
+                        case QueueItem.MediaType.Video:
+                            message = Program.BotClient.SendVideoAsync(
+                                caption: caption.CaptionText,
+                                chatId: AppSettings.Config_ChannelId,
+                                parseMode: ParseMode.Html,
+                                video: post.MediaUrl
+                            ).Result;
+                            break;
+                    }
+                }
+                catch (Exception e)
+                {
+                    if (e.Message.Contains("Bad Request:"))
+                    {
+                        failed = true;
+                        failureReason = e.Message;
+                    }
+                    else
+                    {
+                        throw;
+                    }
                 }
 
-                QueueData.SetQueueItemAsPosted(post.Id, postedAt, message.MessageId);
-                MessageUtilities.PrintSuccessMessage($"Posted #{post.Id} at {postedAt.ToString("yyyy-MM-dd hh:mm:ss zzz")}");
+                if (!failed)
+                {
+                    QueueData.SetQueueItemAsPosted(post.Id, postedAt, message.MessageId);
+                    MessageUtilities.PrintSuccessMessage($"Posted #{post.Id} at {postedAt.ToString("yyyy-MM-dd hh:mm:ss zzz")}");
+                }
+                else
+                {
+                    QueueData.SetQueueItemAsPostFailed(post.Id, postedAt, failureReason);
+                    MessageUtilities.PrintWarningMessage($"Unable to post #{post.Id}: {failureReason}");
+                }
             }
         }
 

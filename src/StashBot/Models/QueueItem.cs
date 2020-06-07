@@ -23,6 +23,8 @@ namespace StashBot.Models
         public DateTime PostedAt { get; set; }
         public DateTime QueuedAt { get; set; }
 
+        public string PostFailureReason { get; set; }
+
         public int MessageId { get; set; }
 
         public Author Author { get; set; }
@@ -34,6 +36,7 @@ namespace StashBot.Models
             Queued = 2,
             Disputed = 4,
             Deleted = 5,
+            PostFailed = 6,
             Posted = 3
         }
 
