@@ -26,14 +26,14 @@ namespace StashBot.Handlers.CommandHandlers
             Arguments = new List<HelpArgument> {
               new HelpArgument {
                   Example = "https://t.me/channel/5126",
-                  Explanation = "Link to Telegram post to directly view it",
+                  Explanation = "Link to Telegram post on the channel to directly view it",
                   Name = "t.me Link",
                   Optional = true,
                   Position = 1
               },
             },
             Command = "view",
-            Description = "View and manage posts in queue"
+            Description = "Manage posts in the queue and channel"
         };
 
         public static void Invoke(CommandHandlerArguments arguments)

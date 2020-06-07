@@ -22,7 +22,7 @@ namespace StashBot.Handlers.CommandHandlers
               },
               new HelpArgument {
                   Example = "1, 3, 7",
-                  Explanation = "Selection of media from a gallery (if link includes one)",
+                  Explanation = "If link includes multiple photos/videos, select which item to post (defaults to <i>1</i>)",
                   Name = "Media Index",
                   Optional = true,
                   Position = 2
