@@ -131,7 +131,6 @@ namespace StashBot.Handlers.CommandHandlers
                 var authorId = arguments.TelegramUser.Id;
 
                 bool allowedToDeleteThisQueueItem = false;
-                bool canDelete = true;
 
                 var statusText = "";
 
@@ -188,7 +187,6 @@ namespace StashBot.Handlers.CommandHandlers
                                         }
                                     )
                                 );
-                                canDelete = false;
                             }
                         }
                         catch (Exception e)
@@ -203,7 +201,6 @@ namespace StashBot.Handlers.CommandHandlers
                                     }
                                 )
                             );
-                            canDelete = false;
                         }
                     }
                 }
@@ -217,7 +214,7 @@ namespace StashBot.Handlers.CommandHandlers
                     text: statusText
                 );
 
-                if (allowedToDeleteThisQueueItem && canDelete)
+                if (allowedToDeleteThisQueueItem)
                 {
                     QueueService.RemoveQueueItem(queueItemsData.SelectedQueuedItem.Id);
 
