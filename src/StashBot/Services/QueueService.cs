@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using StashBot.Data;
+using StashBot.I18n;
 using StashBot.Models;
 using StashBot.Models.ReturnModels.QueueServiceReturns;
 using StashBot.Models.ReturnModels.ServiceReturnModels;
@@ -114,97 +115,6 @@ namespace StashBot.Services
             }
         }
 
-        public static GetQueueCaptionReturn GetQueueCaption(
-            QueueItem queueItem,
-            bool advanced = false
-        )
-        {
-            GetQueueCaptionReturn returnModel = new GetQueueCaptionReturn { };
-
-            string creditText = "";
-            string mediaTypeText = "";
-            string sourceText = "";
-
-            switch (queueItem.Type)
-            {
-                case QueueItem.MediaType.Image:
-                    mediaTypeText = "📷 | ";
-                    break;
-                case QueueItem.MediaType.Video:
-                    mediaTypeText = "📹 | ";
-                    break;
-            }
-
-            if (!String.IsNullOrEmpty(queueItem.Name))
-            {
-                if (!String.IsNullOrEmpty(queueItem.UsernameUrl))
-                {
-                    creditText += $"👤 <a href=\"{queueItem.UsernameUrl}\">{queueItem.Name}</a>";
-                }
-                else
-                {
-                    creditText += $"👤 <i>{queueItem.Name}</i>";
-                }
-            }
-            else
-            {
-                creditText += $"👤 <i>(unknown)</i>";
-            }
-
-            if (!String.IsNullOrEmpty(queueItem.SourceUrl))
-            {
-                string sourceName = String.IsNullOrEmpty(queueItem.SourceName) ? "source" : queueItem.SourceName;
-
-                creditText += " | ";
-                sourceText += $"<a href=\"{queueItem.SourceUrl}\">🔗 {sourceName}</a>";
-            }
-
-            returnModel.CaptionText = $"{mediaTypeText}{creditText}{sourceText}";
-
-            if (advanced)
-            {
-                var statusDateString = "";
-                var messageIdString = "";
-
-                switch (queueItem.Status)
-                {
-                    case QueueItem.QueueStatus.Queued:
-                        statusDateString = GenerateStatusDateStringForAdvancedCaption(queueItem.QueuedAt, QueueItem.QueueStatus.Queued);
-                        break;
-                    case QueueItem.QueueStatus.Deleted:
-                        statusDateString = GenerateStatusDateStringForAdvancedCaption(queueItem.DeletedAt, QueueItem.QueueStatus.Deleted);
-                        break;
-                    case QueueItem.QueueStatus.Posted:
-                        statusDateString = GenerateStatusDateStringForAdvancedCaption(queueItem.PostedAt, QueueItem.QueueStatus.Posted);
-                        break;
-                }
-
-                if(queueItem.Status == QueueItem.QueueStatus.Posted)
-                {
-                    messageIdString = $"{Environment.NewLine}#️⃣ <b>Message ID:</b> ";
-
-                    if(queueItem.MessageId != 0)
-                    {
-                        messageIdString += $"<code>{queueItem.MessageId}</code>";
-                    }
-                    else
-                    {
-                        messageIdString += "<i>(None)</i>";
-                    }
-                }
-
-                string authorNameLink = $"<a href=\"tg://user?id={queueItem.Author.TelegramId}\">{queueItem.Author.TelegramName}</a>";
-
-                string advancedText = $@"—
-📩 <b>Poster:</b> {authorNameLink}{statusDateString}
-💡 <b>Status:</b> {queueItem.Status}{messageIdString}";
-
-                returnModel.CaptionText += $"{Environment.NewLine}{advancedText}";
-            }
-
-            return returnModel;
-        }
-
         public static QueueServiceReturn QueueLink(
             string url,
             TelegramUser user,
@@ -266,9 +176,101 @@ namespace StashBot.Services
             QueueData.DeleteQueueItem(id, false);
         }
 
-        private static string GenerateStatusDateStringForAdvancedCaption(DateTime date, Enum status)
+        // TODO: Move this to utilities
+        public static GetQueueCaptionReturn GetQueueCaption(
+            QueueItem queueItem,
+            bool advanced = false,
+            TelegramUser user = null
+        )
         {
-            return $"{Environment.NewLine}{GeneratorUtilities.GenerateClockEmoji(date)} <b>{status}:</b> {date.ToString("dd-MMM-yy hh:mm:ss zz")}";
+            GetQueueCaptionReturn returnModel = new GetQueueCaptionReturn { };
+
+            string creditText = "";
+            string mediaTypeText = "";
+            string sourceText = "";
+
+            switch (queueItem.Type)
+            {
+                case QueueItem.MediaType.Image:
+                    mediaTypeText = "📷 | ";
+                    break;
+                case QueueItem.MediaType.Video:
+                    mediaTypeText = "📹 | ";
+                    break;
+            }
+
+            if (!String.IsNullOrEmpty(queueItem.Name))
+            {
+                if (!String.IsNullOrEmpty(queueItem.UsernameUrl))
+                {
+                    creditText += $"👤 <a href=\"{queueItem.UsernameUrl}\">{queueItem.Name}</a>";
+                }
+                else
+                {
+                    creditText += $"👤 <i>{queueItem.Name}</i>";
+                }
+            }
+            else
+            {
+                creditText += $"👤 <i>(unknown)</i>";
+            }
+
+            if (!String.IsNullOrEmpty(queueItem.SourceUrl))
+            {
+                string sourceName = String.IsNullOrEmpty(queueItem.SourceName) ? "source" : queueItem.SourceName;
+
+                creditText += " | ";
+                sourceText += $"<a href=\"{queueItem.SourceUrl}\">🔗 {sourceName}</a>";
+            }
+
+            returnModel.CaptionText = $"{mediaTypeText}{creditText}{sourceText}";
+
+            if (advanced)
+            {
+                var statusDateString = "";
+                var messageIdString = "";
+
+                switch (queueItem.Status)
+                {
+                    case QueueItem.QueueStatus.Queued:
+                        statusDateString = GenerateStatusDateStringForAdvancedCaption(queueItem.QueuedAt, Localization.GetPhrase(Localization.Phrase.Queued, user));
+                        break;
+                    case QueueItem.QueueStatus.Deleted:
+                        statusDateString = GenerateStatusDateStringForAdvancedCaption(queueItem.DeletedAt, "Deleted");
+                        break;
+                    case QueueItem.QueueStatus.Posted:
+                        statusDateString = GenerateStatusDateStringForAdvancedCaption(queueItem.PostedAt, Localization.GetPhrase(Localization.Phrase.Posted, user));
+                        break;
+                }
+
+                if (queueItem.Status == QueueItem.QueueStatus.Posted)
+                {
+                    messageIdString = $"{Environment.NewLine}#️⃣ <b>{Localization.GetPhrase(Localization.Phrase.MessageID, user)}:</b> ";
+
+                    if (queueItem.MessageId != 0)
+                    {
+                        messageIdString += $"<code>{queueItem.MessageId}</code>";
+                    }
+                    else
+                    {
+                        messageIdString += $"<i>({Localization.GetPhrase(Localization.Phrase.NotSet, user)})</i>";
+                    }
+                }
+
+                string authorNameLink = $"<a href=\"tg://user?id={queueItem.Author.TelegramId}\">{queueItem.Author.TelegramName}</a>";
+
+                string advancedText = $@"—
+📩 <b>{Localization.GetPhrase(Localization.Phrase.Author, user)}:</b> {authorNameLink}{statusDateString}{messageIdString}";
+
+                returnModel.CaptionText += $"{Environment.NewLine}{advancedText}";
+            }
+
+            return returnModel;
+        }
+
+        private static string GenerateStatusDateStringForAdvancedCaption(DateTime date, string statusText)
+        {
+            return $"{Environment.NewLine}{GeneratorUtilities.GenerateClockEmoji(date)} <b>{statusText}:</b> {date.ToString("dd-MMM-yy hh:mm:ss zz")}";
         }
     }
 }

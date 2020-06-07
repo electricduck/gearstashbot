@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Telegram.Bot.Types.ReplyMarkups;
 using StashBot.Exceptions;
 using StashBot.Data;
+using StashBot.I18n;
 using StashBot.Models;
 using StashBot.Models.ArgumentModels;
 using StashBot.Services;
@@ -26,15 +27,15 @@ namespace StashBot.Handlers.CommandHandlers
                 var toolsKeyboard = new InlineKeyboardMarkup(new[] {
                     new []
                     {
-                        InlineKeyboardButton.WithCallbackData("🔄 Refresh Profile", $"tools_refreshprofile")
+                        InlineKeyboardButton.WithCallbackData($"🔄 {Localization.GetPhrase(Localization.Phrase.RefreshProfile, arguments.TelegramUser)}", $"tools_refreshprofile")
                     },
                     new []
                     {
-                        InlineKeyboardButton.WithCallbackData("🚽 Flush Removed Posts", $"tools_flush"),
+                        InlineKeyboardButton.WithCallbackData($"🚽 {Localization.GetPhrase(Localization.Phrase.FlushRemovedPosts, arguments.TelegramUser)}", $"tools_flush"),
                     },
                     new []
                     {
-                        InlineKeyboardButton.WithCallbackData("🔫 Purge Dangling Users", $"tools_purgeusers")
+                        InlineKeyboardButton.WithCallbackData($"🔫 {Localization.GetPhrase(Localization.Phrase.FlushDanglingUsers, arguments.TelegramUser)}", $"tools_purgeusers")
                     }
                 });
 
@@ -42,7 +43,7 @@ namespace StashBot.Handlers.CommandHandlers
                     new SendTextMessageArguments
                     {
                         ReplyMarkup = toolsKeyboard,
-                        Text = "⚒ <b>Tools</b>"
+                        Text = $"⚒ <b>{Localization.GetPhrase(Localization.Phrase.Tools, arguments.TelegramUser)}</b>"
                     },
                     Program.BotClient,
                     arguments.TelegramMessageEvent
@@ -50,7 +51,7 @@ namespace StashBot.Handlers.CommandHandlers
             }
             else
             {
-                throw new CommandHandlerException("You do not have permission to use tools");
+                throw new CommandHandlerException(Localization.GetPhrase(Localization.Phrase.NoPermissionTools, arguments.TelegramUser));
             }
         }
 
@@ -61,11 +62,11 @@ namespace StashBot.Handlers.CommandHandlers
                 if (AuthorData.CanAuthorFlushQueue(arguments.TelegramUser.Id))
                 {
                     QueueData.DeleteRemovedQueueItems();
-                    MessageUtilities.AlertSuccessMessage("Flushed removed posts", arguments.TelegramCallbackQueryEvent);
+                    MessageUtilities.AlertSuccessMessage(Localization.GetPhrase(Localization.Phrase.FlushedRemovedPosts, arguments.TelegramUser), arguments.TelegramCallbackQueryEvent);
                 }
                 else
                 {
-                    MessageUtilities.AlertWarningMessage($"You do not have permission to flush removed posts", arguments.TelegramCallbackQueryEvent);
+                    MessageUtilities.AlertWarningMessage(Localization.GetPhrase(Localization.Phrase.NoPermissionFlushRemovedPosts, arguments.TelegramUser), arguments.TelegramCallbackQueryEvent);
                 }
             }
             else
@@ -75,7 +76,7 @@ namespace StashBot.Handlers.CommandHandlers
                     messageId: arguments.TelegramCallbackQueryEvent.CallbackQuery.Message.MessageId
                 );
 
-                throw new CommandHandlerException("You do not have permission to use tools");
+                throw new CommandHandlerException(Localization.GetPhrase(Localization.Phrase.NoPermissionTools, arguments.TelegramUser));
             }
         }
 
@@ -110,12 +111,19 @@ namespace StashBot.Handlers.CommandHandlers
 
                             if (authorsToDelete.Count == 0)
                             {
-                                MessageUtilities.AlertWarningMessage("No dangling users to purge", arguments.TelegramCallbackQueryEvent);
+                                MessageUtilities.AlertWarningMessage(Localization.GetPhrase(Localization.Phrase.NoDanglingUsers, arguments.TelegramUser), arguments.TelegramCallbackQueryEvent);
                             }
                             else
                             {
                                 AuthorData.DeleteAuthorRange(authorsToDelete);
-                                MessageUtilities.AlertSuccessMessage($"Purged {authorsToDelete.Count} dangling users", arguments.TelegramCallbackQueryEvent);
+                                MessageUtilities.AlertSuccessMessage(Localization.GetPhrase(
+                                    Localization.Phrase.FlushedXDanglingUsers,
+                                    arguments.TelegramUser,
+                                    new string[] {
+                                        authorsToDelete.Count.ToString()
+                                    }
+                                ),
+                                arguments.TelegramCallbackQueryEvent);
                             }
                         }
                         catch (Exception e)
@@ -126,13 +134,13 @@ namespace StashBot.Handlers.CommandHandlers
                 }
                 else
                 {
-                    MessageUtilities.AlertWarningMessage("You do not have permission to purge dangling users", arguments.TelegramCallbackQueryEvent);
+                    MessageUtilities.AlertWarningMessage(Localization.GetPhrase(Localization.Phrase.NoPermissionFlushDanglingUsers, arguments.TelegramUser), arguments.TelegramCallbackQueryEvent);
                     //throw new CommandHandlerAlertException("You do not have permission to purge dangling users");
                 }
             }
             else
             {
-                throw new CommandHandlerException("You do not have permission to use tools");
+                throw new CommandHandlerException(Localization.GetPhrase(Localization.Phrase.NoPermissionTools, arguments.TelegramUser));
             }
         }
 
@@ -141,7 +149,14 @@ namespace StashBot.Handlers.CommandHandlers
             if (AuthorData.DoesAuthorExist(arguments.TelegramUser))
             {
                 Author refreshedAuthor = AuthorData.UpdateAuthorTelegramProfile(arguments.TelegramUser);
-                MessageUtilities.AlertSuccessMessage($"Refreshed profile. Hello {refreshedAuthor.TelegramName}!", arguments.TelegramCallbackQueryEvent);
+                MessageUtilities.AlertSuccessMessage(Localization.GetPhrase(
+                    Localization.Phrase.RefreshedProfileHelloX,
+                    arguments.TelegramUser,
+                    new string[] {
+                        refreshedAuthor.TelegramName
+                    }
+                ),
+                arguments.TelegramCallbackQueryEvent);
             }
             else
             {
@@ -150,7 +165,7 @@ namespace StashBot.Handlers.CommandHandlers
                     messageId: arguments.TelegramCallbackQueryEvent.CallbackQuery.Message.MessageId
                 );
 
-                throw new CommandHandlerException("You do not have permission to use tools");
+                throw new CommandHandlerException(Localization.GetPhrase(Localization.Phrase.NoPermissionTools, arguments.TelegramUser));
             }
         }
     }

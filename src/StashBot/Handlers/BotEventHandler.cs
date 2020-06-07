@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Telegram.Bot.Args;
 using StashBot.Exceptions;
 using StashBot.Handlers.CommandHandlers;
+using StashBot.I18n;
 using StashBot.Models.ArgumentModels;
 using StashBot.Utilities;
 
@@ -73,7 +74,15 @@ namespace StashBot.Handlers
                 }
                 catch (ArgumentException)
                 {
-                    MessageUtilities.SendWarningMessage($"Invalid arguments: see <code>/help {arguments.Command}</code> for details", telegramMessageEvent);
+                    MessageUtilities.SendWarningMessage(
+                        Localization.GetPhrase(
+                            Localization.Phrase.InvalidArgsSeeHelp,
+                            arguments.TelegramUser,
+                            new string[] {
+                                arguments.Command
+                            }
+                        ),
+                        telegramMessageEvent);
                 }
                 catch (CommandHandlerException e)
                 {
@@ -126,7 +135,15 @@ namespace StashBot.Handlers
             }
             catch (ArgumentException)
             {
-                MessageUtilities.SendWarningMessage($"Invalid arguments: see <code>/help {arguments.Command}</code> for details", arguments.TelegramCallbackQueryEvent);
+                MessageUtilities.SendWarningMessage(
+                    Localization.GetPhrase(
+                            Localization.Phrase.InvalidArgsSeeHelp,
+                            arguments.TelegramUser,
+                            new string[] {
+                                arguments.Command
+                            }
+                        ),
+                        arguments.TelegramCallbackQueryEvent);
             }
             catch (CommandHandlerException e)
             {

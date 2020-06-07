@@ -92,8 +92,10 @@ namespace StashBot.Handlers.CommandHandlers
                     }
                 }
 
-                string authorNameText = (String.IsNullOrEmpty(author.TelegramName)) ? "<i>(Not set)</i>" : author.TelegramName;
-                string authorUsernameText = (String.IsNullOrEmpty(author.TelegramUsername)) ? "<i>(Not set)</i>" : author.TelegramUsername;
+                string notSetText = Localization.GetPhrase(Localization.Phrase.NotSet, arguments.TelegramUser);
+
+                string authorNameText = (String.IsNullOrEmpty(author.TelegramName)) ? $"<i>({notSetText})</i>" : author.TelegramName;
+                string authorUsernameText = (String.IsNullOrEmpty(author.TelegramUsername)) ? "<i>({notSetText})</i>" : author.TelegramUsername;
                 string authorLastUpdatedText = author.TelegramDetailsLastUpdatedAt.ToString("dd-MMM-yy hh:mm:ss zz");
                 int authorPostCount = AuthorData.CountAuthorQueue(author.TelegramId);
                 int queueCount = QueueData.CountQueueItems();
@@ -104,13 +106,13 @@ namespace StashBot.Handlers.CommandHandlers
                     queuePercentage = ((decimal)authorPostCount / queueCount) * 100;
                 }
 
-                var userPermissionKeyboard = GetPermissionKeyboard(author);
-                var userDetailsText = $@"👤 <b>User:</b> <code>{authorId}</code>
+                var userPermissionKeyboard = GetPermissionKeyboard(author, arguments.TelegramUser);
+                var userDetailsText = $@"👤 <b>{Localization.GetPhrase(Localization.Phrase.User, arguments.TelegramUser)}:</b> <code>{authorId}</code>
 —
-<b>Name:</b> {authorNameText}
-<b>Username:</b> {authorUsernameText}
-<b>Profile Updated:</b> {authorLastUpdatedText}
-<b>Posts:</b> {authorPostCount} ({queuePercentage.ToString("0.00")}%)";
+<b>{Localization.GetPhrase(Localization.Phrase.Name, arguments.TelegramUser)}:</b> {authorNameText}
+<b>{Localization.GetPhrase(Localization.Phrase.Username, arguments.TelegramUser)}:</b> {authorUsernameText}
+<b>{Localization.GetPhrase(Localization.Phrase.ProfileUpdated, arguments.TelegramUser)}:</b> {authorLastUpdatedText}
+<b>{Localization.GetPhrase(Localization.Phrase.Posts, arguments.TelegramUser)}:</b> {authorPostCount} ({queuePercentage.ToString("0.00")}%)";
 
                 TelegramApiService.SendTextMessage(
                     new SendTextMessageArguments
@@ -124,7 +126,7 @@ namespace StashBot.Handlers.CommandHandlers
             }
             else
             {
-                throw new CommandHandlerException("You do not have permission to manage users");
+                throw new CommandHandlerException(Localization.GetPhrase(Localization.Phrase.NoPermissionManageUsers, arguments.TelegramUser));
             }
         }
 
@@ -169,14 +171,14 @@ namespace StashBot.Handlers.CommandHandlers
                     await Program.BotClient.EditMessageReplyMarkupAsync(
                         arguments.TelegramCallbackQueryEvent.CallbackQuery.Message.Chat.Id,
                         arguments.TelegramCallbackQueryEvent.CallbackQuery.Message.MessageId,
-                        GetPermissionKeyboard(author)
+                        GetPermissionKeyboard(author, arguments.TelegramUser)
                     );
                 }
                 else
                 {
                     await Program.BotClient.AnswerCallbackQueryAsync(
                         callbackQueryId: arguments.TelegramCallbackQueryEvent.CallbackQuery.Id,
-                        text: MessageUtilities.CreateWarningMessage($"You cannot remove this permission from yourself")
+                        text: MessageUtilities.CreateWarningMessage(Localization.GetPhrase(Localization.Phrase.CannotRemovePermissionFromSelf, arguments.TelegramUser))
                     );
                 }
             }
@@ -187,7 +189,7 @@ namespace StashBot.Handlers.CommandHandlers
                     messageId: arguments.TelegramCallbackQueryEvent.CallbackQuery.Message.MessageId
                 );
 
-                throw new CommandHandlerException("You do not have permission to manage users");
+                throw new CommandHandlerException(Localization.GetPhrase(Localization.Phrase.NoPermissionManageUsers, arguments.TelegramUser));
             }
         }
 
@@ -238,7 +240,7 @@ namespace StashBot.Handlers.CommandHandlers
             }
         }
 
-        private static InlineKeyboardMarkup GetPermissionKeyboard(Author author)
+        private static InlineKeyboardMarkup GetPermissionKeyboard(Author author, TelegramUser user)
         {
             const string tick = "✔️";
             const string cross = "✖️";
@@ -252,19 +254,19 @@ namespace StashBot.Handlers.CommandHandlers
             {
                 new []
                 {
-                    InlineKeyboardButton.WithCallbackData($"{canQueueStatus} Queue", $"user_perm:{author.TelegramId}:CanQueue:{!author.CanQueue}")
+                    InlineKeyboardButton.WithCallbackData($"{canQueueStatus} {Localization.GetPhrase(Localization.Phrase.Queue, user)}", $"user_perm:{author.TelegramId}:CanQueue:{!author.CanQueue}")
                 },
                 new []
                 {
-                    InlineKeyboardButton.WithCallbackData($"{canDeleteOthersStatus} Delete Others", $"user_perm:{author.TelegramId}:CanDeleteOthers:{!author.CanDeleteOthers}")
+                    InlineKeyboardButton.WithCallbackData($"{canDeleteOthersStatus} {Localization.GetPhrase(Localization.Phrase.DeleteOthers, user)}", $"user_perm:{author.TelegramId}:CanDeleteOthers:{!author.CanDeleteOthers}")
                 },
                 new []
                 {
-                    InlineKeyboardButton.WithCallbackData($"{canFlushQueueStatus} Flush Queue", $"user_perm:{author.TelegramId}:CanFlushQueue:{!author.CanFlushQueue}")
+                    InlineKeyboardButton.WithCallbackData($"{canFlushQueueStatus} {Localization.GetPhrase(Localization.Phrase.FlushQueue, user)}", $"user_perm:{author.TelegramId}:CanFlushQueue:{!author.CanFlushQueue}")
                 },
                 new []
                 {
-                    InlineKeyboardButton.WithCallbackData($"{canManageAuthorsStatus} Manage Users", $"user_perm:{author.TelegramId}:CanManageAuthors:{!author.CanManageAuthors}")
+                    InlineKeyboardButton.WithCallbackData($"{canManageAuthorsStatus} {Localization.GetPhrase(Localization.Phrase.ManageUsers, user)}", $"user_perm:{author.TelegramId}:CanManageAuthors:{!author.CanManageAuthors}")
                 }
             });
         }

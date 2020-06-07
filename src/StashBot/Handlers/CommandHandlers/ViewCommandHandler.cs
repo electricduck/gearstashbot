@@ -41,7 +41,7 @@ namespace StashBot.Handlers.CommandHandlers
             if (AuthorData.CanAuthorQueue(arguments.TelegramUser.Id))
             {
                 var initMessage = Program.BotClient.SendPhotoAsync(
-                        caption: "<i>Loading Queue...</i>",
+                        caption: $"<i>{Localization.GetPhrase(Localization.Phrase.LoadingQueue, arguments.TelegramUser)}</i>",
                         chatId: arguments.TelegramMessageEvent.Message.Chat.Id,
                         parseMode: ParseMode.Html,
                         photo: placeholderImage
@@ -122,93 +122,129 @@ namespace StashBot.Handlers.CommandHandlers
 
         public static async Task InvokeDelete(CommandHandlerArguments arguments)
         {
-            var queueItemsData = GetQueueItemsData(
-                arguments.TelegramUser,
-                GetQueueItemStatusEnum(arguments.CommandArguments[1]),
-                Convert.ToInt32(arguments.CommandArguments[0]));
-            var authorId = arguments.TelegramUser.Id;
-
-            bool allowedToDeleteThisQueueItem = false;
-            bool canDelete = true;
-
-            var statusText = "";
-
-            if (AuthorData.CanAuthorQueue(authorId))
+            if (AuthorData.CanAuthorQueue(arguments.TelegramUser.Id))
             {
-                if (queueItemsData.SelectedQueuedItem.Author.TelegramId == authorId)
+                var queueItemsData = GetQueueItemsData(
+                    arguments.TelegramUser,
+                    GetQueueItemStatusEnum(arguments.CommandArguments[1]),
+                    Convert.ToInt32(arguments.CommandArguments[0]));
+                var authorId = arguments.TelegramUser.Id;
+
+                bool allowedToDeleteThisQueueItem = false;
+                bool canDelete = true;
+
+                var statusText = "";
+
+                if (AuthorData.CanAuthorQueue(authorId))
                 {
-                    allowedToDeleteThisQueueItem = true;
-                }
-                else
-                {
-                    if (AuthorData.CanAuthorDeleteOthers(authorId))
+                    if (queueItemsData.SelectedQueuedItem.Author.TelegramId == authorId)
                     {
                         allowedToDeleteThisQueueItem = true;
                     }
-                }
-            }
-
-            if (allowedToDeleteThisQueueItem)
-            {
-                statusText = MessageUtilities.CreateSuccessMessage(
-                    Localization.GetPhrase(Localization.Phrase.DeletedFromQueue, arguments.TelegramUser)
-                );
-
-                if (queueItemsData.SelectedQueuedItem.Status == QueueItem.QueueStatus.Posted)
-                {
-                    try
+                    else
                     {
-
-                        if (queueItemsData.SelectedQueuedItem.MessageId != 0)
+                        if (AuthorData.CanAuthorDeleteOthers(authorId))
                         {
-                            await Program.BotClient.DeleteMessageAsync(
-                                chatId: Models.AppSettings.Config_ChannelId,
-                                messageId: Convert.ToInt32(queueItemsData.SelectedQueuedItem.MessageId)
-                            );
-                            statusText = MessageUtilities.CreateSuccessMessage($"Deleted #{queueItemsData.SelectedQueuedItem.MessageId} from channel");
+                            allowedToDeleteThisQueueItem = true;
                         }
-                        else
+                    }
+                }
+
+                if (allowedToDeleteThisQueueItem)
+                {
+                    statusText = MessageUtilities.CreateSuccessMessage(
+                        Localization.GetPhrase(Localization.Phrase.DeletedFromQueue, arguments.TelegramUser)
+                    );
+
+                    if (queueItemsData.SelectedQueuedItem.Status == QueueItem.QueueStatus.Posted)
+                    {
+                        try
                         {
-                            statusText = MessageUtilities.CreateWarningMessage($"Unable to delete #{queueItemsData.SelectedQueuedItem.MessageId} from channel");
+
+                            if (queueItemsData.SelectedQueuedItem.MessageId != 0)
+                            {
+                                await Program.BotClient.DeleteMessageAsync(
+                                    chatId: Models.AppSettings.Config_ChannelId,
+                                    messageId: Convert.ToInt32(queueItemsData.SelectedQueuedItem.MessageId)
+                                );
+                                statusText = MessageUtilities.CreateSuccessMessage(
+                                    Localization.GetPhrase(
+                                        Localization.Phrase.DeletedXFromChannel,
+                                        arguments.TelegramUser,
+                                        new string[] {
+                                        queueItemsData.SelectedQueuedItem.MessageId.ToString()
+                                        }
+                                    )
+                                );
+                            }
+                            else
+                            {
+                                statusText = MessageUtilities.CreateWarningMessage(
+                                    Localization.GetPhrase(
+                                        Localization.Phrase.CannotDeleteXFromChannel,
+                                        arguments.TelegramUser,
+                                        new string[] {
+                                        queueItemsData.SelectedQueuedItem.MessageId.ToString()
+                                        }
+                                    )
+                                );
+                                canDelete = false;
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            MessageUtilities.PrintErrorMessage(e, Guid.Empty);
+                            statusText = MessageUtilities.CreateWarningMessage(
+                                Localization.GetPhrase(
+                                    Localization.Phrase.CannotDeleteXFromChannel,
+                                    arguments.TelegramUser,
+                                    new string[] {
+                                    queueItemsData.SelectedQueuedItem.MessageId.ToString()
+                                    }
+                                )
+                            );
                             canDelete = false;
                         }
                     }
-                    catch (Exception e)
+                }
+                else
+                {
+                    statusText = MessageUtilities.CreateWarningMessage(Localization.GetPhrase(Localization.Phrase.NoPermissionRemovePost, arguments.TelegramUser));
+                }
+
+                await Program.BotClient.AnswerCallbackQueryAsync(
+                    callbackQueryId: arguments.TelegramCallbackQueryEvent.CallbackQuery.Id,
+                    text: statusText
+                );
+
+                if (allowedToDeleteThisQueueItem && canDelete)
+                {
+                    QueueService.RemoveQueueItem(queueItemsData.SelectedQueuedItem.Id);
+
+                    int idToNavigateTo = queueItemsData.PreviousQueuedItem.Id;
+
+                    if (queueItemsData.IsEarliestItem)
                     {
-                        MessageUtilities.PrintErrorMessage(e, Guid.Empty);
-                        statusText = MessageUtilities.CreateWarningMessage($"Unable to delete #{queueItemsData.SelectedQueuedItem.MessageId} from channel");
-                        canDelete = false;
+                        idToNavigateTo = queueItemsData.NextQueuedItem.Id;
                     }
+
+                    await NavigateTo(
+                        arguments.TelegramCallbackQueryEvent.CallbackQuery.Message.Chat.Id,
+                        arguments.TelegramCallbackQueryEvent.CallbackQuery.Message.MessageId,
+                        arguments.TelegramUser,
+                        arguments.CommandArguments[1],
+                        idToNavigateTo
+                    );
                 }
             }
             else
             {
-                statusText = MessageUtilities.CreateWarningMessage(Localization.GetPhrase(Localization.Phrase.NoPermissionRemovePost, arguments.TelegramUser));
-            }
-
-            await Program.BotClient.AnswerCallbackQueryAsync(
-                callbackQueryId: arguments.TelegramCallbackQueryEvent.CallbackQuery.Id,
-                text: statusText
-            );
-
-            if (allowedToDeleteThisQueueItem && canDelete)
-            {
-                QueueService.RemoveQueueItem(queueItemsData.SelectedQueuedItem.Id);
-
-                int idToNavigateTo = queueItemsData.PreviousQueuedItem.Id;
-
-                if (queueItemsData.IsEarliestItem)
-                {
-                    idToNavigateTo = queueItemsData.NextQueuedItem.Id;
-                }
-
-                await NavigateTo(
-                    arguments.TelegramCallbackQueryEvent.CallbackQuery.Message.Chat.Id,
-                    arguments.TelegramCallbackQueryEvent.CallbackQuery.Message.MessageId,
-                    arguments.TelegramUser,
-                    arguments.CommandArguments[1],
-                    idToNavigateTo
+                await Program.BotClient.DeleteMessageAsync(
+                    chatId: arguments.TelegramCallbackQueryEvent.CallbackQuery.Message.Chat.Id,
+                    messageId: arguments.TelegramCallbackQueryEvent.CallbackQuery.Message.MessageId
                 );
+
+                throw new CommandHandlerException(Localization.GetPhrase(Localization.Phrase.NoPermissionViewQueue, arguments.TelegramUser));
             }
         }
 
@@ -241,6 +277,7 @@ namespace StashBot.Handlers.CommandHandlers
                     user
                 ),
                 GenerateStatusKeyboardButtons(
+                    user,
                     isLookingAtPosted,
                     isLookingAtQueued
                 )
@@ -281,8 +318,8 @@ namespace StashBot.Handlers.CommandHandlers
 
             if (status == QueueItem.QueueStatus.Posted)
             {
-                nextString = "Earlier";
-                lastString = "Earliest";
+                nextString = Localization.GetPhrase(Localization.Phrase.Earlier, user);
+                lastString = Localization.GetPhrase(Localization.Phrase.Earliest, user);
                 previousString = Localization.GetPhrase(Localization.Phrase.Later, user);
                 firstString = Localization.GetPhrase(Localization.Phrase.Latest, user);
             }
@@ -298,11 +335,12 @@ namespace StashBot.Handlers.CommandHandlers
         }
 
         private static InlineKeyboardButton[] GenerateStatusKeyboardButtons(
+            TelegramUser user,
             bool postedStatus = false,
             bool queuedStatus = false
         )
         {
-            const string tick = "✔️ ";
+            const string tick = "👁 ";
 
             string postedStatusIcon = "📥 ";
             string queuedStatusIcon = "📤 ";
@@ -317,8 +355,8 @@ namespace StashBot.Handlers.CommandHandlers
 
             return new[]
             {
-                InlineKeyboardButton.WithCallbackData($"{queuedStatusIcon}Queued", $"view_{action}:0:Queued"),
-                InlineKeyboardButton.WithCallbackData($"{postedStatusIcon}Posted", $"view_{action}:0:Posted")
+                InlineKeyboardButton.WithCallbackData($"{queuedStatusIcon}{Localization.GetPhrase(Localization.Phrase.Queued, user)}", $"view_{action}:0:Queued"),
+                InlineKeyboardButton.WithCallbackData($"{postedStatusIcon}{Localization.GetPhrase(Localization.Phrase.Posted, user)}", $"view_{action}:0:Posted")
             };
         }
 
@@ -357,7 +395,7 @@ namespace StashBot.Handlers.CommandHandlers
                 bool isEarliestItem = (previousIndex < minIndex);
                 bool isLatestItem = (nextIndex > maxIndex);
 
-                var caption = QueueService.GetQueueCaption(selectedQueuedItem, true).CaptionText;
+                var caption = QueueService.GetQueueCaption(selectedQueuedItem, true, user).CaptionText;
 
                 var keyboard = GenerateDefaultKeyboard(
                     selectedQueuedItem.Id,
@@ -413,11 +451,15 @@ namespace StashBot.Handlers.CommandHandlers
             switch (status)
             {
                 case QueueItem.QueueStatus.Posted:
-                    caption = MessageUtilities.CreateWarningMessage("Nothing has been posted");
+                    caption = MessageUtilities.CreateWarningMessage(
+                        Localization.GetPhrase(Localization.Phrase.NothingIsPosted, user)
+                    );
                     break;
                 case QueueItem.QueueStatus.Queued:
                 default:
-                    caption = MessageUtilities.CreateWarningMessage("Nothing in selected queue");
+                    caption = MessageUtilities.CreateWarningMessage(
+                        Localization.GetPhrase(Localization.Phrase.NothingIsQueued, user)
+                    );
                     break;
             }
 
@@ -427,7 +469,7 @@ namespace StashBot.Handlers.CommandHandlers
                 messageId: messageId,
                 replyMarkup: new InlineKeyboardMarkup(new[]
                 {
-                    GenerateStatusKeyboardButtons()
+                    GenerateStatusKeyboardButtons(user)
                 }),
                 parseMode: ParseMode.Html
             );
@@ -518,7 +560,15 @@ namespace StashBot.Handlers.CommandHandlers
                     messageId: messageId
                 );
 
-                MessageUtilities.SendWarningMessage($"Unable to find message <code>{channelMessageId}</code>", chatId);
+                MessageUtilities.SendWarningMessage(
+                    Localization.GetPhrase(
+                        Localization.Phrase.CannotFindMessageX,
+                        user,
+                        new string[] {
+                            channelMessageId.ToString()
+                        }
+                    ),
+                    chatId);
             }
         }
     }
