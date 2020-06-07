@@ -15,6 +15,7 @@ namespace StashBot.Services
 {
     public class QueueService
     {
+        // TODO: Rewrite this. Its garbage.
         public static void PollQueue()
         {
             Task.Run(() =>
@@ -68,10 +69,19 @@ namespace StashBot.Services
                             }*/
 
                             Thread.Sleep((int)sleepTime);
-                            PostQueueItem(soonestQueuedItem);
+                            bool wasPosted = PostQueueItem(soonestQueuedItem);
 
                             queueCount = QueueData.CountQueuedQueueItems();
                             soonestQueuedItem = QueueData.GetSoonestQueuedQueueItem();
+
+                            if (wasPosted)
+                            {
+                                sleepTime = sleepTimeFromConfig;
+                            }
+                            else
+                            {
+                                sleepTime = 0;
+                            }
                         }
                     }
                 }
@@ -82,7 +92,7 @@ namespace StashBot.Services
             });
         }
 
-        public static void PostQueueItem(QueueItem post)
+        public static bool PostQueueItem(QueueItem post)
         {
             if (post != null)
             {
@@ -131,13 +141,17 @@ namespace StashBot.Services
                 {
                     QueueData.SetQueueItemAsPosted(post.Id, postedAt, message.MessageId);
                     MessageUtilities.PrintSuccessMessage($"Posted #{post.Id} at {postedAt.ToString("yyyy-MM-dd hh:mm:ss zzz")}");
+                    return true;
                 }
                 else
                 {
                     QueueData.SetQueueItemAsPostFailed(post.Id, postedAt, failureReason);
                     MessageUtilities.PrintWarningMessage($"Unable to post #{post.Id}: {failureReason}");
+                    return false;
                 }
             }
+
+            return false;
         }
 
         public static QueueServiceReturn QueueLink(
