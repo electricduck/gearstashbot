@@ -95,8 +95,9 @@ namespace StashBot.Handlers.CommandHandlers
                 string notSetText = Localization.GetPhrase(Localization.Phrase.NotSet, arguments.TelegramUser);
 
                 string authorNameText = (String.IsNullOrEmpty(author.TelegramName)) ? $"<i>({notSetText})</i>" : author.TelegramName;
-                string authorUsernameText = (String.IsNullOrEmpty(author.TelegramUsername)) ? "<i>({notSetText})</i>" : author.TelegramUsername;
+                string authorUsernameText = (String.IsNullOrEmpty(author.TelegramUsername)) ? $"<i>({notSetText})</i>" : author.TelegramUsername;
                 string authorLastUpdatedText = author.TelegramDetailsLastUpdatedAt.ToString("dd-MMM-yy hh:mm:ss zz");
+                string authorLink = $"<a href=\"tg://user?id={authorId}\">{authorId}</a>";
                 int authorPostCount = AuthorData.CountAuthorQueue(author.TelegramId);
                 int queueCount = QueueData.CountQueueItems();
                 decimal queuePercentage = 0;
@@ -107,7 +108,7 @@ namespace StashBot.Handlers.CommandHandlers
                 }
 
                 var userPermissionKeyboard = GetPermissionKeyboard(author, arguments.TelegramUser);
-                var userDetailsText = $@"👤 <b>{Localization.GetPhrase(Localization.Phrase.User, arguments.TelegramUser)}:</b> <code>{authorId}</code>
+                var userDetailsText = $@"👤 <b>{Localization.GetPhrase(Localization.Phrase.User, arguments.TelegramUser)}:</b> {authorLink}
 —
 <b>{Localization.GetPhrase(Localization.Phrase.Name, arguments.TelegramUser)}:</b> {authorNameText}
 <b>{Localization.GetPhrase(Localization.Phrase.Username, arguments.TelegramUser)}:</b> {authorUsernameText}
