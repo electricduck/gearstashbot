@@ -123,6 +123,11 @@ namespace StashBot.Services.ScrapeServices
                 returnModel.Username = documentNode.SelectNodes("//div[contains(@class, 'main-tweet')]//a[contains(@class, 'username')]")[0].InnerText.Replace("@", "");
                 returnModel.SourceUrl = documentNode.SelectNodes("//div[contains(@class, 'nav-item')]//a[contains(@class, 'icon-bird')]")[0].Attributes["href"].Value;
 
+                if(returnModel.SourceUrl.Contains('?'))
+                {
+                    returnModel.SourceUrl = returnModel.SourceUrl.Substring(0, returnModel.SourceUrl.LastIndexOf('?'));
+                }
+
                 HtmlNodeCollection extractedImages = documentNode.SelectNodes("//div[contains(@class, 'main-tweet')]//a[contains(@class, 'still-image')]");
                 HtmlNodeCollection extractedVideos = documentNode.SelectNodes("//div[contains(@class, 'main-tweet')]//div[contains(@class, 'gallery-video')]");
 
