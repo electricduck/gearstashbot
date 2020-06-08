@@ -17,49 +17,38 @@ namespace StashBot
 
         static void Main(string[] args)
         {
-            MessageUtilities.PrintStartupMessage();
-
-            if(!File.Exists("stashbot.db"))
-            {
-                MessageUtilities.PrintWarningMessage("Database does not exist. Please run 'dotnet ef database restore' to create");
-                Environment.Exit(1);
-            }
-
-            if(!Directory.Exists("_backup"))
-            {
-                Directory.CreateDirectory("_backup");
-            }
-
-            File.Copy(
-                "stashbot.db",
-                $"_backup/stashbot_{DateTime.Now.ToString("yyyyMMddHHmmss")}.db"  
-            );
-            MessageUtilities.PrintSuccessMessage("Backed up database");
-
             try
             {
+                MessageUtilities.PrintStartupMessage();
+
+                if(!File.Exists("stashbot.db"))
+                {
+                    throw new Exception("Database does not exist. Please run 'dotnet ef database restore' to create");
+                }
+
+                MessageUtilities.PrintInfoMessage("Backing up database");
+                DbUtilities.BackupDatabase();
+
+                MessageUtilities.PrintInfoMessage("Consuming settings file");
                 SetupApp();
-                MessageUtilities.PrintSuccessMessage("Setup successful");
+
+                BotClient = new TelegramBotClient(AppSettings.ApiKeys_Telegram);
+
+                MessageUtilities.PrintInfoMessage("Connecting to Telegram");
+                if (!BotClient.TestApiAsync().Result)
+                {
+                    throw new Exception("Telegram API key invalid");
+                }
+
+                HelpData.CompileHelp();
             }
-            catch (Exception e)
+            catch(Exception e)
             {
                 MessageUtilities.PrintErrorMessage(e, Guid.Empty);
                 Environment.Exit(1);
             }
 
-            BotClient = new TelegramBotClient(AppSettings.ApiKeys_Telegram);
-
-            if (BotClient.TestApiAsync().Result)
-            {
-                MessageUtilities.PrintSuccessMessage("Telegram API key valid");
-            }
-            else
-            {
-                MessageUtilities.PrintWarningMessage("Telegram API key invalid");
-                Environment.Exit(1);
-            }
-
-            HelpData.CompileHelp();
+            MessageUtilities.PrintSuccessMessage("Initial startup successful");
 
             try
             {
@@ -84,7 +73,7 @@ namespace StashBot
                 }
                 else
                 {
-                    MessageUtilities.PrintInfoMessage("Polling has been disabled in the configuration");
+                    MessageUtilities.PrintWarningMessage("Polling has been disabled in the configuration");
                 }
             }
             catch (Exception e)
