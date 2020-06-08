@@ -32,6 +32,7 @@ namespace StashBot.Handlers.CommandHandlers
             Description = @"Post links to queue, automatically grabbing media and relevant data
 
 Supported services:
+• Flickr (https://www.flickr.com)
 • Instagram (https://www.instagram.com)
 • Twitter (https://twitter.com)"
         };
