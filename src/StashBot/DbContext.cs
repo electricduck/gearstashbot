@@ -16,6 +16,12 @@ namespace StashBot
             modelBuilder.Entity<QueueItem>()
                 .HasOne(qi => qi.Author)
                 .WithMany(a => a.QueueItems);
+
+            modelBuilder.Entity<QueueItem>()
+                .HasIndex(q => new {
+                    q.MessageId,
+                    q.SourceUrl
+                });
         }
     }
 }

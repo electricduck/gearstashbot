@@ -51,6 +51,7 @@ namespace StashBot.Handlers.CommandHandlers
 
                 if (arguments.CommandArguments != null)
                 {
+                    // TODO: Find by source URL?
                     if (arguments.CommandArguments.Length == 1)
                     {
                         Regex tMeIdRegex = new Regex(@"^(https:\/\/t.me\/)(\w+)([\/]{1})([0-9]*)$");
