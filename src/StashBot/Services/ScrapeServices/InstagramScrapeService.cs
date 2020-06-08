@@ -46,8 +46,15 @@ namespace StashBot.Services.ScrapeServices
                             username = item[0].Next["username"].ToString();
                             break;
                         case 3:
+                            if (item[2]["typename"].ToString() == "GraphVideo")
+                            {
+                                mediaType = QueueItem.MediaType.Video;
+                            }
+                            else if (item[2]["typename"].ToString() == "GraphImage")
+                            {
+                                mediaType = QueueItem.MediaType.Image;
+                            }
                             media.Add(item[1].ToString());
-                            mediaType = QueueItem.MediaType.Image;
                             hasMedia = true;
                             break;
                     }
