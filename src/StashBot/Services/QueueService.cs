@@ -180,6 +180,14 @@ namespace StashBot.Services
                 InstagramScrapeService _instagramScrapeService = new InstagramScrapeService();
                 itemToQueue = _instagramScrapeService.ScrapeInstagramUrl(url, mediaIndex);
             }
+            else if (
+                url.StartsWith("https://flickr.com") ||
+                url.StartsWith("https://www.flickr.com/")
+            )
+            {
+                FlickrScrapeService _flickrScrapeService = new FlickrScrapeService();
+                itemToQueue = _flickrScrapeService.ScrapeFlickrUrl(url, mediaIndex);
+            }
             else
             {
                 returnModel.Status = QueueServiceReturn.QueueServiceReturnStatus.ServiceNotSupported;
