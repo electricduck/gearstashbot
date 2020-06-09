@@ -28,8 +28,8 @@ namespace StashBot.Handlers.CommandHandlers
             string systemOpSys = "(Unknown OS)";
             string systemOpSysVersion = String.Empty;
             string systemTime = DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss zzz");
-            string userId = TelegramUtilities.GetUserId(arguments.TelegramMessageEvent).ToString();
-            string userLanguageCode = TelegramUtilities.GetUserLanguageCode(arguments.TelegramMessageEvent);
+            string userId = arguments.TelegramUser.Id.ToString();
+            string userLanguageCode = arguments.TelegramUser.Language.ToString();
 
             TimeSpan timeSinceStart = DateTime.Now.ToUniversalTime().Subtract(processStartTime.ToUniversalTime());
             string uptime = timeSinceStart.ToString("d'd 'h'h 'm'm 's's'");
@@ -37,6 +37,7 @@ namespace StashBot.Handlers.CommandHandlers
             int queueAmountInt = QueueData.CountQueuedQueueItems();
             string queueAmount = queueAmountInt.ToString();
             string queueApproxDays = QueueUtlities.CalculateQueueApproxDays(queueAmountInt).ToString("0.00");
+            string totalQueueAmount = QueueData.CountQueueItems().ToString();
 
             string runtime = Assembly
                 .GetEntryAssembly()?
@@ -74,6 +75,7 @@ Env.: <code>{runtime}</code>
 —
 <b>📊 Stats</b>
 Queue: <code>{queueAmount}</code> <i>(~{queueApproxDays} days)</i>
+Total: <code>{totalQueueAmount}</code>
 —
 <b>🖥️ System</b>
 Host: <code>{systemHostname}</code>
