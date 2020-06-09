@@ -39,12 +39,10 @@ namespace StashBot.Handlers.CommandHandlers
             string queueApproxDays = QueueUtlities.CalculateQueueApproxDays(queueAmountInt).ToString("0.00");
             string totalQueueAmount = QueueData.CountQueueItems().ToString();
 
-            string runtime = Assembly
+            string runtime = ParseRuntime(Assembly
                 .GetEntryAssembly()?
                 .GetCustomAttribute<TargetFrameworkAttribute>()?
-                .FrameworkName
-                .Replace(".NETCoreApp", ".NET Core")
-                .Replace(",Version=v", " ");
+                .FrameworkName);
 
             if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
             {
@@ -94,6 +92,24 @@ Language: <code>{userLanguageCode}</code>";
                 Program.BotClient,
                 arguments.TelegramMessageEvent
             );
+        }
+    
+        private static string ParseRuntime(string framework)
+        {
+            string name = "";
+            double version = Convert.ToDouble(
+                framework
+                    .Replace(".NETCoreApp,Version=v", "")
+            );
+
+            if(version >= 5.0)
+            {
+                name = ".NET";
+            } else {
+                name = ".NET Core";
+            }
+
+            return $"{name} {version.ToString("0.0")}";
         }
     }
 }
