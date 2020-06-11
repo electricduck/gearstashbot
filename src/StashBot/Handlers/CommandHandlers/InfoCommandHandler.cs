@@ -1,4 +1,5 @@
 using System;
+using Microsoft.DotNet.PlatformAbstractions;
 using StashBot.Data;
 using StashBot.Models;
 using StashBot.Models.ArgumentModels;
@@ -24,8 +25,8 @@ namespace StashBot.Handlers.CommandHandlers
             string processMemoryUsage = Convert.ToDecimal(thisProcess.WorkingSet64 / 1000000).ToString();
             DateTime processStartTime = thisProcess.StartTime;
             string systemHostname = System.Net.Dns.GetHostName();
-            string systemOpSys = "(Unknown OS)";
-            string systemOpSysVersion = String.Empty;
+            string systemOpSys = RuntimeEnvironment.OperatingSystem;
+            string systemOpSysVersion = RuntimeEnvironment.OperatingSystemVersion;
             string systemTime = DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss zzz");
             string userId = arguments.TelegramUser.Id.ToString();
             string userLanguageCode = arguments.TelegramUser.Language.ToString();
@@ -37,26 +38,6 @@ namespace StashBot.Handlers.CommandHandlers
             string queueAmount = queueAmountInt.ToString();
             string queueApproxDays = QueueUtlities.CalculateQueueApproxDays(queueAmountInt).ToString("0.00");
             string totalQueueAmount = QueueData.CountQueueItems().ToString();
-
-            if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
-            {
-                systemOpSys = "Windows";
-
-                if (System.Environment.OSVersion.Version.Build > 9600)
-                {
-                    systemOpSysVersion = "10.0." + System.Environment.OSVersion.Version.Build;
-                }
-            }
-            else if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.OSX))
-            {
-                systemOpSys = "macOS";
-                systemOpSysVersion = System.Environment.OSVersion.Version.ToString();
-            }
-            else if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux))
-            {
-                systemOpSys = "Linux";
-                systemOpSysVersion = System.Environment.OSVersion.Version.ToString();
-            }
 
             string outputText = $@"<b>StashBot</b> | {version}
 —
