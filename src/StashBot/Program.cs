@@ -1,4 +1,6 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -24,6 +26,20 @@ namespace StashBot
             {
                 MessageUtilities.PrintStartupMessage();
 
+                try
+                {
+                MessageUtilities.PrintInfoMessage("Updating required pip packages...");
+                UpdatePipPackage("gallery-dl");
+                UpdatePipPackage("youtube-dl");
+                }
+                catch (Win32Exception e)
+                {
+                    if(e.NativeErrorCode == 2)
+                    {
+                        throw new Exception("'python3' is not installed.");
+                    }
+                }
+
                 MessageUtilities.PrintInfoMessage("Migrating database...");
                 DbUtilities.MigrateDatabase();
 
@@ -43,7 +59,7 @@ namespace StashBot
 
                 HelpData.CompileHelp();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 MessageUtilities.PrintErrorMessage(e, Guid.Empty);
                 Environment.Exit(1);
@@ -58,15 +74,7 @@ namespace StashBot
                 BotClient.OnCallbackQuery += BotEventHandler.Bot_OnCallbackQuery;
                 BotClient.OnInlineQuery += BotEventHandler.Bot_OnInlineQueryRecieved;
                 BotClient.StartReceiving();
-            }
-            catch (Exception e)
-            {
-                MessageUtilities.PrintErrorMessage(e, Guid.Empty);
-                Environment.Exit(1);
-            }
 
-            try
-            {
                 if (AppSettings.Config_Poll)
                 {
                     MessageUtilities.PrintInfoMessage("Polling queue...");
@@ -84,9 +92,10 @@ namespace StashBot
 
             Thread.Sleep(int.MaxValue);
         }
-        public static void SetupApp()
+
+        private static void SetupApp()
         {
-            if(!File.Exists("appsettings.json"))
+            if (!File.Exists("appsettings.json"))
             {
                 CreateDefaultConfig();
                 throw new Exception("Settings file did not exist. Please edit 'appsettings.json' and re-run.");
@@ -121,6 +130,28 @@ namespace StashBot
 }";
 
             File.WriteAllText("appsettings.json", defaultConfig);
+        }
+
+        private static string UpdatePipPackage(string package)
+        {
+            // TODO: Handle pip not installed
+            //       Handle pip outputs
+            var process = new Process()
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = "python3",
+                    Arguments = $"-m pip install --upgrade {package}",
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                }
+            };
+            process.Start();
+            string result = process.StandardOutput.ReadToEnd();
+            process.WaitForExit();
+
+            return result;
         }
     }
 }
