@@ -37,8 +37,15 @@ namespace StashBot.Utilities
 
         public static void PrintErrorMessage(Exception e, Guid errorGuid)
         {
+            string errorMessage = errorGuid.ToString();
+
+            if(errorGuid == Guid.Empty)
+            {
+                errorMessage = "Oops!";
+            }
+
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"{RenderEmoji("🚫")}{errorGuid}");
+            Console.WriteLine($"{RenderEmoji("🚫")}{errorMessage}");
             Console.ForegroundColor = ConsoleColor.Gray;
             Console.WriteLine($"{e.Message}{Environment.NewLine}{e.StackTrace}");
             Console.ForegroundColor = ConsoleColor.White;
