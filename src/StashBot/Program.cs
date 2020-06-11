@@ -17,6 +17,8 @@ namespace StashBot
 
         static void Main(string[] args)
         {
+            Console.OutputEncoding = System.Text.Encoding.UTF8;
+
             try
             {
                 MessageUtilities.PrintStartupMessage();
