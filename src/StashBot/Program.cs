@@ -21,23 +21,21 @@ namespace StashBot
             {
                 MessageUtilities.PrintStartupMessage();
 
-                if(!File.Exists("stashbot.db"))
-                {
-                    throw new Exception("Database does not exist. Please run 'dotnet ef database restore' to create");
-                }
+                MessageUtilities.PrintInfoMessage("Migrating database...");
+                DbUtilities.MigrateDatabase();
 
-                MessageUtilities.PrintInfoMessage("Backing up database");
+                MessageUtilities.PrintInfoMessage("Backing up database...");
                 DbUtilities.BackupDatabase();
 
-                MessageUtilities.PrintInfoMessage("Consuming settings file");
+                MessageUtilities.PrintInfoMessage("Consuming settings file...");
                 SetupApp();
 
                 BotClient = new TelegramBotClient(AppSettings.ApiKeys_Telegram);
 
-                MessageUtilities.PrintInfoMessage("Connecting to Telegram");
+                MessageUtilities.PrintInfoMessage("Connecting to Telegram...");
                 if (!BotClient.TestApiAsync().Result)
                 {
-                    throw new Exception("Telegram API key invalid");
+                    throw new Exception("Telegram API key invalid.");
                 }
 
                 HelpData.CompileHelp();
@@ -52,7 +50,7 @@ namespace StashBot
 
             try
             {
-                MessageUtilities.PrintInfoMessage("Listening to messages");
+                MessageUtilities.PrintInfoMessage("Listening to messages...");
                 BotClient.OnMessage += BotEventHandler.Bot_OnMessage;
                 BotClient.OnCallbackQuery += BotEventHandler.Bot_OnCallbackQuery;
                 BotClient.OnInlineQuery += BotEventHandler.Bot_OnInlineQueryRecieved;
@@ -68,7 +66,7 @@ namespace StashBot
             {
                 if (AppSettings.Config_Poll)
                 {
-                    MessageUtilities.PrintInfoMessage("Polling queue");
+                    MessageUtilities.PrintInfoMessage("Polling queue...");
                     QueueService.PollQueue();
                 }
                 else
@@ -85,6 +83,12 @@ namespace StashBot
         }
         public static void SetupApp()
         {
+            if(!File.Exists("appsettings.json"))
+            {
+                File.Create("appsettings.json");
+                throw new Exception("Settings file did not exist. Please edit 'appsettings.json' and re-run.");
+            }
+
             IConfiguration configuration = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: false)
