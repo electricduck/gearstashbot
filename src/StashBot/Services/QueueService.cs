@@ -317,7 +317,7 @@ namespace StashBot.Services
 
         private static string GenerateStatusDateStringForAdvancedCaption(DateTime date, string statusText)
         {
-            return $"{Environment.NewLine}{GeneratorUtilities.GenerateClockEmoji(date)} <b>{statusText}:</b> {date.ToString("dd-MMM-yy hh:mm:ss zz")}";
+            return $"{Environment.NewLine}{GeneratorUtilities.GenerateClockEmoji(date)} <b>{statusText}:</b> <code>{date.ToString("dd-MMM-yy hh:mm:ss zz")}</code>";
         }
     }
 }

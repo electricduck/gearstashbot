@@ -72,8 +72,8 @@ Memory: <code>{processMemoryUsage}mb</code>
 Env.: <code>{runtime}</code>
 —
 <b>📊 Stats</b>
-Queue: <code>{queueAmount}</code> <i>(~{queueApproxDays} days)</i>
-Total: <code>{totalQueueAmount}</code>
+Queued Posts: <code>{queueAmount}</code> <i>(~{queueApproxDays} days)</i>
+Total Posts: <code>{totalQueueAmount}</code>
 —
 <b>🖥️ System</b>
 Host: <code>{systemHostname}</code>
