@@ -85,7 +85,7 @@ namespace StashBot
         {
             if(!File.Exists("appsettings.json"))
             {
-                File.Create("appsettings.json");
+                CreateDefaultConfig();
                 throw new Exception("Settings file did not exist. Please edit 'appsettings.json' and re-run.");
             }
 
@@ -99,6 +99,24 @@ namespace StashBot
             AppSettings.Config_Owner = configuration.GetSection("config")["owner"];
             AppSettings.Config_Poll = Convert.ToBoolean(configuration.GetSection("config")["poll"]);
             AppSettings.Config_PostInterval = Convert.ToInt32(configuration.GetSection("config")["postInterval"]);
+        }
+
+        private static void CreateDefaultConfig()
+        {
+            string defaultConfig = @"{
+    ""apiKeys"": {
+        ""telegram"": ""1234567890:AbC_dEfGhIjKlMnOpQrStUvWxYz""
+    },
+    ""config"": {
+        ""channel"": -1000000000000,
+        ""owner"": ""ownerUsername"",
+        ""poll"": true,
+        ""postInterval"": 30000
+    }
+}";
+
+            File.Create("appsettings.json");
+            File.WriteAllText("appsettings.json", defaultConfig);
         }
     }
 }
