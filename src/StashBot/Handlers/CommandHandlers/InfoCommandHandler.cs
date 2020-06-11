@@ -28,7 +28,8 @@ namespace StashBot.Handlers.CommandHandlers
             DateTime processStartTime = thisProcess.StartTime;
             string systemHostname = System.Net.Dns.GetHostName();
             string systemOpSys = RuntimeEnvironment.OperatingSystem
-                .Replace("debian", "Debian").Replace("ubuntu", "Ubuntu");
+                .Replace("alpine", "Alpine").Replace("debian", "Debian").Replace("elementary", "elementaryOS")
+                .Replace("ubuntu", "Ubuntu");
             string systemOpSysVersion = RuntimeEnvironment.OperatingSystemVersion;
             string systemTime = DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss zzz");
             string userId = arguments.TelegramUser.Id.ToString();

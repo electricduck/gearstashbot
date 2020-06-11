@@ -216,7 +216,6 @@ namespace StashBot.Services
             QueueData.DeleteQueueItem(id, false);
         }
 
-        // TODO: Move this to utilities
         public static GetQueueCaptionReturn GetQueueCaption(
             QueueItem queueItem,
             bool advanced = false,

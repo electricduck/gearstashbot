@@ -28,13 +28,13 @@ namespace StashBot
 
                 try
                 {
-                MessageUtilities.PrintInfoMessage("Updating required pip packages...");
-                UpdatePipPackage("gallery-dl");
-                UpdatePipPackage("youtube-dl");
+                    MessageUtilities.PrintInfoMessage("Updating required pip packages...");
+                    UpdatePipPackage("gallery-dl");
+                    UpdatePipPackage("youtube-dl");
                 }
                 catch (Win32Exception e)
                 {
-                    if(e.NativeErrorCode == 2)
+                    if (e.NativeErrorCode == 2)
                     {
                         throw new Exception("'python3' is not installed.");
                     }
