@@ -1,6 +1,4 @@
 using System;
-using System.Reflection;
-using System.Runtime.Versioning;
 using StashBot.Data;
 using StashBot.Models;
 using StashBot.Models.ArgumentModels;
@@ -21,6 +19,7 @@ namespace StashBot.Handlers.CommandHandlers
             var thisProcess = System.Diagnostics.Process.GetCurrentProcess();
 
             var version = ReflectionUtilities.GetVersion();
+            var runtime = ReflectionUtilities.GetEnvironment();
 
             string processMemoryUsage = Convert.ToDecimal(thisProcess.WorkingSet64 / 1000000).ToString();
             DateTime processStartTime = thisProcess.StartTime;
@@ -38,11 +37,6 @@ namespace StashBot.Handlers.CommandHandlers
             string queueAmount = queueAmountInt.ToString();
             string queueApproxDays = QueueUtlities.CalculateQueueApproxDays(queueAmountInt).ToString("0.00");
             string totalQueueAmount = QueueData.CountQueueItems().ToString();
-
-            string runtime = ParseRuntime(Assembly
-                .GetEntryAssembly()?
-                .GetCustomAttribute<TargetFrameworkAttribute>()?
-                .FrameworkName);
 
             if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
             {
@@ -92,24 +86,6 @@ Language: <code>{userLanguageCode}</code>";
                 Program.BotClient,
                 arguments.TelegramMessageEvent
             );
-        }
-    
-        private static string ParseRuntime(string framework)
-        {
-            string name = "";
-            double version = Convert.ToDouble(
-                framework
-                    .Replace(".NETCoreApp,Version=v", "")
-            );
-
-            if(version >= 5.0)
-            {
-                name = ".NET";
-            } else {
-                name = ".NET Core";
-            }
-
-            return $"{name} {version.ToString("0.0")}";
         }
     }
 }
