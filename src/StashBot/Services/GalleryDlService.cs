@@ -1,4 +1,3 @@
-using System;
 using System.Diagnostics;
 using Newtonsoft.Json.Linq;
 
@@ -15,7 +14,7 @@ namespace StashBot.Services
             return parsedJson;
         }
 
-        static string Invoke(string args)
+        private static string Invoke(string args)
         {
             // TODO: Handle gallery-dl not installed
             var process = new Process()

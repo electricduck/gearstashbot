@@ -14,7 +14,7 @@ namespace StashBot.Services
             return youtubeDlOutput.Trim();
         }
 
-        static string Invoke(string args)
+        private static string Invoke(string args)
         {
             // TODO: Handle gallery-dl not installed
             var process = new Process()
