@@ -117,7 +117,6 @@ namespace StashBot
     }
 }";
 
-            File.Create("appsettings.json");
             File.WriteAllText("appsettings.json", defaultConfig);
         }
     }
