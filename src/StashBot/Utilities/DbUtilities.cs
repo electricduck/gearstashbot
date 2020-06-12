@@ -8,14 +8,14 @@ namespace StashBot.Utilities
     {
         public static void BackupDatabase()
         {
-            if (!Directory.Exists("_backup"))
+            if (!Directory.Exists("config/backup"))
             {
-                Directory.CreateDirectory("_backup");
+                Directory.CreateDirectory("config/backup");
             }
 
             File.Copy(
-                "stashbot.db",
-                $"_backup/stashbot_{DateTime.Now.ToString("yyyyMMddHHmmss")}.db"
+                "config/stashbot.db",
+                $"config/backup/stashbot_{DateTime.Now.ToString("yyyyMMddHHmmss")}.db"
             );
         }
 

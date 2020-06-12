@@ -57,7 +57,7 @@ namespace StashBot.I18n.Strings
             { Localization.Phrase.Tools, "Tools" },
             { Localization.Phrase.User, "User" },
             { Localization.Phrase.Username, "Username" },
-            { Localization.Phrase.WelcomeFirstAuthor, $"<b>Welcome to StashBot, [0]!</b><br />Set your permissions with <code>/user [0]</code> (or just <code>/user</code>)." }
+            { Localization.Phrase.WelcomeFirstAuthor, $"<b>Welcome to StashBot, [0]!</b><br />Set your permissions with <code>/user [1]</code> (or just <code>/user</code>)." }
         };
     }
 }

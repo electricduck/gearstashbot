@@ -360,3 +360,4 @@ appsettings.json
 stashbot_*.db
 *.db-journal
 /build
+/src/StashBot/config
