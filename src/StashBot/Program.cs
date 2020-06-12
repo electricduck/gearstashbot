@@ -40,7 +40,7 @@ namespace StashBot
                     }
                 }
 
-                MessageUtilities.PrintInfoMessage("Consuming settings file...");
+                MessageUtilities.PrintInfoMessage("Setting up app...");
                 SetupApp();
 
                 MessageUtilities.PrintInfoMessage("Migrating database...");
