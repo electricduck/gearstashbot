@@ -1,17 +1,14 @@
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-alpine3.11 AS build-env
 WORKDIR /app
-
-# Copy csproj and restore as distinct layers
 COPY *.csproj ./
 RUN dotnet restore
-
-# Copy everything else and build
 COPY . ./
 RUN dotnet publish -c Release -o out
 
-# Build runtime image
 FROM mcr.microsoft.com/dotnet/core/runtime:3.1-alpine3.11
 RUN apk add --no-cache python3 py3-pip
 WORKDIR /app
 COPY --from=build-env /app/out .
+VOLUME /app/config
+
 ENTRYPOINT ["dotnet", "StashBot.dll"]
