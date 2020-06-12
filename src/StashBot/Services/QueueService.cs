@@ -159,7 +159,8 @@ namespace StashBot.Services
 
             if (
                 url.StartsWith("https://mobile.twitter.com") ||
-                url.StartsWith("https://twitter.com")
+                url.StartsWith("https://twitter.com") ||
+                url.StartsWith("https://nitter.net")
             )
             {
                 TwitterScrapeService _twitterScrapeService = new TwitterScrapeService();
