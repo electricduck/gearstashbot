@@ -9,7 +9,7 @@ namespace StashBot
         public DbSet<QueueItem> Queue { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
-            => options.UseSqlite("Data Source=stashbot.db");
+            => options.UseSqlite("Data Source=config/stashbot.db");
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

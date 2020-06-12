@@ -40,14 +40,14 @@ namespace StashBot
                     }
                 }
 
+                MessageUtilities.PrintInfoMessage("Consuming settings file...");
+                SetupApp();
+
                 MessageUtilities.PrintInfoMessage("Migrating database...");
                 DbUtilities.MigrateDatabase();
 
                 MessageUtilities.PrintInfoMessage("Backing up database...");
                 DbUtilities.BackupDatabase();
-
-                MessageUtilities.PrintInfoMessage("Consuming settings file...");
-                SetupApp();
 
                 BotClient = new TelegramBotClient(AppSettings.ApiKeys_Telegram);
 
@@ -95,15 +95,20 @@ namespace StashBot
 
         private static void SetupApp()
         {
-            if (!File.Exists("appsettings.json"))
+            if(!Directory.Exists("config/"))
+            {
+                Directory.CreateDirectory("config/");
+            }
+
+            if (!File.Exists("config/appsettings.json"))
             {
                 CreateDefaultConfig();
-                throw new Exception("Settings file did not exist. Please edit 'appsettings.json' and re-run.");
+                throw new Exception("Settings file did not exist. Please edit 'config/appsettings.json' and re-run.");
             }
 
             IConfiguration configuration = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: false)
+                .AddJsonFile("config/appsettings.json", optional: true, reloadOnChange: false)
                 .Build();
 
             AppSettings.ApiKeys_Telegram = configuration.GetSection("apiKeys")["telegram"];
@@ -129,7 +134,7 @@ namespace StashBot
     }
 }";
 
-            File.WriteAllText("appsettings.json", defaultConfig);
+            File.WriteAllText("config/appsettings.json", defaultConfig);
         }
 
         private static string UpdatePipPackage(string package)
