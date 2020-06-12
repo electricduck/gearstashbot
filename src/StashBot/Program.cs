@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using CommandLine;
 using Microsoft.Extensions.Configuration;
 using Telegram.Bot;
 using StashBot.Data;
@@ -18,9 +19,18 @@ namespace StashBot
     {
         public static ITelegramBotClient BotClient;
 
+        public class Options
+        {
+            [Option('c', "config", Required = false, HelpText = "Location of configuration directory", Default = "config")]
+            public string ConfigDirectory { get; set; }
+        }
+
         static void Main(string[] args)
         {
+            ParseCommandLineArguments(args);
             Console.OutputEncoding = System.Text.Encoding.UTF8;
+
+            Console.WriteLine(AppArguments.ConfigDirectory);
 
             try
             {
@@ -93,22 +103,32 @@ namespace StashBot
             Thread.Sleep(int.MaxValue);
         }
 
+        private static void ParseCommandLineArguments(string[] arguments)
+        {
+            Parser.Default.ParseArguments<Options>(arguments)
+                .WithParsed<Options>(o =>
+                {
+                    AppArguments.ConfigDirectory = o.ConfigDirectory
+                        .Replace("\\", "/"); // TODO: Parse this safer
+                });
+        }
+
         private static void SetupApp()
         {
-            if(!Directory.Exists("config/"))
+            if(!Directory.Exists($"{AppArguments.ConfigDirectory}/"))
             {
-                Directory.CreateDirectory("config/");
+                Directory.CreateDirectory($"{AppArguments.ConfigDirectory}/");
             }
 
-            if (!File.Exists("config/appsettings.json"))
+            if (!File.Exists($"{AppArguments.ConfigDirectory}/appsettings.json"))
             {
                 CreateDefaultConfig();
-                throw new Exception("Settings file did not exist. Please edit 'config/appsettings.json' and re-run.");
+                throw new Exception($"Settings file did not exist. Please edit '{AppArguments.ConfigDirectory}/appsettings.json' and re-run.");
             }
 
             IConfiguration configuration = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("config/appsettings.json", optional: true, reloadOnChange: false)
+                .AddJsonFile($"{AppArguments.ConfigDirectory}/appsettings.json", optional: true, reloadOnChange: false)
                 .Build();
 
             AppSettings.ApiKeys_Telegram = configuration.GetSection("apiKeys")["telegram"];
@@ -134,7 +154,7 @@ namespace StashBot
     }
 }";
 
-            File.WriteAllText("config/appsettings.json", defaultConfig);
+            File.WriteAllText($"{AppArguments.ConfigDirectory}/appsettings.json", defaultConfig);
         }
 
         private static string UpdatePipPackage(string package)

@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using Microsoft.EntityFrameworkCore;
+using StashBot.Models;
 
 namespace StashBot.Utilities
 {
@@ -9,14 +10,14 @@ namespace StashBot.Utilities
         // TODO: Compare MD5sum of previous backup so we're not creating useless backups
         public static void BackupDatabase()
         {
-            if (!Directory.Exists("config/backup"))
+            if (!Directory.Exists($"{AppArguments.ConfigDirectory}/backup"))
             {
-                Directory.CreateDirectory("config/backup");
+                Directory.CreateDirectory($"{AppArguments.ConfigDirectory}/backup");
             }
 
             File.Copy(
-                "config/stashbot.db",
-                $"config/backup/stashbot_{DateTime.Now.ToString("yyyyMMddHHmmss")}.db"
+                $"{AppArguments.ConfigDirectory}/stashbot.db",
+                $"{AppArguments.ConfigDirectory}/backup/stashbot_{DateTime.Now.ToString("yyyyMMddHHmmss")}.db"
             );
         }
 
