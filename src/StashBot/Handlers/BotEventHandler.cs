@@ -98,9 +98,8 @@ namespace StashBot.Handlers
 
         public static void Bot_OnCallbackQuery(object sender, CallbackQueryEventArgs telegramCallbackQueryEvent)
         {
-            var t = Task.Run(async () =>
+            Task.Run(async () =>
             {
-
                 CommandHandlerArguments arguments = new CommandHandlerArguments { };
 
                 try

@@ -21,7 +21,7 @@ namespace StashBot
 
         public class Options
         {
-            [Option('c', "config", Required = false, HelpText = "Location of configuration directory", Default = "config")]
+            [Option('c', "confdir", Required = false, HelpText = "Location of configuration directory", Default = "config")]
             public string ConfigDirectory { get; set; }
         }
 
