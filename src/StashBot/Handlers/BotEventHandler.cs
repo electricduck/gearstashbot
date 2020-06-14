@@ -96,62 +96,67 @@ namespace StashBot.Handlers
             });
         }
 
-        public async static void Bot_OnCallbackQuery(object sender, CallbackQueryEventArgs telegramCallbackQueryEvent)
+        public static void Bot_OnCallbackQuery(object sender, CallbackQueryEventArgs telegramCallbackQueryEvent)
         {
-            CommandHandlerArguments arguments = new CommandHandlerArguments { };
-
-            try
+            var t = Task.Run(async () =>
             {
-                Regex commandAndArgumentsRegex = new Regex(@"^([a-z_]{1,100})([:]){0,1}([\/a-zA-Z0-9_:.,-@ ]*)$");
-                Match parsedCommand = commandAndArgumentsRegex.Match(telegramCallbackQueryEvent.CallbackQuery.Data);
 
-                arguments.Command = parsedCommand.Groups[1].Value;
-                arguments.CommandArguments = parsedCommand.Groups[3].Value.Split(":");
-                arguments.TelegramCallbackQueryEvent = telegramCallbackQueryEvent;
-                arguments.TelegramUser = TelegramUtilities.GetTelegramUser(telegramCallbackQueryEvent);
+                CommandHandlerArguments arguments = new CommandHandlerArguments { };
 
-                switch (arguments.Command)
+                try
                 {
-                    case "tools_flush":
-                        await ToolsCommandHandler.InvokeFlush(arguments);
-                        break;
-                    case "tools_purgeusers":
-                        ToolsCommandHandler.InvokePurgeUsers(arguments);
-                        break;
-                    case "tools_refreshprofile":
-                        await ToolsCommandHandler.InvokeRefreshProfile(arguments);
-                        break;
-                    case "user_perm":
-                        await UserCommandHandler.InvokeSetPermission(arguments);
-                        break;
-                    case "view_del":
-                        await ViewCommandHandler.InvokeDelete(arguments);
-                        break;
-                    case "view_nav":
-                        await ViewCommandHandler.InvokeChange(arguments);
-                        break;
+                    Regex commandAndArgumentsRegex = new Regex(@"^([a-z_]{1,100})([:]){0,1}([\/a-zA-Z0-9_:.,-@ ]*)$");
+                    Match parsedCommand = commandAndArgumentsRegex.Match(telegramCallbackQueryEvent.CallbackQuery.Data);
+
+                    arguments.Command = parsedCommand.Groups[1].Value;
+                    arguments.CommandArguments = parsedCommand.Groups[3].Value.Split(":");
+                    arguments.TelegramCallbackQueryEvent = telegramCallbackQueryEvent;
+                    arguments.TelegramUser = TelegramUtilities.GetTelegramUser(telegramCallbackQueryEvent);
+
+                    switch (arguments.Command)
+                    {
+                        case "tools_flush":
+                            await ToolsCommandHandler.InvokeFlush(arguments);
+                            break;
+                        case "tools_purgeusers":
+                            ToolsCommandHandler.InvokePurgeUsers(arguments);
+                            break;
+                        case "tools_refreshprofile":
+                            await ToolsCommandHandler.InvokeRefreshProfile(arguments);
+                            break;
+                        case "user_perm":
+                            await UserCommandHandler.InvokeSetPermission(arguments);
+                            break;
+                        case "view_del":
+                            await ViewCommandHandler.InvokeDelete(arguments);
+                            break;
+                        case "view_nav":
+                            await ViewCommandHandler.InvokeChange(arguments);
+                            break;
+                    }
                 }
-            }
-            catch (ArgumentException)
-            {
-                MessageUtilities.SendWarningMessage(
-                    Localization.GetPhrase(
+                catch (ArgumentException)
+                {
+                    MessageUtilities.SendWarningMessage(
+                        Localization.GetPhrase(
                             Localization.Phrase.InvalidArgsSeeHelp,
                             arguments.TelegramUser,
                             new string[] {
-                                arguments.Command
+                            arguments.Command
                             }
                         ),
-                        arguments.TelegramCallbackQueryEvent);
-            }
-            catch (CommandHandlerException e)
-            {
-                MessageUtilities.SendWarningMessage(e.Message, arguments.TelegramCallbackQueryEvent);
-            }
-            catch (Exception e)
-            {
-                MessageUtilities.SendErrorMessage(e, arguments.TelegramCallbackQueryEvent);
-            }
+                        arguments.TelegramCallbackQueryEvent
+                    );
+                }
+                catch (CommandHandlerException e)
+                {
+                    MessageUtilities.SendWarningMessage(e.Message, arguments.TelegramCallbackQueryEvent);
+                }
+                catch (Exception e)
+                {
+                    MessageUtilities.SendErrorMessage(e, arguments.TelegramCallbackQueryEvent);
+                }
+            });
         }
 
         public static void Bot_OnInlineQueryRecieved(object sender, InlineQueryEventArgs inlineQueryEventArgs)

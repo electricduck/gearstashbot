@@ -82,55 +82,54 @@ namespace StashBot.Handlers.CommandHandlers
 
         public static void InvokePurgeUsers(CommandHandlerArguments arguments)
         {
+            System.Threading.Thread.Sleep(5000);
+
             if (AuthorData.DoesAuthorExist(arguments.TelegramUser))
             {
                 if (AuthorData.CanAuthorManageAuthors(arguments.TelegramUser.Id))
                 {
-                    Task.Run(() =>
+                    try
                     {
-                        try
+                        List<Author> allAuthors = AuthorData.GetAuthors();
+                        List<Author> authorsToDelete = new List<Author>();
+
+                        foreach (var author in allAuthors)
                         {
-                            List<Author> allAuthors = AuthorData.GetAuthors();
-                            List<Author> authorsToDelete = new List<Author>();
+                            int queueItemAmount = author.QueueItems.Count;
 
-                            foreach (var author in allAuthors)
+                            if (
+                                author.CanDeleteOthers == false &&
+                                author.CanFlushQueue == false &&
+                                author.CanManageAuthors == false &&
+                                author.CanQueue == false &&
+                                queueItemAmount == 0
+                            )
                             {
-                                int queueItemAmount = author.QueueItems.Count;
-
-                                if (
-                                    author.CanDeleteOthers == false &&
-                                    author.CanFlushQueue == false &&
-                                    author.CanManageAuthors == false &&
-                                    author.CanQueue == false &&
-                                    queueItemAmount == 0
-                                )
-                                {
-                                    authorsToDelete.Add(author);
-                                }
+                                authorsToDelete.Add(author);
                             }
+                        }
 
-                            if (authorsToDelete.Count == 0)
-                            {
-                                MessageUtilities.AlertWarningMessage(Localization.GetPhrase(Localization.Phrase.NoDanglingUsers, arguments.TelegramUser), arguments.TelegramCallbackQueryEvent);
-                            }
-                            else
-                            {
-                                AuthorData.DeleteAuthorRange(authorsToDelete);
-                                MessageUtilities.AlertSuccessMessage(Localization.GetPhrase(
-                                    Localization.Phrase.FlushedXDanglingUsers,
-                                    arguments.TelegramUser,
-                                    new string[] {
+                        if (authorsToDelete.Count == 0)
+                        {
+                            MessageUtilities.AlertWarningMessage(Localization.GetPhrase(Localization.Phrase.NoDanglingUsers, arguments.TelegramUser), arguments.TelegramCallbackQueryEvent);
+                        }
+                        else
+                        {
+                            AuthorData.DeleteAuthorRange(authorsToDelete);
+                            MessageUtilities.AlertSuccessMessage(Localization.GetPhrase(
+                                Localization.Phrase.FlushedXDanglingUsers,
+                                arguments.TelegramUser,
+                                new string[] {
                                         authorsToDelete.Count.ToString()
-                                    }
-                                ),
-                                arguments.TelegramCallbackQueryEvent);
-                            }
+                                }
+                            ),
+                            arguments.TelegramCallbackQueryEvent);
                         }
-                        catch (Exception e)
-                        {
-                            MessageUtilities.SendErrorMessage(e, arguments.TelegramCallbackQueryEvent);
-                        }
-                    });
+                    }
+                    catch (Exception e)
+                    {
+                        MessageUtilities.SendErrorMessage(e, arguments.TelegramCallbackQueryEvent);
+                    }
                 }
                 else
                 {
