@@ -82,8 +82,6 @@ namespace StashBot.Handlers.CommandHandlers
 
         public static void InvokePurgeUsers(CommandHandlerArguments arguments)
         {
-            System.Threading.Thread.Sleep(5000);
-
             if (AuthorData.DoesAuthorExist(arguments.TelegramUser))
             {
                 if (AuthorData.CanAuthorManageAuthors(arguments.TelegramUser.Id))
