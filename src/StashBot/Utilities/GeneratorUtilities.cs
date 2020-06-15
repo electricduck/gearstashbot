@@ -4,6 +4,8 @@ namespace StashBot.Utilities
 {
     public class GeneratorUtilities
     {
+        private static Random random = new Random();
+
         public static string GenerateClockEmoji(DateTime date)
         {
             switch(date.Hour)
@@ -50,9 +52,16 @@ namespace StashBot.Utilities
             return "";
         }
     
+        public static DateTime GenerateDateBetweenRange(DateTime start, DateTime end)
+        {
+            
+            int range = (end - start).Days;
+            return start.AddDays(random.Next(range));
+        }
+
         public static int GenerateRandomNumber(int minValue, int maxValue)
         {
-            return new Random().Next( minValue, maxValue );
+            return random.Next(minValue, maxValue);
         }
     }
 }
