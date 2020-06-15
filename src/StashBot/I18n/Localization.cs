@@ -66,13 +66,14 @@ namespace StashBot.I18n
         }
 
         public enum Phrase
-        {   // Next: 55
+        {   // Next: 59
             AlreadyBeenQueued = 11,
             Author = 40,
             CannotDeleteXFromChannel = 22,
             CannotFetchFile = 54,
             CannotFindAuthor = 17,
             CannotFindMessageX = 24,
+            CannotPostTemporarilyDueToLongRunningRequest = 57,
             CannotRemovePermissionFromSelf = 32,
             CreatedNewAuthor = 15,
             Delete = 8,
@@ -102,6 +103,7 @@ namespace StashBot.I18n
             NoPermissionFlushRemovedPosts = 48,
             NoPermissionManageUsers = 31,
             NoPermissionPostQueue = 14,
+            NoPermissionRandomizeQueue = 56,
             NoPermissionRemovePost = 9,
             NoPermissionTools = 46,
             NoPermissionViewQueue = 2,
@@ -111,6 +113,8 @@ namespace StashBot.I18n
             ProfileUpdated = 29,
             Queue = 33,
             Queued = 37,
+            RandomizeQueue = 55,
+            RandomizedQueue = 58,
             RefreshProfile = 42,
             RefreshedProfileHelloX = 52,
             ServiceNotSupported = 13,

@@ -120,6 +120,9 @@ namespace StashBot.Handlers
                         case "tools_purgeusers":
                             ToolsCommandHandler.InvokePurgeUsers(arguments);
                             break;
+                        case "tools_randomizequeue":
+                            await ToolsCommandHandler.InvokeRandomizeQueue(arguments);
+                            break;
                         case "tools_refreshprofile":
                             await ToolsCommandHandler.InvokeRefreshProfile(arguments);
                             break;
@@ -133,19 +136,6 @@ namespace StashBot.Handlers
                             await ViewCommandHandler.InvokeChange(arguments);
                             break;
                     }
-                }
-                catch (ArgumentException)
-                {
-                    MessageUtilities.SendWarningMessage(
-                        Localization.GetPhrase(
-                            Localization.Phrase.InvalidArgsSeeHelp,
-                            arguments.TelegramUser,
-                            new string[] {
-                            arguments.Command
-                            }
-                        ),
-                        arguments.TelegramCallbackQueryEvent
-                    );
                 }
                 catch (CommandHandlerException e)
                 {

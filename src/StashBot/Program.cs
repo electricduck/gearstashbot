@@ -30,8 +30,6 @@ namespace StashBot
             ParseCommandLineArguments(args);
             Console.OutputEncoding = System.Text.Encoding.UTF8;
 
-            Console.WriteLine(AppArguments.ConfigDirectory);
-
             try
             {
                 MessageUtilities.PrintStartupMessage();

@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using StashBot;
 
 namespace StashBot.Migrations
 {
     [DbContext(typeof(StashBotDbContext))]
-    partial class StashBotDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200615210955_Modify_Author_003")]
+    partial class Modify_Author_003
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

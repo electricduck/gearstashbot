@@ -52,11 +52,13 @@ namespace StashBot.Utilities
             return "";
         }
     
-        public static DateTime GenerateDateBetweenRange(DateTime start, DateTime end)
-        {
-            
-            int range = (end - start).Days;
-            return start.AddDays(random.Next(range));
+        public static DateTime GenerateDateBetweenRange(DateTime startDate, DateTime endDate)
+        {            
+            TimeSpan timeSpan = endDate - startDate;
+            TimeSpan newSpan = new TimeSpan(0, 0, random.Next(0, (int)timeSpan.TotalSeconds));
+            DateTime newDate = startDate + newSpan;
+
+            return newDate;
         }
 
         public static int GenerateRandomNumber(int minValue, int maxValue)

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using StashBot.Models;
+using StashBot.Utilities;
 
 namespace StashBot.Data
 {
@@ -193,6 +194,35 @@ namespace StashBot.Data
                     .ToList();
 
                 return items;
+            }
+        }
+
+        public static List<QueueItem> RandomizeQueuedQueueItems()
+        {
+            using (var db = new StashBotDbContext())
+            {
+                List<QueueItem> ramdomizedQueuedItems = new List<QueueItem>();
+
+                var queuedItems = db.Queue
+                    .Include(q => q.Author)
+                    .Where(q => q.Status == QueueItem.QueueStatus.Queued)
+                    .OrderBy(q => q.QueuedAt)
+                    .ToList();
+
+                DateTime startDate = queuedItems.First().QueuedAt;
+                DateTime endDate = queuedItems.Last().QueuedAt;
+
+                foreach(var queueItem in queuedItems)
+                {
+                    var randomDate = GeneratorUtilities.GenerateDateBetweenRange(startDate, endDate);
+                    queueItem.QueuedAt = randomDate;
+                    ramdomizedQueuedItems.Add(queueItem);
+                }
+
+                db.UpdateRange(ramdomizedQueuedItems);
+                db.SaveChanges();
+                
+                return ramdomizedQueuedItems;
             }
         }
 
