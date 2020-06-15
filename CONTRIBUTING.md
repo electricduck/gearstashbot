@@ -40,6 +40,7 @@ This repository is now using so-called "semantic commit messages". Commit messag
         * **Do not use** "change", "make", or "update" (exception being when updating libraries)
         * Don't capatalize the first letter
         * Don't put a period (`.`) at the end
+    * Multiple changes should be separate with a `;` (semi-colon)
  * `{5}` **Additional details** _(optional)_: Extra paragraph(s) if extra details are required
 
 ##### Examples
@@ -47,7 +48,7 @@ This repository is now using so-called "semantic commit messages". Commit messag
   * `🧱 build(ci): add Github workflow for .NET Core`
   * `📝 chore: bump version to 1.2.3`
   * `📝 chore(nuget): update awesomelib to 3.0.0`
-  * `📖 docs(readme): modify build process outline`
+  * `📖 docs(readme): modify build process outline; fix spelling mistake`
   * `🛠 fix: [#234] improve performance of database`
   * `🌍 i18n: fix incorrect spelling`
   * `🆕 feat(api): [#321] add API endpoint for getting users`
