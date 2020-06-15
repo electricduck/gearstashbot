@@ -6,7 +6,11 @@ This repository is now using so-called "semantic commit messages". Commit messag
 
 ##### Message fomat
 
-`{1}[{2}]: [{3}] {4}`
+```
+{1}[{2}]: [{3}] {4}
+
+[{5}]
+```
 
  * `{1}` **Type**
     * `🧱 build`: Modificications to tasks for build/release process (e.g. Dockerfile, Github Actions, etc.)
@@ -38,6 +42,7 @@ This repository is now using so-called "semantic commit messages". Commit messag
         * **Do not use** "change", "make", or "update" (exception being when updating libraries)
         * Don't capatalize the first letter
         * Don't put a period (`.`) at the end
+ * `{5}` **Additional details** _(optional)_: Extra paragraph(s) if extra details are required
 
 ##### Examples
 
