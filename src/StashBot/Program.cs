@@ -146,7 +146,7 @@ namespace StashBot
     ""config"": {
         ""channel"": -1000000000000,
         ""name"": ""StashBot"",
-        ""owner"": ""ownerUsername"",
+        ""owner"": ""OopsIForgotToSetTheOwner"",
         ""poll"": true,
         ""postInterval"": 30000
     }
