@@ -169,6 +169,20 @@ namespace StashBot.Data
             }
         }
 
+        public static List<QueueItem> ListDeletedQueueItems()
+        {
+            using (var db = new StashBotDbContext())
+            {
+                var items = db.Queue
+                    .Include(q => q.Author)
+                    .Where(q => q.Status == QueueItem.QueueStatus.Deleted)
+                    .OrderByDescending(q => q.DeletedAt)
+                    .ToList();
+
+                return items;
+            }
+        }
+
         public static List<QueueItem> ListPostedQueueItems()
         {
             using (var db = new StashBotDbContext())

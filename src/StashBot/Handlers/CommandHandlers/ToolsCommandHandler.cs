@@ -35,10 +35,6 @@ namespace StashBot.Handlers.CommandHandlers
                     },
                     new []
                     {
-                        InlineKeyboardButton.WithCallbackData($"🚽 {Localization.GetPhrase(Localization.Phrase.FlushRemovedPosts, arguments.TelegramUser)}", $"tools_flush"),
-                    },
-                    new []
-                    {
                         InlineKeyboardButton.WithCallbackData($"🔫 {Localization.GetPhrase(Localization.Phrase.FlushDanglingUsers, arguments.TelegramUser)}", $"tools_purgeusers")
                     }
                 });
@@ -57,26 +53,6 @@ namespace StashBot.Handlers.CommandHandlers
             {
                 throw new CommandHandlerException(Localization.GetPhrase(Localization.Phrase.NoPermissionTools, arguments.TelegramUser));
                 //await HandleNoPermission(arguments);
-            }
-        }
-
-        public async static Task InvokeFlush(CommandHandlerArguments arguments)
-        {
-            if (AuthorData.DoesAuthorExist(arguments.TelegramUser))
-            {
-                if (AuthorData.CanAuthorFlushQueue(arguments.TelegramUser.Id))
-                {
-                    QueueData.DeleteRemovedQueueItems();
-                    MessageUtilities.AlertSuccessMessage(Localization.GetPhrase(Localization.Phrase.FlushedRemovedPosts, arguments.TelegramUser), arguments.TelegramCallbackQueryEvent);
-                }
-                else
-                {
-                    MessageUtilities.AlertWarningMessage(Localization.GetPhrase(Localization.Phrase.NoPermissionFlushRemovedPosts, arguments.TelegramUser), arguments.TelegramCallbackQueryEvent);
-                }
-            }
-            else
-            {
-                await HandleNoPermission(arguments);
             }
         }
 

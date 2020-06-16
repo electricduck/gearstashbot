@@ -268,11 +268,11 @@ namespace StashBot.Handlers.CommandHandlers
                 },
                 new []
                 {
-                    InlineKeyboardButton.WithCallbackData($"{canRandomizeQueueStatus} Randomize Queue", $"user_perm:{author.TelegramId}:CanRandomizeQueue:{!author.CanRandomizeQueue}")
+                    InlineKeyboardButton.WithCallbackData($"{canFlushQueueStatus} {Localization.GetPhrase(Localization.Phrase.FlushQueue, user)}", $"user_perm:{author.TelegramId}:CanFlushQueue:{!author.CanFlushQueue}")
                 },
                 new []
                 {
-                    InlineKeyboardButton.WithCallbackData($"{canFlushQueueStatus} {Localization.GetPhrase(Localization.Phrase.FlushQueue, user)}", $"user_perm:{author.TelegramId}:CanFlushQueue:{!author.CanFlushQueue}")
+                    InlineKeyboardButton.WithCallbackData($"{canRandomizeQueueStatus} {Localization.GetPhrase(Localization.Phrase.RandomizeQueue, user)}", $"user_perm:{author.TelegramId}:CanRandomizeQueue:{!author.CanRandomizeQueue}")
                 },
                 new []
                 {

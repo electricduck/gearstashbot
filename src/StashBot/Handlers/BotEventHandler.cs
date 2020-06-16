@@ -114,9 +114,6 @@ namespace StashBot.Handlers
 
                     switch (arguments.Command)
                     {
-                        case "tools_flush":
-                            await ToolsCommandHandler.InvokeFlush(arguments);
-                            break;
                         case "tools_purgeusers":
                             ToolsCommandHandler.InvokePurgeUsers(arguments);
                             break;
@@ -131,6 +128,9 @@ namespace StashBot.Handlers
                             break;
                         case "view_del":
                             await ViewCommandHandler.InvokeDelete(arguments);
+                            break;
+                        case "view_list":
+                            await ViewCommandHandler.InvokeList(arguments);
                             break;
                         case "view_nav":
                             await ViewCommandHandler.InvokeChange(arguments);
