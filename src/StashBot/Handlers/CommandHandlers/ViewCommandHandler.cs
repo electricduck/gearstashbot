@@ -61,7 +61,7 @@ namespace StashBot.Handlers.CommandHandlers
                         {
                             int messageId = Convert.ToInt32(parsedTMeId.Groups[4].Value);
 
-                            NavigateToSingle(
+                            NavigateToMessageId(
                                 arguments.TelegramMessageEvent.Message.Chat.Id,
                                 arguments.TelegramMessageEvent.Message.MessageId,
                                 arguments.TelegramUser,
@@ -125,115 +125,165 @@ namespace StashBot.Handlers.CommandHandlers
         {
             if (AuthorData.CanAuthorQueue(arguments.TelegramUser.Id))
             {
-                var queueItemsData = GetQueueItemsData(
-                    arguments.TelegramUser,
-                    GetQueueItemStatusEnum(arguments.CommandArguments[1]),
-                    Convert.ToInt32(arguments.CommandArguments[0]));
-                var authorId = arguments.TelegramUser.Id;
-
-                bool allowedToDeleteThisQueueItem = false;
-
-                var statusText = "";
-
-                if (AuthorData.CanAuthorQueue(authorId))
+                if (!Constants.IsPostingDisabled)
                 {
-                    if (queueItemsData.SelectedQueuedItem.Author.TelegramId == authorId)
+                    var queueItemsData = GetQueueItemsData(
+                        arguments.TelegramUser,
+                        GetQueueItemStatusEnum(arguments.CommandArguments[1]),
+                        Convert.ToInt32(arguments.CommandArguments[0]));
+                    var authorId = arguments.TelegramUser.Id;
+
+                    bool allowedToDeleteThisQueueItem = false;
+
+                    var statusText = "";
+
+                    if(queueItemsData.SelectedQueuedItem.Status != QueueItem.QueueStatus.Deleted)
                     {
-                        allowedToDeleteThisQueueItem = true;
+                        if (AuthorData.CanAuthorQueue(authorId))
+                        {
+                            if (queueItemsData.SelectedQueuedItem.Author.TelegramId == authorId)
+                            {
+                                allowedToDeleteThisQueueItem = true;
+                            }
+                            else
+                            {
+                                if (AuthorData.CanAuthorDeleteOthers(authorId))
+                                {
+                                    allowedToDeleteThisQueueItem = true;
+                                }
+                            }
+                        }
                     }
                     else
                     {
-                        if (AuthorData.CanAuthorDeleteOthers(authorId))
+                        if(AuthorData.CanAuthorFlushQueue(authorId))
                         {
                             allowedToDeleteThisQueueItem = true;
                         }
                     }
-                }
 
-                if (allowedToDeleteThisQueueItem)
-                {
-                    statusText = MessageUtilities.CreateSuccessMessage(
-                        Localization.GetPhrase(Localization.Phrase.DeletedFromQueue, arguments.TelegramUser)
-                    );
-
-                    if (queueItemsData.SelectedQueuedItem.Status == QueueItem.QueueStatus.Posted)
+                    if (allowedToDeleteThisQueueItem)
                     {
-                        try
-                        {
+                        statusText = (queueItemsData.SelectedQueuedItem.Status != QueueItem.QueueStatus.Deleted) ?
+                            MessageUtilities.CreateSuccessMessage(Localization.GetPhrase(Localization.Phrase.Deleted, arguments.TelegramUser)) :
+                            MessageUtilities.CreateSuccessMessage(Localization.GetPhrase(Localization.Phrase.Purged, arguments.TelegramUser));
 
-                            if (queueItemsData.SelectedQueuedItem.MessageId != 0)
+                        if (queueItemsData.SelectedQueuedItem.Status == QueueItem.QueueStatus.Posted)
+                        {
+                            try
                             {
-                                await Program.BotClient.DeleteMessageAsync(
-                                    chatId: Models.AppSettings.Config_ChannelId,
-                                    messageId: Convert.ToInt32(queueItemsData.SelectedQueuedItem.MessageId)
-                                );
-                                statusText = MessageUtilities.CreateSuccessMessage(
-                                    Localization.GetPhrase(
-                                        Localization.Phrase.DeletedXFromChannel,
-                                        arguments.TelegramUser,
-                                        new string[] {
+
+                                if (queueItemsData.SelectedQueuedItem.MessageId != 0)
+                                {
+                                    await Program.BotClient.DeleteMessageAsync(
+                                        chatId: Models.AppSettings.Config_ChannelId,
+                                        messageId: Convert.ToInt32(queueItemsData.SelectedQueuedItem.MessageId)
+                                    );
+                                    statusText = MessageUtilities.CreateSuccessMessage(
+                                        Localization.GetPhrase(
+                                            Localization.Phrase.DeletedXFromChannel,
+                                            arguments.TelegramUser,
+                                            new string[] {
                                         queueItemsData.SelectedQueuedItem.MessageId.ToString()
-                                        }
-                                    )
-                                );
+                                            }
+                                        )
+                                    );
+                                }
+                                else
+                                {
+                                    statusText = MessageUtilities.CreateWarningMessage(
+                                        Localization.GetPhrase(
+                                            Localization.Phrase.CannotDeleteXFromChannel,
+                                            arguments.TelegramUser,
+                                            new string[] {
+                                        queueItemsData.SelectedQueuedItem.MessageId.ToString()
+                                            }
+                                        )
+                                    );
+                                }
                             }
-                            else
+                            catch (Exception e)
                             {
+                                MessageUtilities.PrintErrorMessage(e, Guid.Empty);
                                 statusText = MessageUtilities.CreateWarningMessage(
                                     Localization.GetPhrase(
                                         Localization.Phrase.CannotDeleteXFromChannel,
                                         arguments.TelegramUser,
                                         new string[] {
-                                        queueItemsData.SelectedQueuedItem.MessageId.ToString()
+                                    queueItemsData.SelectedQueuedItem.MessageId.ToString()
                                         }
                                     )
                                 );
                             }
                         }
-                        catch (Exception e)
+                    }
+                    else
+                    {
+                        statusText = (queueItemsData.SelectedQueuedItem.Status != QueueItem.QueueStatus.Deleted) ?
+                            MessageUtilities.CreateWarningMessage(Localization.GetPhrase(Localization.Phrase.NoPermissionRemovePost, arguments.TelegramUser)) :
+                            MessageUtilities.CreateWarningMessage(Localization.GetPhrase(Localization.Phrase.NoPermissionPurgePost, arguments.TelegramUser));
+                    }
+
+                    await Program.BotClient.AnswerCallbackQueryAsync(
+                        callbackQueryId: arguments.TelegramCallbackQueryEvent.CallbackQuery.Id,
+                        text: statusText
+                    );
+
+                    if (allowedToDeleteThisQueueItem)
+                    {
+                        bool purge = (queueItemsData.SelectedQueuedItem.Status == QueueItem.QueueStatus.Deleted) ? true : false;
+                        QueueService.RemoveQueueItem(queueItemsData.SelectedQueuedItem.Id, purge);
+
+                        int idToNavigateTo = queueItemsData.PreviousQueuedItem.Id;
+
+                        if (queueItemsData.IsEarliestItem)
                         {
-                            MessageUtilities.PrintErrorMessage(e, Guid.Empty);
-                            statusText = MessageUtilities.CreateWarningMessage(
-                                Localization.GetPhrase(
-                                    Localization.Phrase.CannotDeleteXFromChannel,
-                                    arguments.TelegramUser,
-                                    new string[] {
-                                    queueItemsData.SelectedQueuedItem.MessageId.ToString()
-                                    }
-                                )
-                            );
+                            idToNavigateTo = queueItemsData.NextQueuedItem.Id;
                         }
+
+                        await NavigateTo(
+                            arguments.TelegramCallbackQueryEvent.CallbackQuery.Message.Chat.Id,
+                            arguments.TelegramCallbackQueryEvent.CallbackQuery.Message.MessageId,
+                            arguments.TelegramUser,
+                            arguments.CommandArguments[1],
+                            idToNavigateTo
+                        );
                     }
                 }
                 else
                 {
-                    statusText = MessageUtilities.CreateWarningMessage(Localization.GetPhrase(Localization.Phrase.NoPermissionRemovePost, arguments.TelegramUser));
-                }
-
-                await Program.BotClient.AnswerCallbackQueryAsync(
-                    callbackQueryId: arguments.TelegramCallbackQueryEvent.CallbackQuery.Id,
-                    text: statusText
-                );
-
-                if (allowedToDeleteThisQueueItem)
-                {
-                    QueueService.RemoveQueueItem(queueItemsData.SelectedQueuedItem.Id);
-
-                    int idToNavigateTo = queueItemsData.PreviousQueuedItem.Id;
-
-                    if (queueItemsData.IsEarliestItem)
-                    {
-                        idToNavigateTo = queueItemsData.NextQueuedItem.Id;
-                    }
-
-                    await NavigateTo(
-                        arguments.TelegramCallbackQueryEvent.CallbackQuery.Message.Chat.Id,
-                        arguments.TelegramCallbackQueryEvent.CallbackQuery.Message.MessageId,
-                        arguments.TelegramUser,
-                        arguments.CommandArguments[1],
-                        idToNavigateTo
+                    await Program.BotClient.AnswerCallbackQueryAsync(
+                        callbackQueryId: arguments.TelegramCallbackQueryEvent.CallbackQuery.Id,
+                        text: MessageUtilities.CreateWarningMessage(
+                            Localization.GetPhrase(Localization.Phrase.CannotDeleteTemporarilyDueToLongRunningRequest, arguments.TelegramUser)
+                        )
                     );
                 }
+            }
+            else
+            {
+                await Program.BotClient.DeleteMessageAsync(
+                    chatId: arguments.TelegramCallbackQueryEvent.CallbackQuery.Message.Chat.Id,
+                    messageId: arguments.TelegramCallbackQueryEvent.CallbackQuery.Message.MessageId
+                );
+
+                throw new CommandHandlerException(Localization.GetPhrase(Localization.Phrase.NoPermissionViewQueue, arguments.TelegramUser));
+            }
+        }
+
+        public static async Task InvokeList(CommandHandlerArguments arguments)
+        {
+            if (AuthorData.CanAuthorQueue(arguments.TelegramUser.Id))
+            {
+                await Program.BotClient.EditMessageReplyMarkupAsync(
+                    chatId: arguments.TelegramCallbackQueryEvent.CallbackQuery.Message.Chat.Id,
+                    messageId: arguments.TelegramCallbackQueryEvent.CallbackQuery.Message.MessageId,
+                    replyMarkup: GenerateListKeyboard(
+                        GetQueueItemStatusEnum(arguments.CommandArguments[1]),
+                        Convert.ToInt32(arguments.CommandArguments[0]),
+                        arguments.TelegramUser
+                    )
+                );
             }
             else
             {
@@ -259,6 +309,8 @@ namespace StashBot.Handlers.CommandHandlers
             bool isLookingAtPosted = (status == QueueItem.QueueStatus.Posted) ? true : false;
             bool isLookingAtQueued = (status == QueueItem.QueueStatus.Queued) ? true : false;
 
+            string currentlyViewingString = GetStringFromStatus(status, user);
+
             return new InlineKeyboardMarkup(new[]
             {
                 GenerateNavigationKeyboardButtons(
@@ -274,11 +326,34 @@ namespace StashBot.Handlers.CommandHandlers
                     currentId,
                     user
                 ),
-                GenerateStatusKeyboardButtons(
-                    user,
-                    isLookingAtPosted,
-                    isLookingAtQueued
-                )
+                new[]
+                {
+                    InlineKeyboardButton.WithCallbackData($"👀 {Localization.GetPhrase(Localization.Phrase.Viewing, user)}: {currentlyViewingString}", $"view_list:{currentId}:{status.ToString()}")
+                }
+            });
+        }
+
+        private static InlineKeyboardMarkup GenerateListKeyboard(
+            QueueItem.QueueStatus status,
+            int currentId,
+            TelegramUser user,
+            bool emptyQueue = false
+        )
+        {
+            string exitButtonString = emptyQueue ?
+                $"🔄 {Localization.GetPhrase(Localization.Phrase.Retry, user)}" :
+                $"◀️ {Localization.GetPhrase(Localization.Phrase.Back, user)}";
+
+            return new InlineKeyboardMarkup(new[]
+            {
+                new[] {
+                    InlineKeyboardButton.WithCallbackData($"📤 {Localization.GetPhrase(Localization.Phrase.Queued, user)}", "view_nav:0:Queued"),
+                    InlineKeyboardButton.WithCallbackData($"📥 {Localization.GetPhrase(Localization.Phrase.Posted, user)}", "view_nav:0:Posted"),
+                    InlineKeyboardButton.WithCallbackData($"🗑 {Localization.GetPhrase(Localization.Phrase.Deleted, user)}", "view_nav:0:Deleted")
+                },
+                new[] {
+                    InlineKeyboardButton.WithCallbackData($"{exitButtonString}", $"view_nav:{currentId}:{status.ToString()}")
+                }
             });
         }
 
@@ -291,11 +366,27 @@ namespace StashBot.Handlers.CommandHandlers
             var statusText = status.ToString();
 
             var deleteString = Localization.GetPhrase(Localization.Phrase.Delete, user);
+            var purgeString = Localization.GetPhrase(Localization.Phrase.Purge, user);
 
-            return new[]
+            switch (status)
             {
-                InlineKeyboardButton.WithCallbackData($"🗑 {deleteString}", $"view_del:{currentId}:{status.ToString()}")
-            };
+                case QueueItem.QueueStatus.Deleted:
+                    return new[]
+                    {
+                        InlineKeyboardButton.WithCallbackData($"💥 {purgeString}", $"view_del:{currentId}:{status.ToString()}")
+                    };
+                case QueueItem.QueueStatus.Posted:
+                    return new[]
+                    {
+                        InlineKeyboardButton.WithCallbackData($"🗑 {deleteString}", $"view_del:{currentId}:{status.ToString()}")/*,
+                        InlineKeyboardButton.WithCallbackData($"📬 {postNowString}", $"view_post:{currentId}:{status.ToString()}")*/
+                    };
+                default:
+                    return new[]
+                    {
+                        InlineKeyboardButton.WithCallbackData($"🗑 {deleteString}", $"view_del:{currentId}:{status.ToString()}")
+                    };
+            }
         }
 
         private static InlineKeyboardButton[] GenerateNavigationKeyboardButtons(
@@ -332,32 +423,6 @@ namespace StashBot.Handlers.CommandHandlers
             };
         }
 
-        private static InlineKeyboardButton[] GenerateStatusKeyboardButtons(
-            TelegramUser user,
-            bool postedStatus = false,
-            bool queuedStatus = false
-        )
-        {
-            const string tick = "✔️ ";
-
-            string postedStatusIcon = "📥 ";
-            string queuedStatusIcon = "📤 ";
-
-            string action = "nav";
-
-            if (postedStatus || queuedStatus)
-            {
-                postedStatusIcon = postedStatus ? tick : null;
-                queuedStatusIcon = queuedStatus ? tick : null;
-            }
-
-            return new[]
-            {
-                InlineKeyboardButton.WithCallbackData($"{queuedStatusIcon}{Localization.GetPhrase(Localization.Phrase.Queued, user)}", $"view_{action}:0:Queued"),
-                InlineKeyboardButton.WithCallbackData($"{postedStatusIcon}{Localization.GetPhrase(Localization.Phrase.Posted, user)}", $"view_{action}:0:Posted")
-            };
-        }
-
         private static GetQueueItemsDataReturn GetQueueItemsData(TelegramUser user, QueueItem.QueueStatus status, int id = 0)
         {
             GetQueueItemsDataReturn returnModel = new GetQueueItemsDataReturn { };
@@ -366,6 +431,9 @@ namespace StashBot.Handlers.CommandHandlers
 
             switch (status)
             {
+                case QueueItem.QueueStatus.Deleted:
+                    queue = QueueData.ListDeletedQueueItems();
+                    break;
                 case QueueItem.QueueStatus.Posted:
                     queue = QueueData.ListPostedQueueItems();
                     break;
@@ -429,6 +497,29 @@ namespace StashBot.Handlers.CommandHandlers
             return status;
         }
 
+        private static string GetStringFromStatus(
+            QueueItem.QueueStatus status,
+            TelegramUser user
+        )
+        {
+            Localization.Phrase phrase = Localization.Phrase.Queued;
+
+            switch (status)
+            {
+                case QueueItem.QueueStatus.Deleted:
+                    phrase = Localization.Phrase.Deleted;
+                    break;
+                case QueueItem.QueueStatus.Posted:
+                    phrase = Localization.Phrase.Posted;
+                    break;
+                case QueueItem.QueueStatus.Queued:
+                    phrase = Localization.Phrase.Queued;
+                    break;
+            }
+
+            return Localization.GetPhrase(phrase, user);
+        }
+
         private static async Task HandleEmptyQueue(
             long chatId,
             int messageId,
@@ -448,27 +539,23 @@ namespace StashBot.Handlers.CommandHandlers
 
             switch (status)
             {
+                case QueueItem.QueueStatus.Deleted:
+                    caption = Localization.GetPhrase(Localization.Phrase.NothingIsDeleted, user);
+                    break;
                 case QueueItem.QueueStatus.Posted:
-                    caption = MessageUtilities.CreateWarningMessage(
-                        Localization.GetPhrase(Localization.Phrase.NothingIsPosted, user)
-                    );
+                    caption = Localization.GetPhrase(Localization.Phrase.NothingIsPosted, user);
                     break;
                 case QueueItem.QueueStatus.Queued:
                 default:
-                    caption = MessageUtilities.CreateWarningMessage(
-                        Localization.GetPhrase(Localization.Phrase.NothingIsQueued, user)
-                    );
+                    caption = Localization.GetPhrase(Localization.Phrase.NothingIsQueued, user);
                     break;
             }
 
             await Program.BotClient.EditMessageCaptionAsync(
-                caption: caption,
+                caption: MessageUtilities.CreateWarningMessage(caption),
                 chatId: chatId,
                 messageId: messageId,
-                replyMarkup: new InlineKeyboardMarkup(new[]
-                {
-                    GenerateStatusKeyboardButtons(user)
-                }),
+                replyMarkup: GenerateListKeyboard(status, 0, user, true),
                 parseMode: ParseMode.Html
             );
         }
@@ -522,7 +609,7 @@ namespace StashBot.Handlers.CommandHandlers
                 }
                 catch (Exception e)
                 {
-                    switch(e.Message)
+                    switch (e.Message)
                     {
                         case "Bad Request: MEDIA_EMPTY":
                         case "Bad Request: WEBPAGE_CURL_FAILED":
@@ -535,7 +622,7 @@ namespace StashBot.Handlers.CommandHandlers
                                 messageId: messageId
                             );
 
-                            string errorMessage =  Localization.GetPhrase(
+                            string errorMessage = Localization.GetPhrase(
                                 Localization.Phrase.CannotFetchFile,
                                 user,
                                 new string[] {
@@ -565,7 +652,7 @@ namespace StashBot.Handlers.CommandHandlers
             }
         }
 
-        private static async Task NavigateToSingle(
+        private static async Task NavigateToMessageId(
             long chatId,
             int messageId,
             TelegramUser user,

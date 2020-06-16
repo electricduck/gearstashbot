@@ -165,6 +165,10 @@ namespace StashBot.Handlers.CommandHandlers
                         AuthorData.SetAuthorQueuePermission(author.TelegramId, setting);
                         author.CanQueue = setting;
                         break;
+                    case "CanRandomizeQueue":
+                        AuthorData.SetAuthorRandomizeQueuePermission(author.TelegramId, setting);
+                        author.CanRandomizeQueue = setting;
+                        break;
                 }
 
                 if (settingUpdated)
@@ -250,6 +254,7 @@ namespace StashBot.Handlers.CommandHandlers
             string canFlushQueueStatus = author.CanFlushQueue ? tick : cross;
             string canManageAuthorsStatus = author.CanManageAuthors ? tick : cross;
             string canQueueStatus = author.CanQueue ? tick : cross;
+            string canRandomizeQueueStatus = author.CanRandomizeQueue ? tick : cross;
 
             return new InlineKeyboardMarkup(new[]
             {
@@ -264,6 +269,10 @@ namespace StashBot.Handlers.CommandHandlers
                 new []
                 {
                     InlineKeyboardButton.WithCallbackData($"{canFlushQueueStatus} {Localization.GetPhrase(Localization.Phrase.FlushQueue, user)}", $"user_perm:{author.TelegramId}:CanFlushQueue:{!author.CanFlushQueue}")
+                },
+                new []
+                {
+                    InlineKeyboardButton.WithCallbackData($"{canRandomizeQueueStatus} {Localization.GetPhrase(Localization.Phrase.RandomizeQueue, user)}", $"user_perm:{author.TelegramId}:CanRandomizeQueue:{!author.CanRandomizeQueue}")
                 },
                 new []
                 {

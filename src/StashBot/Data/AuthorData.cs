@@ -64,6 +64,20 @@ namespace StashBot.Data
             }
         }
 
+        public static bool CanAuthorRandomizeQueue(long telegramId)
+        {
+            Author author = GetAuthor(telegramId, false);
+
+            if (author == null)
+            {
+                return false;
+            }
+            else
+            {
+                return author.CanRandomizeQueue;
+            }
+        }
+
         public static Author CreateAuthor(int telegramId)
         {
             TelegramUser user = new TelegramUser
@@ -296,6 +310,20 @@ namespace StashBot.Data
                 Author author = db.Authors
                     .FirstOrDefault(a => a.TelegramId == telegramId);
                 author.CanManageAuthors = canManageAuthors;
+                db.SaveChanges();
+            }
+        }
+
+        public static void SetAuthorRandomizeQueuePermission(
+            long telegramId,
+            bool canRandomizeQueue
+        )
+        {
+            using (var db = new StashBotDbContext())
+            {
+                Author author = db.Authors
+                    .FirstOrDefault(a => a.TelegramId == telegramId);
+                author.CanRandomizeQueue = canRandomizeQueue;
                 db.SaveChanges();
             }
         }

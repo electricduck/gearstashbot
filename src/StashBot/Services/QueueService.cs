@@ -211,10 +211,11 @@ namespace StashBot.Services
         }
 
         public static void RemoveQueueItem(
-            int id
+            int id,
+            bool purge
         )
         {
-            QueueData.DeleteQueueItem(id, false);
+            QueueData.DeleteQueueItem(id, purge);
         }
 
         public static GetQueueCaptionReturn GetQueueCaption(

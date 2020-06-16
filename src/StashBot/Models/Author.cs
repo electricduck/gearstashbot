@@ -20,6 +20,7 @@ namespace StashBot.Models
         public bool CanFlushQueue { get; set; } = false;
         public bool CanManageAuthors { get; set; } = false;
         public bool CanQueue { get; set; } = false;
+        public bool CanRandomizeQueue { get; set; } = false;
 
         public DateTime TelegramDetailsLastUpdatedAt { get; set; }
 

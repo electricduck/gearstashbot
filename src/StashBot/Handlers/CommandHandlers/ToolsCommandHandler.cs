@@ -31,7 +31,7 @@ namespace StashBot.Handlers.CommandHandlers
                     },
                     new []
                     {
-                        InlineKeyboardButton.WithCallbackData($"🚽 {Localization.GetPhrase(Localization.Phrase.FlushRemovedPosts, arguments.TelegramUser)}", $"tools_flush"),
+                        InlineKeyboardButton.WithCallbackData($"🔀 {Localization.GetPhrase(Localization.Phrase.RandomizeQueue, arguments.TelegramUser)}", $"tools_randomizequeue"),
                     },
                     new []
                     {
@@ -52,95 +52,60 @@ namespace StashBot.Handlers.CommandHandlers
             else
             {
                 throw new CommandHandlerException(Localization.GetPhrase(Localization.Phrase.NoPermissionTools, arguments.TelegramUser));
+                //await HandleNoPermission(arguments);
             }
         }
 
-        public async static Task InvokeFlush(CommandHandlerArguments arguments)
-        {
-            if (AuthorData.DoesAuthorExist(arguments.TelegramUser))
-            {
-                if (AuthorData.CanAuthorFlushQueue(arguments.TelegramUser.Id))
-                {
-                    QueueData.DeleteRemovedQueueItems();
-                    MessageUtilities.AlertSuccessMessage(Localization.GetPhrase(Localization.Phrase.FlushedRemovedPosts, arguments.TelegramUser), arguments.TelegramCallbackQueryEvent);
-                }
-                else
-                {
-                    MessageUtilities.AlertWarningMessage(Localization.GetPhrase(Localization.Phrase.NoPermissionFlushRemovedPosts, arguments.TelegramUser), arguments.TelegramCallbackQueryEvent);
-                }
-            }
-            else
-            {
-                await Program.BotClient.DeleteMessageAsync(
-                    chatId: arguments.TelegramCallbackQueryEvent.CallbackQuery.Message.Chat.Id,
-                    messageId: arguments.TelegramCallbackQueryEvent.CallbackQuery.Message.MessageId
-                );
-
-                throw new CommandHandlerException(Localization.GetPhrase(Localization.Phrase.NoPermissionTools, arguments.TelegramUser));
-            }
-        }
-
-        public static void InvokePurgeUsers(CommandHandlerArguments arguments)
+        public async static void InvokePurgeUsers(CommandHandlerArguments arguments)
         {
             if (AuthorData.DoesAuthorExist(arguments.TelegramUser))
             {
                 if (AuthorData.CanAuthorManageAuthors(arguments.TelegramUser.Id))
                 {
-                    Task.Run(() =>
+                    List<Author> allAuthors = AuthorData.GetAuthors();
+                    List<Author> authorsToDelete = new List<Author>();
+
+                    foreach (var author in allAuthors)
                     {
-                        try
+                        int queueItemAmount = author.QueueItems.Count;
+
+                        if (
+                            author.CanDeleteOthers == false &&
+                            author.CanFlushQueue == false &&
+                            author.CanManageAuthors == false &&
+                            author.CanQueue == false &&
+                            queueItemAmount == 0
+                        )
                         {
-                            List<Author> allAuthors = AuthorData.GetAuthors();
-                            List<Author> authorsToDelete = new List<Author>();
+                            authorsToDelete.Add(author);
+                        }
+                    }
 
-                            foreach (var author in allAuthors)
-                            {
-                                int queueItemAmount = author.QueueItems.Count;
-
-                                if (
-                                    author.CanDeleteOthers == false &&
-                                    author.CanFlushQueue == false &&
-                                    author.CanManageAuthors == false &&
-                                    author.CanQueue == false &&
-                                    queueItemAmount == 0
-                                )
-                                {
-                                    authorsToDelete.Add(author);
-                                }
-                            }
-
-                            if (authorsToDelete.Count == 0)
-                            {
-                                MessageUtilities.AlertWarningMessage(Localization.GetPhrase(Localization.Phrase.NoDanglingUsers, arguments.TelegramUser), arguments.TelegramCallbackQueryEvent);
-                            }
-                            else
-                            {
-                                AuthorData.DeleteAuthorRange(authorsToDelete);
-                                MessageUtilities.AlertSuccessMessage(Localization.GetPhrase(
-                                    Localization.Phrase.FlushedXDanglingUsers,
-                                    arguments.TelegramUser,
-                                    new string[] {
+                    if (authorsToDelete.Count == 0)
+                    {
+                        MessageUtilities.AlertWarningMessage(Localization.GetPhrase(Localization.Phrase.NoDanglingUsers, arguments.TelegramUser), arguments.TelegramCallbackQueryEvent);
+                    }
+                    else
+                    {
+                        AuthorData.DeleteAuthorRange(authorsToDelete);
+                        MessageUtilities.AlertSuccessMessage(Localization.GetPhrase(
+                            Localization.Phrase.FlushedXDanglingUsers,
+                            arguments.TelegramUser,
+                            new string[] {
                                         authorsToDelete.Count.ToString()
-                                    }
-                                ),
-                                arguments.TelegramCallbackQueryEvent);
                             }
-                        }
-                        catch (Exception e)
-                        {
-                            MessageUtilities.SendErrorMessage(e, arguments.TelegramCallbackQueryEvent);
-                        }
-                    });
+                        ),
+                        arguments.TelegramCallbackQueryEvent);
+                    }
                 }
                 else
                 {
                     MessageUtilities.AlertWarningMessage(Localization.GetPhrase(Localization.Phrase.NoPermissionFlushDanglingUsers, arguments.TelegramUser), arguments.TelegramCallbackQueryEvent);
-                    //throw new CommandHandlerAlertException("You do not have permission to purge dangling users");
                 }
             }
             else
             {
-                throw new CommandHandlerException(Localization.GetPhrase(Localization.Phrase.NoPermissionTools, arguments.TelegramUser));
+                await HandleNoPermission(arguments);
             }
         }
 
@@ -160,13 +125,46 @@ namespace StashBot.Handlers.CommandHandlers
             }
             else
             {
+                await HandleNoPermission(arguments);
+            }
+        }
+
+        public async static Task InvokeRandomizeQueue(CommandHandlerArguments arguments)
+        {
+            if (AuthorData.DoesAuthorExist(arguments.TelegramUser))
+            {
+                if (AuthorData.CanAuthorRandomizeQueue(arguments.TelegramUser.Id))
+                {
+                    Constants.IsPostingDisabled = true;
+                    QueueData.RandomizeQueuedQueueItems();
+                    Constants.IsPostingDisabled = false;
+                    MessageUtilities.AlertSuccessMessage(Localization.GetPhrase(Localization.Phrase.RandomizedQueue, arguments.TelegramUser), arguments.TelegramCallbackQueryEvent);
+                }
+                else
+                {
+                    MessageUtilities.AlertWarningMessage(Localization.GetPhrase(Localization.Phrase.NoPermissionRandomizeQueue, arguments.TelegramUser), arguments.TelegramCallbackQueryEvent);
+                }
+            }
+            else
+            {
+                await HandleNoPermission(arguments);
+            }
+        }
+
+        private async static Task HandleNoPermission(
+            CommandHandlerArguments arguments,
+            Localization.Phrase phrase = Localization.Phrase.NoPermissionTools
+        )
+        {
+            if (arguments.TelegramCallbackQueryEvent != null)
+            {
                 await Program.BotClient.DeleteMessageAsync(
                     chatId: arguments.TelegramCallbackQueryEvent.CallbackQuery.Message.Chat.Id,
                     messageId: arguments.TelegramCallbackQueryEvent.CallbackQuery.Message.MessageId
                 );
-
-                throw new CommandHandlerException(Localization.GetPhrase(Localization.Phrase.NoPermissionTools, arguments.TelegramUser));
             }
+
+            throw new CommandHandlerException(Localization.GetPhrase(phrase, arguments.TelegramUser));
         }
     }
 }
