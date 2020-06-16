@@ -18,7 +18,7 @@ There are three ways you can download StashBot:
 
 The first two methods will produce a portable singe-file binary that can be placed anywhere. It will create its needed files on first run; more details below. StashBot **can't currently update itself** or warn of newer versions: this is something that will be implemented at a later date.
 
-The latest release of StashBot is **20.0.0-beta4**, released on 12th June 2020.
+The latest release of StashBot is **20.0.0-beta5**, released on 12th June 2020.
 
 ## 🤖 Setting up the bot
 
