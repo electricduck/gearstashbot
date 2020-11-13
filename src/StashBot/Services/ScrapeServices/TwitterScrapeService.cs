@@ -45,13 +45,16 @@ namespace StashBot.Services.ScrapeServices
                             extracted.Username = item[0].Next["user"]["name"].ToString();
                             break;
                         case 3:
+                            switch(item[2]["extension"].ToString()) {
+                                case "jpg":
+                                case "jpeg":
+                                    extracted.Type = QueueItem.MediaType.Image;
+                                    break;
+                                case "mp4":
+                                    extracted.Type = QueueItem.MediaType.Video;
+                                    break;
+                            }
                             extracted.Media.Add(item[1].ToString());
-                            extracted.Type = QueueItem.MediaType.Video;
-                            extracted.HasMedia = true;
-                            break;
-                        case 7:
-                            extracted.Media.Add(item[1][0].ToString().Replace(":orig", ""));
-                            extracted.Type = QueueItem.MediaType.Image;
                             extracted.HasMedia = true;
                             break;
                     }
