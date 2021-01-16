@@ -17,7 +17,7 @@ namespace GearstashBot.Utilities
 
             File.Copy(
                 $"{AppArguments.ConfigDirectory}/gearstashbot.db",
-                $"{AppArguments.ConfigDirectory}/backup/stashbot_{DateTime.Now.ToString("yyyyMMddHHmmss")}.db"
+                $"{AppArguments.ConfigDirectory}/backup/gearstashbot_{DateTime.Now.ToString("yyyyMMddHHmmss")}.db"
             );
         }
 
