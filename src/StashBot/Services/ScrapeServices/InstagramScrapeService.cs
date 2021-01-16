@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using StashBot.Models;
+using GearstashBot.Models;
 
-namespace StashBot.Services.ScrapeServices
+namespace GearstashBot.Services.ScrapeServices
 {
     public class InstagramScrapeService
     {

@@ -1,13 +1,12 @@
 using System;
-using System.IO;
 using Microsoft.DotNet.PlatformAbstractions;
-using StashBot.Data;
-using StashBot.Models;
-using StashBot.Models.ArgumentModels;
-using StashBot.Services;
-using StashBot.Utilities;
+using GearstashBot.Data;
+using GearstashBot.Models;
+using GearstashBot.Models.ArgumentModels;
+using GearstashBot.Services;
+using GearstashBot.Utilities;
 
-namespace StashBot.Handlers.CommandHandlers
+namespace GearstashBot.Handlers.CommandHandlers
 {
     public class InfoCommandHandler
     {
@@ -45,23 +44,13 @@ namespace StashBot.Handlers.CommandHandlers
             string usersAmount = AuthorData.CountAuthors().ToString();
 
             string name = AppSettings.Config_Name;
-            string descriptionPartial = "";
             string owner = AppSettings.Config_Owner;
-
-            if (name == "StashBot")
-            {
-                descriptionPartial = "A lovely Telegram bot for queuing posts for a channel.";
-            }
-            else
-            {
-                descriptionPartial = "This bot is powered by <b>StashBot</b>; a lovely self-hosted Telegram bot for queuing posts for a channel.";
-            }
 
             string outputText = $@"<b>{name}</b> | {version}
 —
-<i>{descriptionPartial} Code can be found <a href=""https://github.com/electricduck/stashbot"">on Github</a>, licensed under <a href=""https://ducky.mit-license.org/"">MIT</a>. This particular instance is ran by {owner}.</i>
-
 <i>There is <b>{queueAmount} queued posts</b>, amounting to approximately <b>{queueApproxDays} days</b>; with <b>{totalQueueAmount} total posts</b>, and <b>{usersAmount} users</b>. <b>{Constants.Cats} cats</b> have been generated.</i> 
+
+<i>Code can be found <a href=""https://github.com/electricduck/gearstashbot"">on Github</a>, licensed under <a href=""https://ducky.mit-license.org/"">MIT</a>. This particular instance is ran by {owner}.</i>
 —
 <b>🤖 Bot</b>
 Memory: <code>{processMemoryUsage}mb</code>

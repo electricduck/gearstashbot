@@ -1,5 +1,5 @@
 
-namespace StashBot.Models
+namespace GearstashBot.Models
 {
     public class HelpArgument
     {

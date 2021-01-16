@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace StashBot.I18n.Strings
+namespace GearstashBot.I18n.Strings
 {
     public class EnStrings
     {
@@ -69,7 +69,7 @@ namespace StashBot.I18n.Strings
             { Localization.Phrase.User, "User" },
             { Localization.Phrase.Username, "Username" },
             { Localization.Phrase.Viewing, "Viewing" },
-            { Localization.Phrase.WelcomeFirstAuthor, $"<b>Welcome to StashBot, [0]!</b><br />Set your permissions with <code>/user [1]</code> (or just <code>/user</code>)." }
+            { Localization.Phrase.WelcomeFirstAuthor, $"<b>Welcome to GearstashBot, [0]!</b><br />Set your permissions with <code>/user [1]</code> (or just <code>/user</code>)." }
         };
     }
 }

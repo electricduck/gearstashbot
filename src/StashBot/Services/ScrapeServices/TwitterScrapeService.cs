@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using HtmlAgilityPack;
-using StashBot.Models;
-using StashBot.Utilities;
+using GearstashBot.Models;
+using GearstashBot.Utilities;
 
-namespace StashBot.Services.ScrapeServices
+namespace GearstashBot.Services.ScrapeServices
 {
     public class TwitterScrapeService
     {

@@ -5,13 +5,13 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": ".NET Core Launch (StashBot)",
+            "name": ".NET Core Launch (GearstashBot)",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/StashBot/bin/Debug/netcoreapp3.1/StashBot.dll",
+            "program": "${workspaceFolder}/src/GearstashBot/bin/Debug/netcoreapp3.1/GearstashBot.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/src/StashBot",
+            "cwd": "${workspaceFolder}/src/GearstashBot",
             "console": "internalConsole",
             "stopAtEntry": false
         },

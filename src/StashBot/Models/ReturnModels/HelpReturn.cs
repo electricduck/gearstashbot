@@ -1,5 +1,5 @@
 
-namespace StashBot.Models.ReturnModels
+namespace GearstashBot.Models.ReturnModels
 {
     public class HelpReturn
     {

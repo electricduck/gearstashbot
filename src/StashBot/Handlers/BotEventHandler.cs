@@ -2,13 +2,13 @@ using System;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Telegram.Bot.Args;
-using StashBot.Exceptions;
-using StashBot.Handlers.CommandHandlers;
-using StashBot.I18n;
-using StashBot.Models.ArgumentModels;
-using StashBot.Utilities;
+using GearstashBot.Exceptions;
+using GearstashBot.Handlers.CommandHandlers;
+using GearstashBot.I18n;
+using GearstashBot.Models.ArgumentModels;
+using GearstashBot.Utilities;
 
-namespace StashBot.Handlers
+namespace GearstashBot.Handlers
 {
     public class BotEventHandler
     {

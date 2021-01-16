@@ -2,9 +2,9 @@
 
 ## 📦 Getting the latest release
 
-There are three ways you can download StashBot:
+There are three ways you can download GearstashBot:
 
- * Downloading [a release from Github](https://github.com/electricduck/stashbot/releases)
+ * Downloading [a release from Github](https://github.com/electricduck/gearstashbot/releases)
     * Supported platforms are:
         * Windows (7 or above), on x86_64 (`win-x64`) or ARM64 (`win-arm64`)
         * Windows Server (2008 R2 or above), on on x86_64 (`win-x64`) or ARM64 (`win-arm64`)
@@ -14,11 +14,11 @@ There are three ways you can download StashBot:
           * Currently, macOS builds have **not been tested**, but there is no reason that these shouldn't work as intended
  * Building it yourself, either manually, or using the the `BuildReleases.ps1` tool found in `./tools/`
     * Platforms that do not have downloads but are [listed as being supported by .NET Core](https://docs.microsoft.com/en-us/dotnet/core/rid-catalog) (such as x86/32-bit or ARMv7 builds, or older macOS versions) must be built by you
- * Running it via Docker, using the provided `Dockerfile` found in `./src/StashBot/`
+ * Running it via Docker, using the provided `Dockerfile` found in `./src/GearstashBot/`
 
-The first two methods will produce a portable singe-file binary that can be placed anywhere. It will create its needed files on first run; more details below. StashBot **can't currently update itself** or warn of newer versions: this is something that will be implemented at a later date.
+The first two methods will produce a portable singe-file binary that can be placed anywhere. It will create its needed files on first run; more details below. GearstashBot **can't currently update itself** or warn of newer versions: this is something that will be implemented at a later date.
 
-The latest release of StashBot is **20.0.0-beta5**, released on 12th June 2020.
+The latest release of GearstashBot is **20.0.0-beta5**, released on 12th June 2020.
 
 ## 🤖 Setting up the bot
 
@@ -47,7 +47,7 @@ Depending on the app you're using, adding the bot as an administrator is differe
 To run, open the directory in a terminal and call the binary at the prompt, like
 
 ```
-$ ./StashBot-x.x.x-xxx-xxx.bin
+$ ./GearstashBot-x.x.x-xxx-xxx.bin
 ```
 
 _See **Command line arguments** for a list of extra options_
@@ -73,7 +73,7 @@ Once configured, subsequent runs will connect to Telegram; along with updating t
    * `name` _(optional)_ — The name of the bot
      * This is visible in `/info`
      * Its reccomended to set this to the same name as your bot
-     * Omitting this defaults to **StashBot**
+     * Omitting this defaults to **GearstashBot**
    * `owner` — Your, or whoever owns the bots', username on Telegram
      * This is visible in `/info`, giving users someone to contact for help
      * This is also visible whenever an errors occurs, recommending the user forwards it on to you
@@ -116,4 +116,4 @@ _(Todo)_
 
 ## 💥 Problems?
 
-Please submit any problems to the [issue tracker on Github](https://github.com/electricduck/stashbot/issues), or [contact @theducky on Telegram](https://t.me/theducky).
+Please submit any problems to the [issue tracker on Github](https://github.com/electricduck/gearstashbot/issues), or [contact @theducky on Telegram](https://t.me/theducky).

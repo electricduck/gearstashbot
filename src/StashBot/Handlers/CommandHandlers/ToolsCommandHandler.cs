@@ -2,15 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Bot.Types.ReplyMarkups;
-using StashBot.Exceptions;
-using StashBot.Data;
-using StashBot.I18n;
-using StashBot.Models;
-using StashBot.Models.ArgumentModels;
-using StashBot.Services;
-using StashBot.Utilities;
+using GearstashBot.Exceptions;
+using GearstashBot.Data;
+using GearstashBot.I18n;
+using GearstashBot.Models;
+using GearstashBot.Models.ArgumentModels;
+using GearstashBot.Services;
+using GearstashBot.Utilities;
 
-namespace StashBot.Handlers.CommandHandlers
+namespace GearstashBot.Handlers.CommandHandlers
 {
     public class ToolsCommandHandler
     {
@@ -83,12 +83,12 @@ namespace StashBot.Handlers.CommandHandlers
 
                     if (authorsToDelete.Count == 0)
                     {
-                        MessageUtilities.AlertWarningMessage(Localization.GetPhrase(Localization.Phrase.NoDanglingUsers, arguments.TelegramUser), arguments.TelegramCallbackQueryEvent);
+                        MessageUtilities.SendWarningAlert(Localization.GetPhrase(Localization.Phrase.NoDanglingUsers, arguments.TelegramUser), arguments.TelegramCallbackQueryEvent);
                     }
                     else
                     {
                         AuthorData.DeleteAuthorRange(authorsToDelete);
-                        MessageUtilities.AlertSuccessMessage(Localization.GetPhrase(
+                        MessageUtilities.SendSuccessAlert(Localization.GetPhrase(
                             Localization.Phrase.FlushedXDanglingUsers,
                             arguments.TelegramUser,
                             new string[] {
@@ -100,7 +100,7 @@ namespace StashBot.Handlers.CommandHandlers
                 }
                 else
                 {
-                    MessageUtilities.AlertWarningMessage(Localization.GetPhrase(Localization.Phrase.NoPermissionFlushDanglingUsers, arguments.TelegramUser), arguments.TelegramCallbackQueryEvent);
+                    MessageUtilities.SendWarningAlert(Localization.GetPhrase(Localization.Phrase.NoPermissionFlushDanglingUsers, arguments.TelegramUser), arguments.TelegramCallbackQueryEvent);
                 }
             }
             else
@@ -114,7 +114,7 @@ namespace StashBot.Handlers.CommandHandlers
             if (AuthorData.DoesAuthorExist(arguments.TelegramUser))
             {
                 Author refreshedAuthor = AuthorData.UpdateAuthorTelegramProfile(arguments.TelegramUser);
-                MessageUtilities.AlertSuccessMessage(Localization.GetPhrase(
+                MessageUtilities.SendSuccessAlert(Localization.GetPhrase(
                     Localization.Phrase.RefreshedProfileHelloX,
                     arguments.TelegramUser,
                     new string[] {
@@ -138,11 +138,11 @@ namespace StashBot.Handlers.CommandHandlers
                     Constants.IsPostingDisabled = true;
                     QueueData.RandomizeQueuedQueueItems();
                     Constants.IsPostingDisabled = false;
-                    MessageUtilities.AlertSuccessMessage(Localization.GetPhrase(Localization.Phrase.RandomizedQueue, arguments.TelegramUser), arguments.TelegramCallbackQueryEvent);
+                    MessageUtilities.SendSuccessAlert(Localization.GetPhrase(Localization.Phrase.RandomizedQueue, arguments.TelegramUser), arguments.TelegramCallbackQueryEvent);
                 }
                 else
                 {
-                    MessageUtilities.AlertWarningMessage(Localization.GetPhrase(Localization.Phrase.NoPermissionRandomizeQueue, arguments.TelegramUser), arguments.TelegramCallbackQueryEvent);
+                    MessageUtilities.SendWarningAlert(Localization.GetPhrase(Localization.Phrase.NoPermissionRandomizeQueue, arguments.TelegramUser), arguments.TelegramCallbackQueryEvent);
                 }
             }
             else

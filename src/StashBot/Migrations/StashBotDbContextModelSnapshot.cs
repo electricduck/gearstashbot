@@ -3,9 +3,9 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using StashBot;
+using GearstashBot;
 
-namespace StashBot.Migrations
+namespace GearstashBot.Migrations
 {
     [DbContext(typeof(StashBotDbContext))]
     partial class StashBotDbContextModelSnapshot : ModelSnapshot
@@ -16,7 +16,7 @@ namespace StashBot.Migrations
             modelBuilder
                 .HasAnnotation("ProductVersion", "3.1.4");
 
-            modelBuilder.Entity("StashBot.Models.Author", b =>
+            modelBuilder.Entity("GearstashBot.Models.Author", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -57,7 +57,7 @@ namespace StashBot.Migrations
                     b.ToTable("Authors");
                 });
 
-            modelBuilder.Entity("StashBot.Models.QueueItem", b =>
+            modelBuilder.Entity("GearstashBot.Models.QueueItem", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -111,9 +111,9 @@ namespace StashBot.Migrations
                     b.ToTable("Queue");
                 });
 
-            modelBuilder.Entity("StashBot.Models.QueueItem", b =>
+            modelBuilder.Entity("GearstashBot.Models.QueueItem", b =>
                 {
-                    b.HasOne("StashBot.Models.Author", "Author")
+                    b.HasOne("GearstashBot.Models.Author", "Author")
                         .WithMany("QueueItems")
                         .HasForeignKey("AuthorId");
                 });

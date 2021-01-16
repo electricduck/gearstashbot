@@ -1,5 +1,5 @@
 
-namespace StashBot.Models.ReturnModels.CommandHandlerReturnModels
+namespace GearstashBot.Models.ReturnModels.CommandHandlerReturnModels
 {
     public class FlushCommandHandlerReturn : CommandHandlerReturnBase
     {

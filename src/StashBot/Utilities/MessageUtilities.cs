@@ -1,30 +1,14 @@
 using System;
 using Microsoft.DotNet.PlatformAbstractions;
 using Telegram.Bot.Args;
-using StashBot.Models;
-using StashBot.Models.ArgumentModels;
-using StashBot.Services;
+using GearstashBot.Models;
+using GearstashBot.Models.ArgumentModels;
+using GearstashBot.Services;
 
-namespace StashBot.Utilities
+namespace GearstashBot.Utilities
 {
     public class MessageUtilities
     {
-        public static void AlertSuccessMessage(string successText, CallbackQueryEventArgs callbackQueryEventArgs)
-        {
-            Program.BotClient.AnswerCallbackQueryAsync(
-                callbackQueryId: callbackQueryEventArgs.CallbackQuery.Id,
-                text: CreateSuccessMessage(successText)
-            );
-        }
-
-        public static void AlertWarningMessage(string warningText, CallbackQueryEventArgs callbackQueryEventArgs)
-        {
-            Program.BotClient.AnswerCallbackQueryAsync(
-                callbackQueryId: callbackQueryEventArgs.CallbackQuery.Id,
-                text: CreateWarningMessage(warningText)
-            );
-        }
-
         public static string CreateSuccessMessage(string successText)
         {
             return $"✅ {successText}";
@@ -113,6 +97,15 @@ namespace StashBot.Utilities
             PrintErrorMessage(exception, errorGuid);
             TelegramApiService.SendTextMessage(output, Program.BotClient, null);
         }
+
+        public static void SendSuccessAlert(string successText, CallbackQueryEventArgs callbackQueryEventArgs)
+        {
+            Program.BotClient.AnswerCallbackQueryAsync(
+                callbackQueryId: callbackQueryEventArgs.CallbackQuery.Id,
+                text: CreateSuccessMessage(successText)
+            );
+        }
+
         public static void SendSuccessMessage(string successText, MessageEventArgs telegramMessageEvent)
         {
             SendSuccessMessage(successText, telegramMessageEvent.Message.Chat.Id);
@@ -127,6 +120,14 @@ namespace StashBot.Utilities
             };
 
             TelegramApiService.SendTextMessage(output, Program.BotClient, null);
+        }
+
+        public static void SendWarningAlert(string warningText, CallbackQueryEventArgs callbackQueryEventArgs)
+        {
+            Program.BotClient.AnswerCallbackQueryAsync(
+                callbackQueryId: callbackQueryEventArgs.CallbackQuery.Id,
+                text: CreateWarningMessage(warningText)
+            );
         }
 
         public static void SendWarningMessage(string warningText, CallbackQueryEventArgs callbackQueryEventArgs)
@@ -152,12 +153,12 @@ namespace StashBot.Utilities
 
         public static void PrintStartupMessage()
         {
-            string figlet = @" ____  _            _     ____        _
-/ ___|| |_ __ _ ___| |__ | __ )  ___ | |_
-\___ \| __/ _` / __| '_ \|  _ \ / _ \| __|
- ___) | || (_| \__ | | | | |_) | (_) | |_
-|____/ \__\__,_|___|_| |_|____/ \___/ \__|
-==========================================";
+            string figlet = @"  ____                     _            _     ____        _
+ / ___| ___  __ _ _ __ ___| |_ __ _ ___| |__ | __ )  ___ | |_
+| |  _ / _ \/ _` | '__/ __| __/ _` / __| '_ \|  _ \ / _ \| __|
+| |_| |  __| (_| | |  \__ | || (_| \__ | | | | |_) | (_) | |_
+ \____|\___|\__,_|_|  |___/\__\__,_|___|_| |_|____/ \___/ \__|
+==============================================================";
 
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine(figlet);

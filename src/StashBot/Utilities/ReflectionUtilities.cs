@@ -1,7 +1,7 @@
 using System;
 using System.Reflection;
 
-namespace StashBot.Utilities
+namespace GearstashBot.Utilities
 {
     public class ReflectionUtilities
     {

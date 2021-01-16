@@ -1,6 +1,6 @@
-using StashBot.Models.ArgumentModels;
+using GearstashBot.Models.ArgumentModels;
 
-namespace StashBot.Models.ReturnModels.CommandHandlerReturnModels
+namespace GearstashBot.Models.ReturnModels.CommandHandlerReturnModels
 {
     public class CommandHandlerReturnBase
     {

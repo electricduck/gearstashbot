@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace StashBot.I18n.Strings
+namespace GearstashBot.I18n.Strings
 {
     public class DeStrings
     {
@@ -69,7 +69,7 @@ namespace StashBot.I18n.Strings
             { Localization.Phrase.User, "Benutzer" },
             { Localization.Phrase.Username, "Nutzername" },
             { Localization.Phrase.Viewing, "Anzeigen" },
-            { Localization.Phrase.WelcomeFirstAuthor, $"<b>Willkommen bei StashBot, [0]!</b><br />Setzen Sie Ihre Berechtigungen mit <code>/user [1]</code> (oder nur <code>/user</code>)." }
+            { Localization.Phrase.WelcomeFirstAuthor, $"<b>Willkommen bei GearstashBot, [0]!</b><br />Setzen Sie Ihre Berechtigungen mit <code>/user [1]</code> (oder nur <code>/user</code>)." }
         };
     }
 }

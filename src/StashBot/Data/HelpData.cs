@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using StashBot.Handlers.CommandHandlers;
-using StashBot.Models;
-using StashBot.Models.ReturnModels;
+using GearstashBot.Handlers.CommandHandlers;
+using GearstashBot.Models;
+using GearstashBot.Models.ReturnModels;
 
-namespace StashBot.Data
+namespace GearstashBot.Data
 {
     public class HelpData
     {

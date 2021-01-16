@@ -1,6 +1,6 @@
 using System;
 
-namespace StashBot.Utilities
+namespace GearstashBot.Utilities
 {
     public class GeneratorUtilities
     {

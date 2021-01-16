@@ -11,4 +11,4 @@ WORKDIR /app
 COPY --from=build-env /app/out .
 VOLUME /app/config
 
-ENTRYPOINT ["dotnet", "StashBot.dll"]
+ENTRYPOINT ["dotnet", "GearstashBot.dll"]

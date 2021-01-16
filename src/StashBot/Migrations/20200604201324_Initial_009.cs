@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace StashBot.Migrations
+namespace GearstashBot.Migrations
 {
     public partial class Initial_009 : Migration
     {

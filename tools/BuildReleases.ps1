@@ -4,7 +4,7 @@ param (
 
 $originalPath = Get-Location
 
-$projectName = "StashBot"
+$projectName = "GearstashBot"
 $projectLocation = Get-Item "../src/$projectName"
 $csprojLocation = Get-Item "$projectLocation/$projectName.csproj"
 $meta = (Select-Xml -Path $csprojLocation -XPath "/Project" | Select-Object -ExpandProperty Node).PropertyGroup
@@ -28,7 +28,7 @@ function Build
     $platform = $RID.Replace("linux-musl", "linux.musl").Replace("osx", "macos")
     $extension = $RID.StartsWith("win") ? "exe" : "bin"
     $builtFilename = $RID.StartsWith("win") ? "$projectName.exe" : "$projectName"
-    $outputFilename = "StashBot-$Version-$platform.$extension"
+    $outputFilename = "GearstashBot-$Version-$platform.$extension"
     $outputLocation = "../../build/$projectName/$Version"
 
     dotnet publish -r $RID -c Release /p:PublishSingleFile=true /p:PublishTrimmed=true

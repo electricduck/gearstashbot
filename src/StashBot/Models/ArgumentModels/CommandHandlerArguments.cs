@@ -1,7 +1,7 @@
 using Telegram.Bot;
 using Telegram.Bot.Args;
 
-namespace StashBot.Models.ArgumentModels
+namespace GearstashBot.Models.ArgumentModels
 {
     public class CommandHandlerArguments
     {

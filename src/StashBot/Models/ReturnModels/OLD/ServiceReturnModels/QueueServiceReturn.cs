@@ -1,5 +1,5 @@
 
-namespace StashBot.Models.ReturnModels.ServiceReturnModels
+namespace GearstashBot.Models.ReturnModels.ServiceReturnModels
 {
     public class QueueServiceReturn
     {

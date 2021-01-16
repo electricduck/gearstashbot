@@ -1,15 +1,15 @@
 using System;
 using System.Collections.Generic;
-using StashBot.Data;
-using StashBot.Exceptions;
-using StashBot.I18n;
-using StashBot.Models;
-using StashBot.Models.ArgumentModels;
-using StashBot.Models.ReturnModels.ServiceReturnModels;
-using StashBot.Services;
-using StashBot.Utilities;
+using GearstashBot.Data;
+using GearstashBot.Exceptions;
+using GearstashBot.I18n;
+using GearstashBot.Models;
+using GearstashBot.Models.ArgumentModels;
+using GearstashBot.Models.ReturnModels.ServiceReturnModels;
+using GearstashBot.Services;
+using GearstashBot.Utilities;
 
-namespace StashBot.Handlers.CommandHandlers
+namespace GearstashBot.Handlers.CommandHandlers
 {
     public class PostCommandHandler
     {

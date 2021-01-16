@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace StashBot.Migrations
+namespace GearstashBot.Migrations
 {
     public partial class Index_QueueItem_001 : Migration
     {

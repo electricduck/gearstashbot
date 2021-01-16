@@ -6,16 +6,16 @@ using System.Threading.Tasks;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
-using StashBot.Data;
-using StashBot.Exceptions;
-using StashBot.I18n;
-using StashBot.Models;
-using StashBot.Models.ArgumentModels;
-using StashBot.Models.ReturnModels.ViewCommandHandlerReturns;
-using StashBot.Services;
-using StashBot.Utilities;
+using GearstashBot.Data;
+using GearstashBot.Exceptions;
+using GearstashBot.I18n;
+using GearstashBot.Models;
+using GearstashBot.Models.ArgumentModels;
+using GearstashBot.Models.ReturnModels.ViewCommandHandlerReturns;
+using GearstashBot.Services;
+using GearstashBot.Utilities;
 
-namespace StashBot.Handlers.CommandHandlers
+namespace GearstashBot.Handlers.CommandHandlers
 {
     public class ViewCommandHandler
     {

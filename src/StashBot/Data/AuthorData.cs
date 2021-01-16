@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using StashBot.Models;
+using GearstashBot.Models;
 
-namespace StashBot.Data
+namespace GearstashBot.Data
 {
     public class AuthorData
     {

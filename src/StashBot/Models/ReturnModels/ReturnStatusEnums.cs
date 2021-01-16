@@ -1,5 +1,5 @@
 
-namespace StashBot.Models.ReturnModels.ReturnStatusEnums
+namespace GearstashBot.Models.ReturnModels.ReturnStatusEnums
 {
     public enum ViewInvokeReturnStatus
     {

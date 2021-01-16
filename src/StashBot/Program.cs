@@ -7,13 +7,13 @@ using System.Threading;
 using CommandLine;
 using Microsoft.Extensions.Configuration;
 using Telegram.Bot;
-using StashBot.Data;
-using StashBot.Handlers;
-using StashBot.Models;
-using StashBot.Services;
-using StashBot.Utilities;
+using GearstashBot.Data;
+using GearstashBot.Handlers;
+using GearstashBot.Models;
+using GearstashBot.Services;
+using GearstashBot.Utilities;
 
-namespace StashBot
+namespace GearstashBot
 {
     class Program
     {
@@ -131,7 +131,7 @@ namespace StashBot
 
             AppSettings.ApiKeys_Telegram = configuration.GetSection("apiKeys")["telegram"];
             AppSettings.Config_ChannelId = Convert.ToInt64(configuration.GetSection("config")["channel"]);
-            AppSettings.Config_Name = (configuration.GetSection("config").GetChildren().Any(i => i.Key == "name")) ? configuration.GetSection("config")["name"] : "StashBot";
+            AppSettings.Config_Name = (configuration.GetSection("config").GetChildren().Any(i => i.Key == "name")) ? configuration.GetSection("config")["name"] : "GearstashBot";
             AppSettings.Config_Owner = "@" + configuration.GetSection("config")["owner"].Replace("@", "");
             AppSettings.Config_Poll = Convert.ToBoolean(configuration.GetSection("config")["poll"]);
             AppSettings.Config_PostInterval = Convert.ToInt32(configuration.GetSection("config")["postInterval"]);
@@ -145,7 +145,7 @@ namespace StashBot
     },
     ""config"": {
         ""channel"": -1000000000000,
-        ""name"": ""StashBot"",
+        ""name"": ""GearstashBot"",
         ""owner"": ""OopsIForgotToSetTheOwner"",
         ""poll"": true,
         ""postInterval"": 30000

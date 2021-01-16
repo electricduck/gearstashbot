@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using StashBot.Models;
+using GearstashBot.Models;
 
-namespace StashBot
+namespace GearstashBot
 {
     public class StashBotDbContext : DbContext  
     {
@@ -9,7 +9,7 @@ namespace StashBot
         public DbSet<QueueItem> Queue { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
-            => options.UseSqlite($"Data Source={AppArguments.ConfigDirectory}/stashbot.db");
+            => options.UseSqlite($"Data Source={AppArguments.ConfigDirectory}/gearstashbot.db");
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

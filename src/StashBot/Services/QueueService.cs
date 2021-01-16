@@ -3,15 +3,15 @@ using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
-using StashBot.Data;
-using StashBot.I18n;
-using StashBot.Models;
-using StashBot.Models.ReturnModels.QueueServiceReturns;
-using StashBot.Models.ReturnModels.ServiceReturnModels;
-using StashBot.Services.ScrapeServices;
-using StashBot.Utilities;
+using GearstashBot.Data;
+using GearstashBot.I18n;
+using GearstashBot.Models;
+using GearstashBot.Models.ReturnModels.QueueServiceReturns;
+using GearstashBot.Models.ReturnModels.ServiceReturnModels;
+using GearstashBot.Services.ScrapeServices;
+using GearstashBot.Utilities;
 
-namespace StashBot.Services
+namespace GearstashBot.Services
 {
     public class QueueService
     {

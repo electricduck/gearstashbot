@@ -1,5 +1,5 @@
 
-namespace StashBot.Models.ArgumentModels
+namespace GearstashBot.Models.ArgumentModels
 {
     public class SendTextMessageArguments : TelegramApiServiceBase
     {

@@ -1,7 +1,7 @@
 
 using Telegram.Bot.Types.ReplyMarkups;
 
-namespace StashBot.Models.ReturnModels.ViewCommandHandlerReturns
+namespace GearstashBot.Models.ReturnModels.ViewCommandHandlerReturns
 {
     public class GetQueueItemsDataReturn
     {

@@ -2,10 +2,10 @@ using System;
 using Telegram.Bot;
 using Telegram.Bot.Args;
 using Telegram.Bot.Types.Enums;
-using StashBot.Models.ArgumentModels;
-using StashBot.Utilities;
+using GearstashBot.Models.ArgumentModels;
+using GearstashBot.Utilities;
 
-namespace StashBot.Services
+namespace GearstashBot.Services
 {
     public class TelegramApiService
     {

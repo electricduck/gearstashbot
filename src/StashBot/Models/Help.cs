@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace StashBot.Models
+namespace GearstashBot.Models
 {
     public class Help
     {

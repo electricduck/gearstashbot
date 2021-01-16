@@ -355,9 +355,9 @@ MigrationBackup/
 # End of https://www.gitignore.io/api/csharp
 
 # Other files
-stashbot.db
+gearstashbot.db
 appsettings.json
-stashbot_*.db
+gearstashbot_*.db
 *.db-journal
 /build
-/src/StashBot/config
+/src/GearstashBot/config

@@ -1,6 +1,6 @@
 using System;
 
-namespace StashBot.Exceptions
+namespace GearstashBot.Exceptions
 {
     public class CommandHandlerException : Exception
     {

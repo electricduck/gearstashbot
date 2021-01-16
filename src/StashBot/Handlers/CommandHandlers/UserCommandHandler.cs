@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Bot.Types.ReplyMarkups;
-using StashBot.Data;
-using StashBot.Exceptions;
-using StashBot.I18n;
-using StashBot.Models;
-using StashBot.Models.ArgumentModels;
-using StashBot.Services;
-using StashBot.Utilities;
+using GearstashBot.Data;
+using GearstashBot.Exceptions;
+using GearstashBot.I18n;
+using GearstashBot.Models;
+using GearstashBot.Models.ArgumentModels;
+using GearstashBot.Services;
+using GearstashBot.Utilities;
 
-namespace StashBot.Handlers.CommandHandlers
+namespace GearstashBot.Handlers.CommandHandlers
 {
     public class UserCommandHandler
     {

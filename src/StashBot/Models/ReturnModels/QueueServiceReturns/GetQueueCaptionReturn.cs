@@ -1,5 +1,5 @@
 
-namespace StashBot.Models.ReturnModels.QueueServiceReturns
+namespace GearstashBot.Models.ReturnModels.QueueServiceReturns
 {
     public class GetQueueCaptionReturn
     {

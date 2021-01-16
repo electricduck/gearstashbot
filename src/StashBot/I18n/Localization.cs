@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
-using StashBot.I18n.Strings;
-using StashBot.Models;
+using GearstashBot.I18n.Strings;
+using GearstashBot.Models;
 
-namespace StashBot.I18n
+namespace GearstashBot.I18n
 {
     public class Localization
     {

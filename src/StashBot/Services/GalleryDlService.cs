@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using Newtonsoft.Json.Linq;
 
-namespace StashBot.Services
+namespace GearstashBot.Services
 {
     public class GalleryDlService
     {

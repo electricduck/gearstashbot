@@ -1,9 +1,9 @@
 using System;
 using System.IO;
 using Microsoft.EntityFrameworkCore;
-using StashBot.Models;
+using GearstashBot.Models;
 
-namespace StashBot.Utilities
+namespace GearstashBot.Utilities
 {
     public class DbUtilities
     {
@@ -16,7 +16,7 @@ namespace StashBot.Utilities
             }
 
             File.Copy(
-                $"{AppArguments.ConfigDirectory}/stashbot.db",
+                $"{AppArguments.ConfigDirectory}/gearstashbot.db",
                 $"{AppArguments.ConfigDirectory}/backup/stashbot_{DateTime.Now.ToString("yyyyMMddHHmmss")}.db"
             );
         }

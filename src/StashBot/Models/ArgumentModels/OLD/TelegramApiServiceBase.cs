@@ -1,6 +1,6 @@
 using Telegram.Bot.Types.ReplyMarkups;
 
-namespace StashBot.Models.ArgumentModels
+namespace GearstashBot.Models.ArgumentModels
 {
     public class TelegramApiServiceBase
     {

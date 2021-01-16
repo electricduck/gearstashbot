@@ -1,9 +1,9 @@
-using StashBot.Models;
-using StashBot.Models.ArgumentModels;
-using StashBot.Services;
-using StashBot.Utilities;
+using GearstashBot.Models;
+using GearstashBot.Models.ArgumentModels;
+using GearstashBot.Services;
+using GearstashBot.Utilities;
 
-namespace StashBot.Handlers.CommandHandlers
+namespace GearstashBot.Handlers.CommandHandlers
 {
     public class CatPlsCommandHandler
     {

@@ -1,10 +1,10 @@
 using System;
-using StashBot.Data;
-using StashBot.Exceptions;
-using StashBot.Models.ArgumentModels;
-using StashBot.Services;
+using GearstashBot.Data;
+using GearstashBot.Exceptions;
+using GearstashBot.Models.ArgumentModels;
+using GearstashBot.Services;
 
-namespace StashBot.Handlers.CommandHandlers
+namespace GearstashBot.Handlers.CommandHandlers
 {
     public class HelpCommandHandler
     {

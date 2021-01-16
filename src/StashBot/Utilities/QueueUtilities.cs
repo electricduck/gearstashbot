@@ -1,8 +1,8 @@
 using System;
-using StashBot.Data;
-using StashBot.Models;
+using GearstashBot.Data;
+using GearstashBot.Models;
 
-namespace StashBot.Utilities
+namespace GearstashBot.Utilities
 {
     public class QueueUtlities
     {

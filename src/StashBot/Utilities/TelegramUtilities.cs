@@ -1,9 +1,9 @@
 
 using System;
-using StashBot.Models;
+using GearstashBot.Models;
 using Telegram.Bot.Args;
 
-namespace StashBot.Utilities
+namespace GearstashBot.Utilities
 {
     public class TelegramUtilities
     {
