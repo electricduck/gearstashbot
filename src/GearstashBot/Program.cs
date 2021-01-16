@@ -131,7 +131,7 @@ namespace GearstashBot
 
             AppSettings.ApiKeys_Telegram = configuration.GetSection("apiKeys")["telegram"];
             AppSettings.Config_ChannelId = Convert.ToInt64(configuration.GetSection("config")["channel"]);
-            AppSettings.Config_Name = (configuration.GetSection("config").GetChildren().Any(i => i.Key == "name")) ? configuration.GetSection("config")["name"] : "GearstashBot";
+            AppSettings.Config_Name = (configuration.GetSection("config").GetChildren().Any(i => i.Key == "name")) ? configuration.GetSection("config")["name"] : "Gearstash Bot";
             AppSettings.Config_Owner = "@" + configuration.GetSection("config")["owner"].Replace("@", "");
             AppSettings.Config_Poll = Convert.ToBoolean(configuration.GetSection("config")["poll"]);
             AppSettings.Config_PostInterval = Convert.ToInt32(configuration.GetSection("config")["postInterval"]);
