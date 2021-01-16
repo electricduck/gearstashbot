@@ -91,7 +91,7 @@ namespace GearstashBot.Utilities
                 Text = $@"🚫 {exception.Message}
 <code>{errorGuid}</code>
 —
-<b>This is an error. Please forward me to @{AppSettings.Config_Owner}.</b>"
+<b>This is an error. Please forward me to {AppSettings.Config_Owner}.</b>"
             };
 
             PrintErrorMessage(exception, errorGuid);
