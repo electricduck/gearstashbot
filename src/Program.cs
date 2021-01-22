@@ -19,6 +19,20 @@ namespace GearstashBot
     {
         public static ITelegramBotClient BotClient;
 
+        public static string DefaultConfig = @"{
+    ""apiKeys"": {
+        ""telegram"": ""1234567890:AbC_dEfGhIjKlMnOpQrStUvWxYz""
+    },
+    ""config"": {
+        ""channel"": -1000000000000,
+        ""createDbBackups"": true,
+        ""name"": ""GearstashBot"",
+        ""owner"": ""OopsIForgotToSetTheOwner"",
+        ""poll"": true,
+        ""postInterval"": 30000
+    }
+}";
+
         public class Options
         {
             [Option('c', "confdir", Required = false, HelpText = "Location of configuration directory", Default = "config")]
@@ -54,8 +68,11 @@ namespace GearstashBot
                 MessageUtilities.PrintInfoMessage("Migrating database...");
                 DbUtilities.MigrateDatabase();
 
-                MessageUtilities.PrintInfoMessage("Backing up database...");
-                DbUtilities.BackupDatabase();
+                if (AppSettings.Config_CreateDbBackups)
+                {
+                    MessageUtilities.PrintInfoMessage("Backing up database...");
+                    DbUtilities.BackupDatabase();
+                }
 
                 BotClient = new TelegramBotClient(AppSettings.ApiKeys_Telegram);
 
@@ -113,14 +130,14 @@ namespace GearstashBot
 
         private static void SetupApp()
         {
-            if(!Directory.Exists($"{AppArguments.ConfigDirectory}/"))
+            if (!Directory.Exists($"{AppArguments.ConfigDirectory}/"))
             {
                 Directory.CreateDirectory($"{AppArguments.ConfigDirectory}/");
             }
 
             if (!File.Exists($"{AppArguments.ConfigDirectory}/appsettings.json"))
             {
-                CreateDefaultConfig();
+                File.WriteAllText($"{AppArguments.ConfigDirectory}/appsettings.json", DefaultConfig);
                 throw new Exception($"Settings file did not exist. Please edit '{AppArguments.ConfigDirectory}/appsettings.json' and re-run.");
             }
 
@@ -129,30 +146,14 @@ namespace GearstashBot
                 .AddJsonFile($"{AppArguments.ConfigDirectory}/appsettings.json", optional: true, reloadOnChange: false)
                 .Build();
 
+            // TODO: Handle nulls
             AppSettings.ApiKeys_Telegram = configuration.GetSection("apiKeys")["telegram"];
             AppSettings.Config_ChannelId = Convert.ToInt64(configuration.GetSection("config")["channel"]);
+            AppSettings.Config_CreateDbBackups = Convert.ToBoolean(configuration.GetSection("config")["createDbBackups"]);
             AppSettings.Config_Name = (configuration.GetSection("config").GetChildren().Any(i => i.Key == "name")) ? configuration.GetSection("config")["name"] : "Gearstash Bot";
             AppSettings.Config_Owner = "@" + configuration.GetSection("config")["owner"].Replace("@", "");
             AppSettings.Config_Poll = Convert.ToBoolean(configuration.GetSection("config")["poll"]);
             AppSettings.Config_PostInterval = Convert.ToInt32(configuration.GetSection("config")["postInterval"]);
-        }
-
-        private static void CreateDefaultConfig()
-        {
-            string defaultConfig = @"{
-    ""apiKeys"": {
-        ""telegram"": ""1234567890:AbC_dEfGhIjKlMnOpQrStUvWxYz""
-    },
-    ""config"": {
-        ""channel"": -1000000000000,
-        ""name"": ""GearstashBot"",
-        ""owner"": ""OopsIForgotToSetTheOwner"",
-        ""poll"": true,
-        ""postInterval"": 30000
-    }
-}";
-
-            File.WriteAllText($"{AppArguments.ConfigDirectory}/appsettings.json", defaultConfig);
         }
 
         private static string UpdatePipPackage(string package)
