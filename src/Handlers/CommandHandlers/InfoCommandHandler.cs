@@ -44,13 +44,10 @@ namespace GearstashBot.Handlers.CommandHandlers
             string usersAmount = AuthorData.CountAuthors().ToString();
 
             string name = AppSettings.Config_Name;
-            string owner = AppSettings.Config_Owner;
 
             string outputText = $@"<b>{name}</b> | {version}
 —
 <i>There is <b>{queueAmount} queued posts</b>, amounting to approximately <b>{queueApproxDays} days</b>; with <b>{totalQueueAmount} total posts</b>, and <b>{usersAmount} users</b>. <b>{Constants.Cats} cats</b> have been generated.</i> 
-
-<i>Code can be found <a href=""https://github.com/electricduck/gearstashbot"">on Github</a>, licensed under <a href=""https://ducky.mit-license.org/"">MIT</a>. This particular instance is ran by {owner}.</i>
 —
 <b>🤖 Bot</b>
 Memory: <code>{processMemoryUsage}mb</code>
