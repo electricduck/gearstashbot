@@ -360,4 +360,4 @@ appsettings.json
 gearstashbot_*.db
 *.db-journal
 /build
-/src/GearstashBot/config
+/src/config
