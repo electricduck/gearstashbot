@@ -191,15 +191,16 @@ namespace GearstashBot.Services
             if (itemToQueue != null)
             {
                 var duplicate = QueueData.GetQueueItemBySourceUrl(itemToQueue.SourceUrl);
+                returnModel.Status = QueueServiceReturn.QueueServiceReturnStatus.Queued;
 
                 if (duplicate != null)
                 {
-                    returnModel.Status = QueueServiceReturn.QueueServiceReturnStatus.Duplicate;
+                    if(AppSettings.Config_WarnOnDuplicate)
+                        returnModel.Status = QueueServiceReturn.QueueServiceReturnStatus.Duplicate;
                 }
                 else
                 {
                     QueueData.AddQueueItem(itemToQueue, user);
-                    returnModel.Status = QueueServiceReturn.QueueServiceReturnStatus.Queued;
                 }
             }
             else
