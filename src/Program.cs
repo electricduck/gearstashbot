@@ -29,7 +29,8 @@ namespace GearstashBot
         ""name"": ""GearstashBot"",
         ""owner"": ""OopsIForgotToSetTheOwner"",
         ""poll"": true,
-        ""postInterval"": 30000
+        ""postInterval"": 30000,
+        ""warnOnDuplicate"": true
     }
 }";
 
@@ -154,6 +155,7 @@ namespace GearstashBot
             AppSettings.Config_Owner = "@" + configuration.GetSection("config")["owner"].Replace("@", "");
             AppSettings.Config_Poll = Convert.ToBoolean(configuration.GetSection("config")["poll"]);
             AppSettings.Config_PostInterval = Convert.ToInt32(configuration.GetSection("config")["postInterval"]);
+            AppSettings.Config_WarnOnDuplicate = Convert.ToBoolean(configuration.GetSection("config")["warnOnDuplicate"]);
         }
 
         private static string UpdatePipPackage(string package)
