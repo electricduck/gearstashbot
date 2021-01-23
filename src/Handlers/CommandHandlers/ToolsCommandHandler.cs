@@ -70,7 +70,6 @@ namespace GearstashBot.Handlers.CommandHandlers
 
                         if (
                             author.CanDeleteOthers == false &&
-                            author.CanFlushQueue == false &&
                             author.CanManageAuthors == false &&
                             author.CanQueue == false &&
                             queueItemAmount == 0

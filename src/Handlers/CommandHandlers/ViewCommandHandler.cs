@@ -137,36 +137,24 @@ namespace GearstashBot.Handlers.CommandHandlers
 
                     var statusText = "";
 
-                    if(queueItemsData.SelectedQueuedItem.Status != QueueItem.QueueStatus.Deleted)
+                    if (AuthorData.CanAuthorQueue(authorId))
                     {
-                        if (AuthorData.CanAuthorQueue(authorId))
+                        if (queueItemsData.SelectedQueuedItem.Author.TelegramId == authorId)
                         {
-                            if (queueItemsData.SelectedQueuedItem.Author.TelegramId == authorId)
+                            allowedToDeleteThisQueueItem = true;
+                        }
+                        else
+                        {
+                            if (AuthorData.CanAuthorDeleteOthers(authorId))
                             {
                                 allowedToDeleteThisQueueItem = true;
                             }
-                            else
-                            {
-                                if (AuthorData.CanAuthorDeleteOthers(authorId))
-                                {
-                                    allowedToDeleteThisQueueItem = true;
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if(AuthorData.CanAuthorFlushQueue(authorId))
-                        {
-                            allowedToDeleteThisQueueItem = true;
                         }
                     }
 
                     if (allowedToDeleteThisQueueItem)
                     {
-                        statusText = (queueItemsData.SelectedQueuedItem.Status != QueueItem.QueueStatus.Deleted) ?
-                            MessageUtilities.CreateSuccessMessage(Localization.GetPhrase(Localization.Phrase.Deleted, arguments.TelegramUser)) :
-                            MessageUtilities.CreateSuccessMessage(Localization.GetPhrase(Localization.Phrase.Purged, arguments.TelegramUser));
+                        statusText = MessageUtilities.CreateSuccessMessage(Localization.GetPhrase(Localization.Phrase.Deleted, arguments.TelegramUser));
 
                         if (queueItemsData.SelectedQueuedItem.Status == QueueItem.QueueStatus.Posted)
                         {
@@ -219,9 +207,7 @@ namespace GearstashBot.Handlers.CommandHandlers
                     }
                     else
                     {
-                        statusText = (queueItemsData.SelectedQueuedItem.Status != QueueItem.QueueStatus.Deleted) ?
-                            MessageUtilities.CreateWarningMessage(Localization.GetPhrase(Localization.Phrase.NoPermissionRemovePost, arguments.TelegramUser)) :
-                            MessageUtilities.CreateWarningMessage(Localization.GetPhrase(Localization.Phrase.NoPermissionPurgePost, arguments.TelegramUser));
+                        statusText = MessageUtilities.CreateWarningMessage(Localization.GetPhrase(Localization.Phrase.NoPermissionRemovePost, arguments.TelegramUser));
                     }
 
                     await Program.BotClient.AnswerCallbackQueryAsync(
@@ -232,7 +218,7 @@ namespace GearstashBot.Handlers.CommandHandlers
                     if (allowedToDeleteThisQueueItem)
                     {
                         bool purge = (queueItemsData.SelectedQueuedItem.Status == QueueItem.QueueStatus.Deleted) ? true : false;
-                        QueueService.RemoveQueueItem(queueItemsData.SelectedQueuedItem.Id, purge);
+                        QueueService.RemoveQueueItem(queueItemsData.SelectedQueuedItem.Id);
 
                         int idToNavigateTo = queueItemsData.PreviousQueuedItem.Id;
 
@@ -348,8 +334,7 @@ namespace GearstashBot.Handlers.CommandHandlers
             {
                 new[] {
                     InlineKeyboardButton.WithCallbackData($"📤 {Localization.GetPhrase(Localization.Phrase.Queued, user)}", "view_nav:0:Queued"),
-                    InlineKeyboardButton.WithCallbackData($"📥 {Localization.GetPhrase(Localization.Phrase.Posted, user)}", "view_nav:0:Posted"),
-                    InlineKeyboardButton.WithCallbackData($"🗑 {Localization.GetPhrase(Localization.Phrase.Deleted, user)}", "view_nav:0:Deleted")
+                    InlineKeyboardButton.WithCallbackData($"📥 {Localization.GetPhrase(Localization.Phrase.Posted, user)}", "view_nav:0:Posted")
                 },
                 new[] {
                     InlineKeyboardButton.WithCallbackData($"{exitButtonString}", $"view_nav:{currentId}:{status.ToString()}")
@@ -363,24 +348,10 @@ namespace GearstashBot.Handlers.CommandHandlers
             TelegramUser user
         )
         {
-            var statusText = status.ToString();
-
             var deleteString = Localization.GetPhrase(Localization.Phrase.Delete, user);
-            var purgeString = Localization.GetPhrase(Localization.Phrase.Purge, user);
 
             switch (status)
             {
-                case QueueItem.QueueStatus.Deleted:
-                    return new[]
-                    {
-                        InlineKeyboardButton.WithCallbackData($"💥 {purgeString}", $"view_del:{currentId}:{status.ToString()}")
-                    };
-                case QueueItem.QueueStatus.Posted:
-                    return new[]
-                    {
-                        InlineKeyboardButton.WithCallbackData($"🗑 {deleteString}", $"view_del:{currentId}:{status.ToString()}")/*,
-                        InlineKeyboardButton.WithCallbackData($"📬 {postNowString}", $"view_post:{currentId}:{status.ToString()}")*/
-                    };
                 default:
                     return new[]
                     {
@@ -431,9 +402,6 @@ namespace GearstashBot.Handlers.CommandHandlers
 
             switch (status)
             {
-                case QueueItem.QueueStatus.Deleted:
-                    queue = QueueData.ListDeletedQueueItems();
-                    break;
                 case QueueItem.QueueStatus.Posted:
                     queue = QueueData.ListPostedQueueItems();
                     break;

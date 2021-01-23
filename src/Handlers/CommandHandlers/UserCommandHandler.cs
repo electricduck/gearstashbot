@@ -146,10 +146,6 @@ namespace GearstashBot.Handlers.CommandHandlers
                         AuthorData.SetAuthorDeleteOthersPermission(author.TelegramId, setting);
                         author.CanDeleteOthers = setting;
                         break;
-                    case "CanFlushQueue":
-                        AuthorData.SetAuthorFlushQueuePermission(author.TelegramId, setting);
-                        author.CanFlushQueue = setting;
-                        break;
                     case "CanManageAuthors":
                         if (author.CanManageAuthors == true && author.TelegramId == arguments.TelegramUser.Id)
                         {
@@ -251,7 +247,6 @@ namespace GearstashBot.Handlers.CommandHandlers
             const string cross = "✖️";
 
             string canDeleteOthersStatus = author.CanDeleteOthers ? tick : cross;
-            string canFlushQueueStatus = author.CanFlushQueue ? tick : cross;
             string canManageAuthorsStatus = author.CanManageAuthors ? tick : cross;
             string canQueueStatus = author.CanQueue ? tick : cross;
             string canRandomizeQueueStatus = author.CanRandomizeQueue ? tick : cross;
@@ -265,10 +260,6 @@ namespace GearstashBot.Handlers.CommandHandlers
                 new []
                 {
                     InlineKeyboardButton.WithCallbackData($"{canDeleteOthersStatus} {Localization.GetPhrase(Localization.Phrase.DeleteOthers, user)}", $"user_perm:{author.TelegramId}:CanDeleteOthers:{!author.CanDeleteOthers}")
-                },
-                new []
-                {
-                    InlineKeyboardButton.WithCallbackData($"{canFlushQueueStatus} {Localization.GetPhrase(Localization.Phrase.FlushQueue, user)}", $"user_perm:{author.TelegramId}:CanFlushQueue:{!author.CanFlushQueue}")
                 },
                 new []
                 {

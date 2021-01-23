@@ -211,11 +211,10 @@ namespace GearstashBot.Services
         }
 
         public static void RemoveQueueItem(
-            int id,
-            bool purge
+            int id
         )
         {
-            QueueData.DeleteQueueItem(id, purge);
+            QueueData.DeleteQueueItem(id, true);
         }
 
         public static GetQueueCaptionReturn GetQueueCaption(
