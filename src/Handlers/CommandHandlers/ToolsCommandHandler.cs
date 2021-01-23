@@ -1,9 +1,8 @@
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Bot.Types.ReplyMarkups;
-using GearstashBot.Exceptions;
 using GearstashBot.Data;
+using GearstashBot.Exceptions;
 using GearstashBot.I18n;
 using GearstashBot.Models;
 using GearstashBot.Models.ArgumentModels;
@@ -12,7 +11,7 @@ using GearstashBot.Utilities;
 
 namespace GearstashBot.Handlers.CommandHandlers
 {
-    public class ToolsCommandHandler
+    public class ToolsCommandHandler : CommandHandlerBase
     {
         public static Help Help = new Help
         {
@@ -149,22 +148,6 @@ namespace GearstashBot.Handlers.CommandHandlers
             {
                 await HandleNoPermission(arguments);
             }
-        }
-
-        private async static Task HandleNoPermission(
-            CommandHandlerArguments arguments,
-            Localization.Phrase phrase = Localization.Phrase.NoPermissionTools
-        )
-        {
-            if (arguments.TelegramCallbackQueryEvent != null)
-            {
-                await Program.BotClient.DeleteMessageAsync(
-                    chatId: arguments.TelegramCallbackQueryEvent.CallbackQuery.Message.Chat.Id,
-                    messageId: arguments.TelegramCallbackQueryEvent.CallbackQuery.Message.MessageId
-                );
-            }
-
-            throw new CommandHandlerException(Localization.GetPhrase(phrase, arguments.TelegramUser));
         }
     }
 }
