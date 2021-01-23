@@ -42,7 +42,7 @@ namespace GearstashBot.Services.ScrapeServices
                     {
                         case 2:
                             name = item[0].Next["username"].ToString();
-                            source = item[0].Next["shortcode"].ToString();
+                            source = item[0].Next["post_shortcode"].ToString();
                             username = item[0].Next["username"].ToString();
                             break;
                         case 3:
