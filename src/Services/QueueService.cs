@@ -8,7 +8,6 @@ using GearstashBot.I18n;
 using GearstashBot.Models;
 using GearstashBot.Models.ReturnModels.QueueServiceReturns;
 using GearstashBot.Models.ReturnModels.ServiceReturnModels;
-using GearstashBot.Services.ScrapeServices;
 using GearstashBot.Utilities;
 
 namespace GearstashBot.Services
@@ -119,7 +118,12 @@ namespace GearstashBot.Services
                 }
                 catch (Exception e)
                 {
-                    if (e.Message.Contains("Bad Request:"))
+                    string errorMessage = e.Message;
+
+                    if (
+                        errorMessage.Contains("Bad Request:") ||
+                        errorMessage.Contains("chat not found")
+                    )
                     {
                         failed = true;
                         failureReason = e.Message;
@@ -155,37 +159,43 @@ namespace GearstashBot.Services
         )
         {
             QueueServiceReturn returnModel = new QueueServiceReturn { };
+            ScrapeService scrapeService = new ScrapeService();
             QueueItem itemToQueue = null;
 
-            if (
-                url.StartsWith("https://mobile.twitter.com") ||
-                url.StartsWith("https://twitter.com") ||
-                url.StartsWith("https://nitter.net")
-            )
+            Scrape scrape = scrapeService.Scrape(url);
+
+            if (scrape != null)
             {
-                TwitterScrapeService _twitterScrapeService = new TwitterScrapeService();
-                itemToQueue = _twitterScrapeService.ScrapeTwitterUrl(url, mediaIndex, customName);
-            }
-            else if (
-                url.StartsWith("https://instagram.com") ||
-                url.StartsWith("https://www.instagram.com")
-            )
-            {
-                InstagramScrapeService _instagramScrapeService = new InstagramScrapeService();
-                itemToQueue = _instagramScrapeService.ScrapeInstagramUrl(url, mediaIndex);
-            }
-            else if (
-                url.StartsWith("https://flickr.com") ||
-                url.StartsWith("https://www.flickr.com/")
-            )
-            {
-                FlickrScrapeService _flickrScrapeService = new FlickrScrapeService();
-                itemToQueue = _flickrScrapeService.ScrapeFlickrUrl(url, mediaIndex);
+                if (scrape.HasMedia)
+                {
+                    if (url.Contains("/photo/") && scrape.SourceName == "Twitter") // NOTE: This will cause issues for the Twitter account @photo
+                    {
+                        mediaIndex = Convert.ToInt32(url.Substring(url.IndexOf("/photo/") + "/photo/".Length)) - 1;
+                    }
+
+                    Media selectedMedia = (mediaIndex + 1 > scrape.Media.Count || mediaIndex < 0) ?
+                        scrape.Media[0] :
+                        scrape.Media[mediaIndex];
+
+                    itemToQueue = new QueueItem
+                    {
+                        MediaUrl = selectedMedia.MediaUrl,
+                        Name = scrape.Name,
+                        SourceName = scrape.SourceName,
+                        SourceUrl = selectedMedia.SourceUrl,
+                        Type = selectedMedia.Type,
+                        UsernameUrl = scrape.UsernameUrl
+                    };
+                }
+                else
+                {
+                    returnModel.Status = QueueServiceReturn.QueueServiceReturnStatus.SourceUrlNotFound;
+                }
             }
             else
             {
+                // TODO: Handle this better?
                 returnModel.Status = QueueServiceReturn.QueueServiceReturnStatus.ServiceNotSupported;
-                return returnModel;
             }
 
             if (itemToQueue != null)
@@ -195,17 +205,13 @@ namespace GearstashBot.Services
 
                 if (duplicate != null)
                 {
-                    if(AppSettings.Config_WarnOnDuplicate)
+                    if (AppSettings.Config_WarnOnDuplicate)
                         returnModel.Status = QueueServiceReturn.QueueServiceReturnStatus.Duplicate;
                 }
                 else
                 {
                     QueueData.AddQueueItem(itemToQueue, user);
                 }
-            }
-            else
-            {
-                returnModel.Status = QueueServiceReturn.QueueServiceReturnStatus.SourceUrlNotFound;
             }
 
             return returnModel;

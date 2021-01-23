@@ -413,6 +413,8 @@ namespace GearstashBot.Handlers.CommandHandlers
 
             if (queue.Count() > 0)
             {
+                // TODO: Handle item that is missing various data
+
                 QueueItem selectedQueuedItem = (id == 0) ? queue[0] : queue.Where(q => q.Id == id).FirstOrDefault();
                 selectedQueuedItem = (selectedQueuedItem == null) ? queue[0] : selectedQueuedItem;
 

@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using Newtonsoft.Json.Linq;
+using GearstashBot.Models;
 
 namespace GearstashBot.Services
 {
