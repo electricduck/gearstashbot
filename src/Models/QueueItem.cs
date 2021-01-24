@@ -33,7 +33,6 @@ namespace GearstashBot.Models
         {
             Created = 0,
             Queued = 2,
-            Disputed = 4,
             Deleted = 5,
             PostFailed = 6,
             Posted = 3

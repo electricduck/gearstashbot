@@ -106,7 +106,29 @@ namespace GearstashBot.Handlers.CommandHandlers
             );
         }
 
-        public static async Task InvokeDelete(CommandHandlerArguments arguments)
+        public static async Task InvokeShuffle(CommandHandlerArguments arguments)
+        {
+            if(AuthorData.CanAuthorRandomizeQueue(arguments.TelegramUser.Id))
+            {
+                Constants.IsPostingDisabled = true;
+                QueueData.RandomizeQueuedQueueItems();
+                Constants.IsPostingDisabled = false;
+
+                MessageUtilities.SendSuccessAlert(Localization.GetPhrase(Localization.Phrase.RandomizedQueue, arguments.TelegramUser), arguments.TelegramCallbackQueryEvent);
+            
+                await NavigateTo(
+                    arguments.TelegramCallbackQueryEvent.CallbackQuery.Message.Chat.Id,
+                    arguments.TelegramCallbackQueryEvent.CallbackQuery.Message.MessageId,
+                    arguments.TelegramUser
+                );
+            }
+            else
+            {
+                MessageUtilities.SendWarningAlert(Localization.GetPhrase(Localization.Phrase.NoPermissionRandomizeQueue, arguments.TelegramUser), arguments.TelegramCallbackQueryEvent);
+            }
+        }
+
+        public static async Task InvokeDelete(CommandHandlerArguments arguments) // TODO: Handle unable to delete old post
         {
             if (AuthorData.CanAuthorQueue(arguments.TelegramUser.Id))
             {
@@ -334,9 +356,16 @@ namespace GearstashBot.Handlers.CommandHandlers
         )
         {
             var deleteString = Localization.GetPhrase(Localization.Phrase.Delete, user);
+            var randomizeString = Localization.GetPhrase(Localization.Phrase.RandomizeQueue, user);
 
             switch (status)
             {
+                case QueueItem.QueueStatus.Queued:
+                    return new[]
+                    {
+                        InlineKeyboardButton.WithCallbackData($"🗑 {deleteString}", $"view_del:{currentId}:{status.ToString()}"),
+                        InlineKeyboardButton.WithCallbackData($"🔀 {randomizeString}", $"view_rand:{currentId}:{status.ToString()}")
+                    };                    
                 default:
                     return new[]
                     {

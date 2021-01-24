@@ -42,7 +42,7 @@ namespace GearstashBot.I18n.Strings
             { Localization.Phrase.NoPermissionFlushDanglingUsers, "Sie haben keine Berechtigung, nutzlose Benutzer zu löschen" },
             { Localization.Phrase.NoPermissionManageUsers, "Sie haben keine Berechtigung zum Verwalten von Benutzern" },
             { Localization.Phrase.NoPermissionPostQueue, "Sie haben keine Berechtigung, neue Beiträge in die Warteschlange zu stellen" },
-            { Localization.Phrase.NoPermissionRandomizeQueue, "Sie haben keine Berechtigung zum Randomisieren der Warteschlange"},
+            { Localization.Phrase.NoPermissionRandomizeQueue, "Sie haben nicht die Berechtigung, die Warteschlange zu mischen"}, // DeepL [En->De] 24-Jan-2021
             { Localization.Phrase.NoPermissionRemovePost, "Sie haben keine Berechtigung, diesen Beitrag zu entfernen" },
             { Localization.Phrase.NoPermissionTools, "Sie haben keine Berechtigung zur Verwendung von Tools" },
             { Localization.Phrase.NoPermissionViewQueue, "Sie haben keine Berechtigung zum Anzeigen der Warteschlange" },
@@ -52,8 +52,8 @@ namespace GearstashBot.I18n.Strings
             { Localization.Phrase.ProfileUpdated, "Profil aktualisiert"},
             { Localization.Phrase.Queue, "Warteschlange" },
             { Localization.Phrase.Queued, "Warteschlange"},
-            { Localization.Phrase.RandomizeQueue, "Randomisieren Warteschlange"},
-            { Localization.Phrase.RandomizedQueue, "Zufällige Warteschlange" },
+            { Localization.Phrase.RandomizeQueue, "Mischen"}, // DeepL [En->De] 24-Jan-2021
+            { Localization.Phrase.RandomizedQueue, "Gemischte Warteschlange" }, // DeepL [En->De] 24-Jan-2021
             { Localization.Phrase.Retry, "Wiederholen" },
             { Localization.Phrase.ServiceNotSupported, "Dieser Dienst wird nicht unterstützt" },
             { Localization.Phrase.Sooner, "Bald" },

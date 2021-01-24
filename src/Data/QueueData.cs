@@ -158,7 +158,6 @@ namespace GearstashBot.Data
                     .Include(q => q.Author)
                     .Where(q =>
                         q.Status == QueueItem.QueueStatus.Created ||
-                        q.Status == QueueItem.QueueStatus.Disputed ||
                         q.Status == QueueItem.QueueStatus.Posted ||
                         q.Status == QueueItem.QueueStatus.Queued
                     )

@@ -42,7 +42,7 @@ namespace GearstashBot.I18n.Strings
             { Localization.Phrase.NoPermissionFlushDanglingUsers, "Vous n'êtes pas autorisé à purger les utilisateurs inutiles" },
             { Localization.Phrase.NoPermissionManageUsers, "Vous n'êtes pas autorisé à gérer les utilisateurs"},
             { Localization.Phrase.NoPermissionPostQueue, "Vous n'êtes pas autorisé à mettre en file d'attente de nouveaux posts" },
-            { Localization.Phrase.NoPermissionRandomizeQueue, "Vous n'êtes pas autorisé à randomiser la file d'attente"},
+            { Localization.Phrase.NoPermissionRandomizeQueue, "Vous n'avez pas la permission de mélanger les files d'attente"}, // DeepL [En->Fr] 24-Jan-2021
             { Localization.Phrase.NoPermissionRemovePost, "Vous n'êtes pas autorisé à supprimer ce post" },
             { Localization.Phrase.NoPermissionTools, "Vous n'êtes pas autorisé à utiliser des outils" },
             { Localization.Phrase.NoPermissionViewQueue, "Vous n'êtes pas autorisé à afficher la file d'attente" },
@@ -52,8 +52,8 @@ namespace GearstashBot.I18n.Strings
             { Localization.Phrase.ProfileUpdated, "Profil mis à jour"},
             { Localization.Phrase.Queue, "Queue" },
             { Localization.Phrase.Queued, "Attente"},
-            { Localization.Phrase.RandomizeQueue, "Randomiser queue"},
-            { Localization.Phrase.RandomizedQueue, "Randomisé queue"},
+            { Localization.Phrase.RandomizeQueue, "Mélanger"}, // GTranslate [En->Fr] 24-Jan-2021
+            { Localization.Phrase.RandomizedQueue, "La file d'attente a été remaniée"}, // DeepL [En->Fr] 24-Jan-2021
             { Localization.Phrase.Retry, "Réessayez" },
             { Localization.Phrase.ServiceNotSupported, "Ce service n'est pas pris en charge" },
             { Localization.Phrase.Sooner, "Plus tôt" },

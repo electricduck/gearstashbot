@@ -66,10 +66,6 @@ namespace GearstashBot.Handlers
                                 case "start":
                                     UserCommandHandler.InvokeSetup(arguments);
                                     break;
-                                case "tools":
-                                case "tool":
-                                    ToolsCommandHandler.Invoke(arguments);
-                                    break;
                                 case "user":
                                 case "set":
                                     UserCommandHandler.Invoke(arguments);
@@ -123,12 +119,6 @@ namespace GearstashBot.Handlers
 
                     switch (arguments.Command)
                     {
-                        case "tools_purgeusers":
-                            ToolsCommandHandler.InvokePurgeUsers(arguments);
-                            break;
-                        case "tools_randomizequeue":
-                            await ToolsCommandHandler.InvokeRandomizeQueue(arguments);
-                            break;
                         case "user_perm":
                             await UserCommandHandler.InvokeSetPermission(arguments);
                             break;
@@ -140,6 +130,9 @@ namespace GearstashBot.Handlers
                             break;
                         case "view_nav":
                             await ViewCommandHandler.InvokeChange(arguments);
+                            break;
+                        case "view_rand":
+                            await ViewCommandHandler.InvokeShuffle(arguments);
                             break;
                     }
                 }
