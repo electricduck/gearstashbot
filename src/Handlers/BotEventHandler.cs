@@ -36,8 +36,8 @@ namespace GearstashBot.Handlers
                     {
                         Match matchedCommand = CommandRegex.Match(messageText);
                         
-                        AuthorData.UpdateAuthorTelegramProfile(arguments.TelegramUser);
                         arguments.TelegramUser = TelegramUtilities.GetTelegramUser(telegramMessageEvent);
+                        AuthorData.UpdateAuthorTelegramProfile(arguments.TelegramUser);
 
                         if (messageText.StartsWith("/"))
                         {
