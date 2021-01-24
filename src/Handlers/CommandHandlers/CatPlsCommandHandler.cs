@@ -7,11 +7,6 @@ namespace GearstashBot.Handlers.CommandHandlers
 {
     public class CatPlsCommandHandler
     {
-        public static Help Help = new Help {
-            Command = "catpls",
-            Description = "Generate a lovely cat"
-        };
-
         public static void Invoke(CommandHandlerArguments arguments)
         {
             string height = GeneratorUtilities.GenerateRandomNumber(250, 1000).ToString();

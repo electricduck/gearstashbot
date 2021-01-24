@@ -82,8 +82,6 @@ namespace GearstashBot
                 {
                     throw new Exception("Telegram API key invalid.");
                 }
-
-                HelpData.CompileHelp();
             }
             catch (Exception e)
             {

@@ -13,31 +13,6 @@ namespace GearstashBot.Handlers.CommandHandlers
 {
     public class PostCommandHandler
     {
-        public static Help Help = new Help
-        {
-            Arguments = new List<HelpArgument> {
-              new HelpArgument {
-                  Explanation = "Link to post that includes photo/video",
-                  Name = "Link",
-                  Position = 1
-              },
-              new HelpArgument {
-                  Example = "1, 3, 7",
-                  Explanation = "If link includes multiple photos/videos, select which item to post (defaults to <i>1</i>)",
-                  Name = "Media Index",
-                  Optional = true,
-                  Position = 2
-              }
-            },
-            Command = "post",
-            Description = @"Post links to queue, automatically grabbing media and relevant data
-
-Supported services:
-• Flickr (https://www.flickr.com)
-• Instagram (https://www.instagram.com)
-• Twitter (https://twitter.com)"
-        };
-
         public static void Invoke(CommandHandlerArguments arguments)
         {
             if (arguments.CommandArguments == null)

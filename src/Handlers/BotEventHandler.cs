@@ -46,9 +46,6 @@ namespace GearstashBot.Handlers
                                 case "catpls":
                                     CatPlsCommandHandler.Invoke(arguments);
                                     break;
-                                case "help":
-                                    HelpCommandHandler.Invoke(arguments);
-                                    break;
                                 case "info":
                                     InfoCommandHandler.Invoke(arguments);
                                     break;

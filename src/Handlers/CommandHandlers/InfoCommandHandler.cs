@@ -10,12 +10,6 @@ namespace GearstashBot.Handlers.CommandHandlers
 {
     public class InfoCommandHandler
     {
-        public static Help Help = new Help
-        {
-            Command = "info",
-            Description = "Bot information and status"
-        };
-
         public static void Invoke(CommandHandlerArguments arguments)
         {
             var thisProcess = System.Diagnostics.Process.GetCurrentProcess();

@@ -13,12 +13,6 @@ namespace GearstashBot.Handlers.CommandHandlers
 {
     public class ToolsCommandHandler : CommandHandlerBase
     {
-        public static Help Help = new Help
-        {
-            Command = "tools",
-            Description = "Extra tools to manage the bot"
-        };
-
         public static void Invoke(CommandHandlerArguments arguments)
         {
             if (AuthorData.DoesAuthorExist(arguments.TelegramUser))

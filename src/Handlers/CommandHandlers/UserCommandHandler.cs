@@ -15,20 +15,6 @@ namespace GearstashBot.Handlers.CommandHandlers
 {
     public class UserCommandHandler
     {
-        public static Help Help = new Help
-        {
-            Arguments = new List<HelpArgument> {
-              new HelpArgument {
-                  Example = "63391517, @theducky",
-                  Explanation = "User ID of Telegram user, or username of user if it exists on the database",
-                  Name = "User ID",
-                  Position = 1
-              },
-            },
-            Command = "user",
-            Description = "Manage user permissions"
-        };
-
         public static void Invoke(CommandHandlerArguments arguments, bool reload = false)
         {
             bool hasPermission = AuthorData.CanAuthorManageAuthors(arguments.TelegramUser.Id);

@@ -19,22 +19,7 @@ namespace GearstashBot.Handlers.CommandHandlers
 {
     public class ViewCommandHandler
     {
-        private static string placeholderImage = "https://i.imgur.com/PmzeWAH.png";
-
-        public static Help Help = new Help
-        {
-            Arguments = new List<HelpArgument> {
-              new HelpArgument {
-                  Example = "https://t.me/channel/5126",
-                  Explanation = "Link to Telegram post on the channel to directly view it",
-                  Name = "t.me Link",
-                  Optional = true,
-                  Position = 1
-              },
-            },
-            Command = "view",
-            Description = "Manage posts in the queue and channel"
-        };
+        private static string PlaceholderImage = "https://i.imgur.com/PmzeWAH.png";
 
         public static void Invoke(CommandHandlerArguments arguments)
         {
@@ -44,7 +29,7 @@ namespace GearstashBot.Handlers.CommandHandlers
                         caption: $"<i>{Localization.GetPhrase(Localization.Phrase.LoadingQueue, arguments.TelegramUser)}</i>",
                         chatId: arguments.TelegramMessageEvent.Message.Chat.Id,
                         parseMode: ParseMode.Html,
-                        photo: placeholderImage
+                        photo: PlaceholderImage
                     ).Result;
 
                 arguments.TelegramMessageEvent.Message.MessageId = initMessage.MessageId;
@@ -500,7 +485,7 @@ namespace GearstashBot.Handlers.CommandHandlers
                 chatId: chatId,
                 media: new InputMediaPhoto
                 {
-                    Media = placeholderImage
+                    Media = PlaceholderImage
                 },
                 messageId: messageId
             );
@@ -587,7 +572,7 @@ namespace GearstashBot.Handlers.CommandHandlers
                                 chatId: chatId,
                                 media: new InputMediaPhoto
                                 {
-                                    Media = placeholderImage
+                                    Media = PlaceholderImage
                                 },
                                 messageId: messageId
                             );
