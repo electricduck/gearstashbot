@@ -2,6 +2,7 @@ FROM mcr.microsoft.com/dotnet/sdk:5.0-alpine3.12 AS build-env
 WORKDIR /app
 COPY ./src/*.csproj ./
 RUN dotnet restore
+COPY ./.git ./
 COPY ./src ./
 RUN dotnet publish -c Release -o out
 
