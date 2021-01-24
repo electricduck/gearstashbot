@@ -16,6 +16,9 @@ namespace GearstashBot.I18n
             bool foundPhrase = false;
 
             switch(language) {
+                case "cs":
+                    phrases = CsStrings.StringDictionary;
+                    break;
                 case "de":
                     phrases = DeStrings.StringDictionary;
                     break;
@@ -70,7 +73,7 @@ namespace GearstashBot.I18n
         }
 
         public enum Phrase
-        {   // Next: 69
+        {   // Next: 71
             AlreadyBeenQueued = 11,
             Author = 40,
             Back = 60,
@@ -89,11 +92,10 @@ namespace GearstashBot.I18n
             Earlier = 18,
             Earliest = 19,
             FlushDanglingUsers = 44,
-            FlushQueue = 35,
-            FlushRemovedPosts = 43,
-            FlushedRemovedPosts = 47,
             FlushedXDanglingUsers = 50,
             InvalidArgs = 53,
+            Language = 69,
+            LastAccessed = 70,
             Later = 4,
             Latest = 7,
             LoadingQueue = 20,
@@ -107,7 +109,6 @@ namespace GearstashBot.I18n
             NothingIsPosted = 23,
             NothingIsQueued = 1,
             NoPermissionFlushDanglingUsers = 51,
-            NoPermissionFlushRemovedPosts = 48,
             NoPermissionManageUsers = 31,
             NoPermissionPostQueue = 14,
             NoPermissionRandomizeQueue = 56,

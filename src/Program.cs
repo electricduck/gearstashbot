@@ -7,7 +7,6 @@ using System.Threading;
 using CommandLine;
 using Microsoft.Extensions.Configuration;
 using Telegram.Bot;
-using GearstashBot.Data;
 using GearstashBot.Handlers;
 using GearstashBot.Models;
 using GearstashBot.Services;

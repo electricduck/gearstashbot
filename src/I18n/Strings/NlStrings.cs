@@ -23,11 +23,10 @@ namespace GearstashBot.I18n.Strings
             { Localization.Phrase.Earlier, "Eerder" }, // GTranslate [En->Nl] 24-Jan-2021
             { Localization.Phrase.Earliest, "Vroegste" }, // GTranslate [En->Nl] 24-Jan-2021
             { Localization.Phrase.FlushDanglingUsers, "Zuiver hangende gebruikers" }, // GTranslate [En->Nl] 24-Jan-2021
-            { Localization.Phrase.FlushQueue, "Zuiver berichten" }, // GTranslate [En->Nl] 24-Jan-2021
-            { Localization.Phrase.FlushRemovedPosts, "Verwijderde berichten doorspoelen" }, // GTranslate [En->Nl] 24-Jan-2021
-            { Localization.Phrase.FlushedRemovedPosts, "Verwijderde berichten gespoeld" }, // GTranslate [En->Nl] 24-Jan-2021
             { Localization.Phrase.FlushedXDanglingUsers, "[0] bungelende gebruikers verwijderd" }, // GTranslate [En->Nl] 24-Jan-2021
             { Localization.Phrase.InvalidArgs, "Ongeldige argumenten" }, // GTranslate [En->Nl] 24-Jan-2021
+            { Localization.Phrase.Language, "Taal" }, // GTranslate [En->De] 24-Jan-2021
+            { Localization.Phrase.LastAccessed, "Laatst geopend" }, // GTranslate [En->De] 24-Jan-2021
             { Localization.Phrase.Later, "Later" }, // GTranslate [En->Nl] 24-Jan-2021
             { Localization.Phrase.Latest, "Laatste" }, // ✔️ GTranslate [En->Nl] 24-Jan-2021
             { Localization.Phrase.LinkContainsNoMedia, "Deze link bevat geen media of bestaat niet" }, // GTranslate [En->Nl] 24-Jan-2021
@@ -41,7 +40,6 @@ namespace GearstashBot.I18n.Strings
             { Localization.Phrase.NothingIsPosted, "Er is niets gepost" }, // GTranslate [En->Nl] 24-Jan-2021
             { Localization.Phrase.NothingIsQueued, "Niets staat in de wachtrij" }, // GTranslate [En->Nl] 24-Jan-2021
             { Localization.Phrase.NoPermissionFlushDanglingUsers, "U hebt geen toestemming om hangende gebruikers te verwijderen" }, // GTranslate [En->Nl] 24-Jan-2021
-            { Localization.Phrase.NoPermissionFlushRemovedPosts, "Je hebt geen toestemming om verwijderde berichten te verwijderen" }, // GTranslate [En->Nl] 24-Jan-2021
             { Localization.Phrase.NoPermissionManageUsers, "U heeft geen toestemming om gebruikers te beheren"}, // GTranslate [En->Nl] 24-Jan-2021
             { Localization.Phrase.NoPermissionPostQueue, "Je hebt geen toestemming om nieuwe berichten in de wachtrij te plaatsen" }, // GTranslate [En->Nl] 24-Jan-2021
             { Localization.Phrase.NoPermissionRandomizeQueue, "U heeft geen toestemming om de wachtrij willekeurig te maken"}, // GTranslate [En->Nl] 24-Jan-2021
@@ -66,7 +64,6 @@ namespace GearstashBot.I18n.Strings
             { Localization.Phrase.User, "Gebruiker" }, // GTranslate [En->Nl] 24-Jan-2021
             { Localization.Phrase.Username, "Gebruikersnaam" }, // GTranslate [En->Nl] 24-Jan-2021
             { Localization.Phrase.Viewing, "Bekijken" }, // GTranslate [En->Nl] 24-Jan-2021
-            { Localization.Phrase.WelcomeFirstAuthor, $"<b>Welkom bij GearstashBot, [0]!</b><br />Stel uw rechten in met <code>/user [1]</code> (of gewoon <code>/user</code>)." } // GTranslate [En->Nl] 24-Jan-2021
         };
     }
 }

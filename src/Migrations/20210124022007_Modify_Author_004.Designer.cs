@@ -3,14 +3,16 @@ using System;
 using GearstashBot;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace GearstashBot.Migrations
 {
     [DbContext(typeof(StashBotDbContext))]
-    partial class StashBotDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210124022007_Modify_Author_004")]
+    partial class Modify_Author_004
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

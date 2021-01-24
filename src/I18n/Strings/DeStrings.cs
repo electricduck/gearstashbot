@@ -23,11 +23,10 @@ namespace GearstashBot.I18n.Strings
             { Localization.Phrase.Earlier, "Früher" },
             { Localization.Phrase.Earliest, "Früheste" },
             { Localization.Phrase.FlushDanglingUsers, "Nutzlose Benutzer löschen" },
-            { Localization.Phrase.FlushQueue, "Beiträge löschen" },
-            { Localization.Phrase.FlushRemovedPosts, "Entfernte Beiträge löschen" },
-            { Localization.Phrase.FlushedRemovedPosts, "Entfernte Pfosten löschen" },
             { Localization.Phrase.FlushedXDanglingUsers, "[0] nutzlose Benutzer gelöscht" },
             { Localization.Phrase.InvalidArgs, "Ungültige Argumente" },
+            { Localization.Phrase.Language, "Sprache" }, // DeepL [En->De] 24-Jan-2021
+            { Localization.Phrase.LastAccessed, "Letzter Zugriff" }, // DeepL [En->De] 24-Jan-2021
             { Localization.Phrase.Later, "Später" },
             { Localization.Phrase.Latest, "Aktuellste" },
             { Localization.Phrase.LinkContainsNoMedia, "Dieser Link enthält keine Medien oder existiert nicht" },
@@ -41,7 +40,6 @@ namespace GearstashBot.I18n.Strings
             { Localization.Phrase.NothingIsPosted, "Es wurde nichts gepostet" },
             { Localization.Phrase.NothingIsQueued, "Nichts steht in der Warteschlange" },
             { Localization.Phrase.NoPermissionFlushDanglingUsers, "Sie haben keine Berechtigung, nutzlose Benutzer zu löschen" },
-            { Localization.Phrase.NoPermissionFlushRemovedPosts, "Sie haben keine Berechtigung zum Entfernen entfernter Beiträge" },
             { Localization.Phrase.NoPermissionManageUsers, "Sie haben keine Berechtigung zum Verwalten von Benutzern" },
             { Localization.Phrase.NoPermissionPostQueue, "Sie haben keine Berechtigung, neue Beiträge in die Warteschlange zu stellen" },
             { Localization.Phrase.NoPermissionRandomizeQueue, "Sie haben keine Berechtigung zum Randomisieren der Warteschlange"},
@@ -65,8 +63,7 @@ namespace GearstashBot.I18n.Strings
             { Localization.Phrase.Tools, "Werkzeuge" },
             { Localization.Phrase.User, "Benutzer" },
             { Localization.Phrase.Username, "Nutzername" },
-            { Localization.Phrase.Viewing, "Anzeigen" },
-            { Localization.Phrase.WelcomeFirstAuthor, $"<b>Willkommen bei GearstashBot, [0]!</b><br />Setzen Sie Ihre Berechtigungen mit <code>/user [1]</code> (oder nur <code>/user</code>)." }
+            { Localization.Phrase.Viewing, "Anzeigen" }
         };
     }
 }

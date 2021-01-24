@@ -80,10 +80,12 @@ namespace GearstashBot.Handlers.CommandHandlers
 
                 string notSetText = Localization.GetPhrase(Localization.Phrase.NotSet, arguments.TelegramUser);
 
-                string authorNameText = (String.IsNullOrEmpty(author.TelegramName)) ? $"<i>({notSetText})</i>" : author.TelegramName;
-                string authorUsernameText = (String.IsNullOrEmpty(author.TelegramUsername)) ? $"<i>({notSetText})</i>" : author.TelegramUsername;
+                string authorLanguageText = author.TelegramLanguage;
+                string authorLastAccessedText = author.LastAccessedAt.ToString("dd-MMM-yy hh:mm:ss zz");
                 string authorLastUpdatedText = author.TelegramDetailsLastUpdatedAt.ToString("dd-MMM-yy hh:mm:ss zz");
                 string authorLink = $"<a href=\"tg://user?id={authorId}\">{authorId}</a>";
+                string authorNameText = (String.IsNullOrEmpty(author.TelegramName)) ? $"<i>({notSetText})</i>" : author.TelegramName;
+                string authorUsernameText = (String.IsNullOrEmpty(author.TelegramUsername)) ? $"<i>({notSetText})</i>" : author.TelegramUsername;
                 int authorPostCount = AuthorData.CountAuthorQueue(author.TelegramId);
                 int queueCount = QueueData.CountQueueItems();
                 decimal queuePercentage = 0;
@@ -98,6 +100,8 @@ namespace GearstashBot.Handlers.CommandHandlers
 —
 <b>{Localization.GetPhrase(Localization.Phrase.Name, arguments.TelegramUser)}:</b> {authorNameText}
 <b>{Localization.GetPhrase(Localization.Phrase.Username, arguments.TelegramUser)}:</b> {authorUsernameText}
+<b>{Localization.GetPhrase(Localization.Phrase.Language, arguments.TelegramUser)}:</b> <code>{authorLanguageText}</code>
+<b>{Localization.GetPhrase(Localization.Phrase.LastAccessed, arguments.TelegramUser)}:</b> <code>{authorLastAccessedText}</code>
 <b>{Localization.GetPhrase(Localization.Phrase.ProfileUpdated, arguments.TelegramUser)}:</b> <code>{authorLastUpdatedText}</code>
 <b>{Localization.GetPhrase(Localization.Phrase.Posts, arguments.TelegramUser)}:</b> <code>{authorPostCount}</code> (<code>{queuePercentage.ToString("0.00")}%</code>)";
 

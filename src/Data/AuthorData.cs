@@ -216,33 +216,6 @@ namespace GearstashBot.Data
             }
         }
 
-        public static Author UpdateAuthorTelegramProfile(TelegramUser user)
-        {
-            using (var db = new StashBotDbContext())
-            {
-                Author author = db.Authors
-                    .FirstOrDefault(a => a.TelegramId == user.Id);
-
-                if (author != null)
-                {
-                    if (!(
-                        author.TelegramName == user.Name &&
-                        author.TelegramUsername == user.Username
-                    ))
-                    {
-                        author.TelegramName = user.Name;
-                        author.TelegramUsername = user.Username;
-                        author.TelegramUsernameUpper = user.Username.ToUpper();
-                        author.TelegramDetailsLastUpdatedAt = DateTime.UtcNow;
-
-                        db.SaveChanges();
-                    }
-                }
-
-                return author;
-            }
-        }
-
         public static void SetAuthorDeleteOthersPermission(
             long telegramId,
             bool canDeleteOthers
@@ -296,6 +269,52 @@ namespace GearstashBot.Data
                     .FirstOrDefault(a => a.TelegramId == telegramId);
                 author.CanRandomizeQueue = canRandomizeQueue;
                 db.SaveChanges();
+            }
+        }
+
+        public static Author UpdateAuthorLastAccess(TelegramUser user)
+        {
+            using (var db = new StashBotDbContext())
+            {
+                Author author = db.Authors
+                    .FirstOrDefault(a => a.TelegramId == user.Id);
+
+                if (author != null)
+                {
+                    author.LastAccessedAt = DateTime.UtcNow;
+                    db.SaveChanges();
+                }
+
+                return author;
+            }
+        }
+
+        public static Author UpdateAuthorTelegramProfile(TelegramUser user)
+        {
+            using (var db = new StashBotDbContext())
+            {
+                Author author = db.Authors
+                    .FirstOrDefault(a => a.TelegramId == user.Id);
+
+                if (author != null)
+                {
+                    if (!(
+                        author.TelegramLanguage == user.Language &&
+                        author.TelegramName == user.Name &&
+                        author.TelegramUsername == user.Username
+                    ))
+                    {
+                        author.TelegramLanguage = user.Language;
+                        author.TelegramName = user.Name;
+                        author.TelegramUsername = user.Username;
+                        author.TelegramUsernameUpper = user.Username.ToUpper();
+                        author.TelegramDetailsLastUpdatedAt = DateTime.UtcNow;
+
+                        db.SaveChanges();
+                    }
+                }
+
+                return author;
             }
         }
     }

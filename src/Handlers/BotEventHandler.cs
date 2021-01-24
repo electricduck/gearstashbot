@@ -38,6 +38,7 @@ namespace GearstashBot.Handlers
                         
                         arguments.TelegramUser = TelegramUtilities.GetTelegramUser(telegramMessageEvent);
                         AuthorData.UpdateAuthorTelegramProfile(arguments.TelegramUser);
+                        AuthorData.UpdateAuthorLastAccess(arguments.TelegramUser);
 
                         if (messageText.StartsWith("/"))
                         {
@@ -117,6 +118,8 @@ namespace GearstashBot.Handlers
                     arguments.CommandArguments = matchedCommand.Groups[3].Value.Split(":");
                     arguments.TelegramCallbackQueryEvent = telegramCallbackQueryEvent;
                     arguments.TelegramUser = TelegramUtilities.GetTelegramUser(telegramCallbackQueryEvent);
+
+                    AuthorData.UpdateAuthorLastAccess(arguments.TelegramUser);
 
                     switch (arguments.Command)
                     {

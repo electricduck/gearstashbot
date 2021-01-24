@@ -12,6 +12,7 @@ namespace GearstashBot.Models
         public int Id { get; set; }
 
         public long TelegramId { get; set; }
+        public string TelegramLanguage { get; set; }
         public string TelegramName { get; set; }
         public string TelegramUsername { get; set; }
         public string TelegramUsernameUpper { get; set; }
@@ -22,6 +23,7 @@ namespace GearstashBot.Models
         public bool CanQueue { get; set; } = false;
         public bool CanRandomizeQueue { get; set; } = false;
 
+        public DateTime LastAccessedAt { get; set; }
         public DateTime TelegramDetailsLastUpdatedAt { get; set; }
 
         public List<QueueItem> QueueItems { get; set; }
