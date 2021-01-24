@@ -30,8 +30,6 @@ namespace GearstashBot.Handlers.CommandHandlers
                         user: arguments.TelegramUser
                     );
 
-                    AuthorData.UpdateAuthorTelegramProfile(arguments.TelegramUser);
-
                     switch (queueLinkStatus.Status)
                     {
                         case QueueServiceReturn.QueueServiceReturnStatus.Queued:

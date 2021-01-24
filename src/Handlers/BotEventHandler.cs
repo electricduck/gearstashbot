@@ -7,6 +7,7 @@ using GearstashBot.Handlers.CommandHandlers;
 using GearstashBot.I18n;
 using GearstashBot.Models.ArgumentModels;
 using GearstashBot.Utilities;
+using GearstashBot.Data;
 
 namespace GearstashBot.Handlers
 {
@@ -33,14 +34,16 @@ namespace GearstashBot.Handlers
                 {
                     if (!String.IsNullOrEmpty(messageText))
                     {
-                        Match parsedCommand = CommandRegex.Match(messageText);
+                        Match matchedCommand = CommandRegex.Match(messageText);
+                        
+                        AuthorData.UpdateAuthorTelegramProfile(arguments.TelegramUser);
                         arguments.TelegramUser = TelegramUtilities.GetTelegramUser(telegramMessageEvent);
 
                         if (messageText.StartsWith("/"))
                         {
-                            arguments.Command = parsedCommand.Groups[1].Value.Replace("/", "").ToLower();
-                            arguments.CommandArgument = parsedCommand.Groups[3].Value;
-                            arguments.CommandArguments = parsedCommand.Groups[3].Value.Split(" ");
+                            arguments.Command = matchedCommand.Groups[1].Value.Replace("/", "").ToLower();
+                            arguments.CommandArgument = matchedCommand.Groups[3].Value;
+                            arguments.CommandArguments = matchedCommand.Groups[3].Value.Split(" ");
                             arguments.TelegramMessageEvent = telegramMessageEvent;
 
                             if (String.IsNullOrEmpty(arguments.CommandArguments[0].ToString()))
@@ -108,10 +111,10 @@ namespace GearstashBot.Handlers
 
                 try
                 {
-                    Match parsedCommand = CallbackRegex.Match(telegramCallbackQueryEvent.CallbackQuery.Data);
+                    Match matchedCommand = CallbackRegex.Match(telegramCallbackQueryEvent.CallbackQuery.Data);
 
-                    arguments.Command = parsedCommand.Groups[1].Value;
-                    arguments.CommandArguments = parsedCommand.Groups[3].Value.Split(":");
+                    arguments.Command = matchedCommand.Groups[1].Value;
+                    arguments.CommandArguments = matchedCommand.Groups[3].Value.Split(":");
                     arguments.TelegramCallbackQueryEvent = telegramCallbackQueryEvent;
                     arguments.TelegramUser = TelegramUtilities.GetTelegramUser(telegramCallbackQueryEvent);
 
