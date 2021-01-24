@@ -1,4 +1,3 @@
-/post - Posts links to queue
-/view - View queued posts
-/help - More commands
-/info - Bot status
+post - Posts links to queue
+view - View queued posts
+info - Bot status

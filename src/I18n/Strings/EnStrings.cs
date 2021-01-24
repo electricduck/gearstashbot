@@ -27,7 +27,7 @@ namespace GearstashBot.I18n.Strings
             { Localization.Phrase.FlushRemovedPosts, "Flush Removed Posts" },
             { Localization.Phrase.FlushedRemovedPosts, "Flushed removed posts" },
             { Localization.Phrase.FlushedXDanglingUsers, "Purged [0] dangling users" },
-            { Localization.Phrase.InvalidArgsSeeHelp, "Invalid arguments: see <code>/help [0]</code> for details" },
+            { Localization.Phrase.InvalidArgs, "Invalid arguments" },
             { Localization.Phrase.Later, "Later" },
             { Localization.Phrase.Latest, "Latest" },
             { Localization.Phrase.LinkContainsNoMedia, "This link contains no media or does not exist" },

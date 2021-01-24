@@ -93,7 +93,7 @@ namespace GearstashBot.I18n
             FlushRemovedPosts = 43,
             FlushedRemovedPosts = 47,
             FlushedXDanglingUsers = 50,
-            InvalidArgsSeeHelp = 53,
+            InvalidArgs = 53,
             Later = 4,
             Latest = 7,
             LoadingQueue = 20,

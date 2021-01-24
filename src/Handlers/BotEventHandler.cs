@@ -74,7 +74,7 @@ namespace GearstashBot.Handlers
                 {
                     MessageUtilities.SendWarningMessage(
                         Localization.GetPhrase(
-                            Localization.Phrase.InvalidArgsSeeHelp,
+                            Localization.Phrase.InvalidArgs,
                             arguments.TelegramUser,
                             new string[] {
                                 arguments.Command

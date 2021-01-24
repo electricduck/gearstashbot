@@ -27,7 +27,7 @@ namespace GearstashBot.I18n.Strings
             { Localization.Phrase.FlushRemovedPosts, "Verwijderde berichten doorspoelen" }, // GTranslate [En->Nl] 24-Jan-2021
             { Localization.Phrase.FlushedRemovedPosts, "Verwijderde berichten gespoeld" }, // GTranslate [En->Nl] 24-Jan-2021
             { Localization.Phrase.FlushedXDanglingUsers, "[0] bungelende gebruikers verwijderd" }, // GTranslate [En->Nl] 24-Jan-2021
-            { Localization.Phrase.InvalidArgsSeeHelp, "Ongeldige argumenten: zie <code>/help [0]</code> voor details" }, // GTranslate [En->Nl] 24-Jan-2021
+            { Localization.Phrase.InvalidArgs, "Ongeldige argumenten" }, // GTranslate [En->Nl] 24-Jan-2021
             { Localization.Phrase.Later, "Later" }, // GTranslate [En->Nl] 24-Jan-2021
             { Localization.Phrase.Latest, "Laatste" }, // ✔️ GTranslate [En->Nl] 24-Jan-2021
             { Localization.Phrase.LinkContainsNoMedia, "Deze link bevat geen media of bestaat niet" }, // GTranslate [En->Nl] 24-Jan-2021
