@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Newtonsoft.Json.Linq;
 using GearstashBot.Models;
 
@@ -25,6 +26,8 @@ namespace GearstashBot.Services
                 return null;
             }
 
+            Source source = null;
+
             foreach (var item in galleryDlOutput.Children())
             {
                 string possibleException = item[0].ToString();
@@ -36,18 +39,21 @@ namespace GearstashBot.Services
                         throw new Exception($"Failed to download item");
                 }
 
-                Source source = new Source();
-
                 switch (Convert.ToInt32(item[0]))
                 {
                     case 2:
-                        if (item[0].Next["category"] != null)
+                        if (item[0].Next["category"] != null && source == null)
                         {
                             source = GetSource(item[0].Next["category"].ToString());
                             scrape.SourceName = source.Name;
                         }
 
-                        if (item[0].Next["owner"] != null)
+                        if(item[0].Next["author"] != null)
+                        {
+                            scrape.Name = item[0].Next["author"].ToString(); // reddit
+                            scrape.Username = item[0].Next["author"].ToString(); // reddit
+                        }
+                        else if (item[0].Next["owner"] != null)
                         {
                             if (item[0].Next["owner"]["nsid"] != null)
                                 scrape.Username = item[0].Next["owner"]["nsid"].ToString(); // Flickr
@@ -55,7 +61,7 @@ namespace GearstashBot.Services
                             if (item[0].Next["owner"]["realname"] != null)
                                 scrape.Name = item[0].Next["owner"]["realname"].ToString(); // Flickr
 
-                            if(String.IsNullOrEmpty(scrape.Name) && item[0].Next["owner"]["username"] != null)
+                            if (String.IsNullOrEmpty(scrape.Name) && item[0].Next["owner"]["username"] != null)
                                 scrape.Name = item[0].Next["owner"]["username"].ToString(); // Flickr
                         }
                         else if (item[0].Next["user"] != null)
@@ -69,15 +75,6 @@ namespace GearstashBot.Services
                         else if (item[0].Next["username"] != null)
                         {
                             scrape.Username = item[0].Next["username"].ToString(); // Instagram;
-                        }
-
-                        if (item[0].Next["post_shortcode"] != null) // TODO: Fix SourceId not being set properly
-                        {
-                            scrape.SourceId = item[0].Next["post_shortcode"].ToString();
-                        }
-                        else if (item[0].Next["tweet_id"] != null)
-                        {
-                            scrape.SourceId = item[0].Next["tweet_id"].ToString(0);
                         }
 
                         if (scrape.Name == null)
@@ -101,6 +98,11 @@ namespace GearstashBot.Services
                                     break;
                             }
                         }
+                        else if(item[2]["is_video"] != null) // reddit
+                        {
+                            if(Convert.ToBoolean(item[2]["is_video"]))
+                                extractedMedia.Type = QueueItem.MediaType.Video;
+                        }
                         else if (item[2]["typename"] != null) // Instagram
                         {
                             switch (item[2]["typename"].ToString())
@@ -114,23 +116,37 @@ namespace GearstashBot.Services
                             }
                         }
 
-                        if (
-                            item[2]["urls"] != null &&
-                            item[2]["urls"]["url"] != null &&
-                            item[2]["urls"]["url"][0]["_content"] != null
-                        ) // Flickr
+                        if (item[2]["post_shortcode"] != null) // Instagram
                         {
-                            extractedMedia.SourceUrl = item[2]["urls"]["url"][0]["_content"].ToString(); // TODO: Replace username with NSID
+                            scrape.UrlId = item[2]["post_shortcode"].ToString();
                         }
-                        else if(item[2]["post_url"] != null) // Instagram
+                        else if(item[2]["subreddit"] != null) // reddit
                         {
-                            extractedMedia.SourceUrl = item[2]["post_url"].ToString();
+                            scrape.UrlCategory = item[2]["subreddit"].ToString();
+                            scrape.UrlId = item[2]["id"].ToString();
+                            scrape.UrlSlug = item[2]["permalink"].ToString()
+                                .Remove(item[2]["permalink"].ToString().Length - 1)
+                                .Split('/').Last();
                         }
-                        else if(item[2]["tweet_id"] != null) // Twitter
+                        else if (item[2]["tweet_id"] != null) // Twitter
                         {
-                            extractedMedia.SourceUrl = GetSource("twitter").SourceUrlTemplate // HACK: Until problem above is resolved
-                                .Replace("{id}", item[2]["tweet_id"].ToString())
-                                .Replace("{username}", item[2]["user"]["name"].ToString());
+                            scrape.UrlId = item[2]["tweet_id"].ToString(0);
+                        }
+
+                        if (String.IsNullOrEmpty(extractedMedia.SourceUrl)) // Potential problems?
+                        {
+                            if (
+                                item[2]["urls"] != null &&
+                                item[2]["urls"]["url"] != null &&
+                                item[2]["urls"]["url"][0]["_content"] != null
+                            ) // Flickr
+                            {
+                                extractedMedia.SourceUrl = item[2]["urls"]["url"][0]["_content"].ToString(); // TODO: Replace username with NSID
+                            }
+                            else
+                            {
+                                extractedMedia.SourceUrl = ParseSourceUrl(source.SourceUrlTemplate, scrape);
+                            }
                         }
 
                         if (item[1] != null)
@@ -166,6 +182,11 @@ namespace GearstashBot.Services
                     returnModel.SourceUrlTemplate = "https://www.instagram.com/p/{id}/";
                     returnModel.UsernameUrlTemplate = "https://www.instagram.com/{username}/";
                     break;
+                case "reddit":
+                    returnModel.Name = "reddit";
+                    returnModel.SourceUrlTemplate = "https://reddit.com/r/{category}/comments/{id}/{slug}";
+                    returnModel.UsernameUrlTemplate = "https://reddit.com/u/{username}";
+                    break;
                 case "twitter":
                     returnModel.Name = "Twitter";
                     returnModel.SourceUrlTemplate = "https://twitter.com/{username}/status/{id}";
@@ -182,7 +203,9 @@ namespace GearstashBot.Services
         private string ParseSourceUrl(string template, Scrape scrape)
         {
             return template
-                .Replace("{id}", scrape.SourceId)
+                .Replace("{category}", scrape.UrlCategory)
+                .Replace("{id}", scrape.UrlId)
+                .Replace("{slug}", scrape.UrlSlug)
                 .Replace("{username}", scrape.Username);
         }
     }
