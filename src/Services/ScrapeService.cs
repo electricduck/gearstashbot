@@ -54,6 +54,9 @@ namespace GearstashBot.Services
 
                             if (item[0].Next["owner"]["realname"] != null)
                                 scrape.Name = item[0].Next["owner"]["realname"].ToString(); // Flickr
+
+                            if(String.IsNullOrEmpty(scrape.Name) && item[0].Next["owner"]["username"] != null)
+                                scrape.Name = item[0].Next["owner"]["username"].ToString(); // Flickr
                         }
                         else if (item[0].Next["user"] != null)
                         {
@@ -117,7 +120,7 @@ namespace GearstashBot.Services
                             item[2]["urls"]["url"][0]["_content"] != null
                         ) // Flickr
                         {
-                            extractedMedia.SourceUrl = item[2]["urls"]["url"][0]["_content"].ToString();
+                            extractedMedia.SourceUrl = item[2]["urls"]["url"][0]["_content"].ToString(); // TODO: Replace username with NSID
                         }
                         else if(item[2]["post_url"] != null) // Instagram
                         {
