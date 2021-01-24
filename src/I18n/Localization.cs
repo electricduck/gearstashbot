@@ -16,9 +16,6 @@ namespace GearstashBot.I18n
             bool foundPhrase = false;
 
             switch(language) {
-                case "cs":
-                    phrases = CsStrings.StringDictionary;
-                    break;
                 case "de":
                     phrases = DeStrings.StringDictionary;
                     break;

@@ -25,8 +25,8 @@ namespace GearstashBot.I18n.Strings
             { Localization.Phrase.FlushDanglingUsers, "Zuiver hangende gebruikers" }, // GTranslate [En->Nl] 24-Jan-2021
             { Localization.Phrase.FlushedXDanglingUsers, "[0] bungelende gebruikers verwijderd" }, // GTranslate [En->Nl] 24-Jan-2021
             { Localization.Phrase.InvalidArgs, "Ongeldige argumenten" }, // GTranslate [En->Nl] 24-Jan-2021
-            { Localization.Phrase.Language, "Taal" }, // GTranslate [En->De] 24-Jan-2021
-            { Localization.Phrase.LastAccessed, "Laatst geopend" }, // GTranslate [En->De] 24-Jan-2021
+            { Localization.Phrase.Language, "Taal" }, // GTranslate [En->Nl] 24-Jan-2021
+            { Localization.Phrase.LastAccessed, "Laatst geopend" }, // GTranslate [En->Nl] 24-Jan-2021
             { Localization.Phrase.Later, "Later" }, // GTranslate [En->Nl] 24-Jan-2021
             { Localization.Phrase.Latest, "Laatste" }, // ✔️ GTranslate [En->Nl] 24-Jan-2021
             { Localization.Phrase.LinkContainsNoMedia, "Deze link bevat geen media of bestaat niet" }, // GTranslate [En->Nl] 24-Jan-2021
