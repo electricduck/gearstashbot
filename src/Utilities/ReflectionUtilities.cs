@@ -1,5 +1,6 @@
 using System;
 using System.Reflection;
+using GearstashBot.Models;
 
 namespace GearstashBot.Utilities
 {
@@ -12,10 +13,28 @@ namespace GearstashBot.Utilities
             return $"{n} {v.Major}.{v.Minor}";
         }
 
-        public static string GetVersion()
+        public static AppVersion GetVersion()
         {
-            var v = Assembly.GetEntryAssembly().GetName().Version;
-            return $"{v.Major}.{v.Minor}.{v.Build}";
+            AppVersion version = new AppVersion();
+            var attribute = Assembly.GetEntryAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>();
+
+            if(attribute?.InformationalVersion != null)
+            {
+                var versionString = attribute.InformationalVersion;
+                
+                version.Commit = versionString.Substring(versionString.IndexOf('+') + 1);
+            }
+
+            return version;
+
+            //var v = Assembly.GetEntryAssembly().GetName().Version;
+            //return $"{v.Major}.{v.Minor}.{v.Build}";
+        }
+
+        public static string GetVersionString()
+        {
+            AppVersion version = GetVersion();
+            return $"{version.Commit}";
         }
     }
 }

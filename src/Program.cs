@@ -24,9 +24,9 @@ namespace GearstashBot
         ""telegram"": ""1234567890:AbC_dEfGhIjKlMnOpQrStUvWxYz""
     },
     ""config"": {
+        ""backupDatabase"": true,
         ""channel"": -1000000000000,
-        ""createDbBackups"": true,
-        ""name"": ""GearstashBot"",
+        ""name"": ""Gearstash Bot"",
         ""owner"": ""OopsIForgotToSetTheOwner"",
         ""poll"": true,
         ""postInterval"": 30000,
@@ -69,7 +69,7 @@ namespace GearstashBot
                 MessageUtilities.PrintInfoMessage("Migrating database...");
                 DbUtilities.MigrateDatabase();
 
-                if (AppSettings.Config_CreateDbBackups)
+                if (AppSettings.Config_BackupDatabase)
                 {
                     MessageUtilities.PrintInfoMessage("Backing up database...");
                     DbUtilities.BackupDatabase();
@@ -147,8 +147,8 @@ namespace GearstashBot
 
             // TODO: Handle nulls
             AppSettings.ApiKeys_Telegram = configuration.GetSection("apiKeys")["telegram"];
+            AppSettings.Config_BackupDatabase = Convert.ToBoolean(configuration.GetSection("config")["backupDatabase"]);
             AppSettings.Config_ChannelId = Convert.ToInt64(configuration.GetSection("config")["channel"]);
-            AppSettings.Config_CreateDbBackups = Convert.ToBoolean(configuration.GetSection("config")["createDbBackups"]);
             AppSettings.Config_Name = (configuration.GetSection("config").GetChildren().Any(i => i.Key == "name")) ? configuration.GetSection("config")["name"] : "Gearstash Bot";
             AppSettings.Config_Owner = "@" + configuration.GetSection("config")["owner"].Replace("@", "");
             AppSettings.Config_Poll = Convert.ToBoolean(configuration.GetSection("config")["poll"]);

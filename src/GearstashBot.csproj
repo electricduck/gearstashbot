@@ -1,8 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+  <Target Name="SetSourceRevisionId" BeforeTargets="InitializeSourceControlInformation">
+    <Exec Command="git describe --long --always --exclude=* --abbrev=7" ConsoleToMSBuild="True" IgnoreExitCode="False">
+      <Output PropertyName="SourceRevisionId" TaskParameter="ConsoleOutput"/>
+    </Exec> 
+  </Target>
+
   <PropertyGroup>
-    <VersionPrefix>20.0.0</VersionPrefix>
-    <VersionSuffix>beta6</VersionSuffix>
+    <VersionPrefix>0.1.0</VersionPrefix>
     <OutputType>Exe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>

@@ -165,7 +165,7 @@ namespace GearstashBot.Utilities
             Console.ForegroundColor = ConsoleColor.Gray;
             Console.Write("Version ");
             Console.ForegroundColor = ConsoleColor.White;
-            Console.Write(ReflectionUtilities.GetVersion());
+            Console.Write(ReflectionUtilities.GetVersionString());
             Console.ForegroundColor = ConsoleColor.Gray;
             Console.Write(" using ");
             Console.ForegroundColor = ConsoleColor.White;

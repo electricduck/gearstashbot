@@ -14,8 +14,9 @@ namespace GearstashBot.Handlers.CommandHandlers
         {
             var thisProcess = System.Diagnostics.Process.GetCurrentProcess();
 
-            var version = ReflectionUtilities.GetVersion();
             var runtime = ReflectionUtilities.GetEnvironment();
+            var version = ReflectionUtilities.GetVersion();
+            var versionString = ReflectionUtilities.GetVersionString();
 
             string processMemoryUsage = Convert.ToDecimal(thisProcess.WorkingSet64 / 1000000).ToString();
             DateTime processStartTime = thisProcess.StartTime;
@@ -39,7 +40,7 @@ namespace GearstashBot.Handlers.CommandHandlers
 
             string name = AppSettings.Config_Name;
 
-            string outputText = $@"<b>{name}</b> | {version}
+            string outputText = $@"<b>{name}</b> | <a href=""https://github.com/electricduck/gearstashbot/commit/{version.Commit}"">{versionString}</a>
 —
 <i>There is <b>{queueAmount} queued posts</b>, amounting to approximately <b>{queueApproxDays} days</b>; with <b>{totalQueueAmount} total posts</b>, <b>{usersAmount} users</b>, and <b>{Constants.Cats} cats</b>.</i> 
 —
