@@ -48,12 +48,12 @@ namespace GearstashBot.Services
                             scrape.SourceName = source.Name;
                         }
 
-                        if(item[0].Next["author"] != null)
+                        /*if(item[0].Next["author"] != null)
                         {
                             scrape.Name = item[0].Next["author"].ToString(); // reddit
                             scrape.Username = item[0].Next["author"].ToString(); // reddit
                         }
-                        else if (item[0].Next["owner"] != null)
+                        else */if (item[0].Next["owner"] != null)
                         {
                             if (item[0].Next["owner"]["nsid"] != null)
                                 scrape.Username = item[0].Next["owner"]["nsid"].ToString(); // Flickr
@@ -98,11 +98,11 @@ namespace GearstashBot.Services
                                     break;
                             }
                         }
-                        else if(item[2]["is_video"] != null) // reddit
+                        /*else if(item[2]["is_video"] != null) // reddit
                         {
                             if(Convert.ToBoolean(item[2]["is_video"]))
                                 extractedMedia.Type = QueueItem.MediaType.Video;
-                        }
+                        }*/
                         else if (item[2]["typename"] != null) // Instagram
                         {
                             switch (item[2]["typename"].ToString())
@@ -120,14 +120,14 @@ namespace GearstashBot.Services
                         {
                             scrape.UrlId = item[2]["post_shortcode"].ToString();
                         }
-                        else if(item[2]["subreddit"] != null) // reddit
+                        /*else if(item[2]["subreddit"] != null) // reddit
                         {
                             scrape.UrlCategory = item[2]["subreddit"].ToString();
                             scrape.UrlId = item[2]["id"].ToString();
                             scrape.UrlSlug = item[2]["permalink"].ToString()
                                 .Remove(item[2]["permalink"].ToString().Length - 1)
                                 .Split('/').Last();
-                        }
+                        }*/
                         else if (item[2]["tweet_id"] != null) // Twitter
                         {
                             scrape.UrlId = item[2]["tweet_id"].ToString(0);
