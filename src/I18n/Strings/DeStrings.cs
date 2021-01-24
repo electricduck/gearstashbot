@@ -54,8 +54,6 @@ namespace GearstashBot.I18n.Strings
             { Localization.Phrase.Queued, "Warteschlange"},
             { Localization.Phrase.RandomizeQueue, "Randomisieren Warteschlange"},
             { Localization.Phrase.RandomizedQueue, "Zufällige Warteschlange" },
-            { Localization.Phrase.RefreshProfile, "Profil auffrischen" },
-            { Localization.Phrase.RefreshedProfileHelloX, "Aktualisiertes Profil. Hallo [0]!" },
             { Localization.Phrase.Retry, "Wiederholen" },
             { Localization.Phrase.ServiceNotSupported, "Dieser Dienst wird nicht unterstützt" },
             { Localization.Phrase.Sooner, "Bald" },

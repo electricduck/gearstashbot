@@ -20,10 +20,6 @@ namespace GearstashBot.Handlers.CommandHandlers
                 var toolsKeyboard = new InlineKeyboardMarkup(new[] {
                     new []
                     {
-                        InlineKeyboardButton.WithCallbackData($"🔄 {Localization.GetPhrase(Localization.Phrase.RefreshProfile, arguments.TelegramUser)}", $"tools_refreshprofile")
-                    },
-                    new []
-                    {
                         InlineKeyboardButton.WithCallbackData($"🔀 {Localization.GetPhrase(Localization.Phrase.RandomizeQueue, arguments.TelegramUser)}", $"tools_randomizequeue"),
                     },
                     new []
@@ -94,26 +90,6 @@ namespace GearstashBot.Handlers.CommandHandlers
                 {
                     MessageUtilities.SendWarningAlert(Localization.GetPhrase(Localization.Phrase.NoPermissionFlushDanglingUsers, arguments.TelegramUser), arguments.TelegramCallbackQueryEvent);
                 }
-            }
-            else
-            {
-                await HandleNoPermission(arguments);
-            }
-        }
-
-        public async static Task InvokeRefreshProfile(CommandHandlerArguments arguments)
-        {
-            if (AuthorData.DoesAuthorExist(arguments.TelegramUser))
-            {
-                Author refreshedAuthor = AuthorData.UpdateAuthorTelegramProfile(arguments.TelegramUser);
-                MessageUtilities.SendSuccessAlert(Localization.GetPhrase(
-                    Localization.Phrase.RefreshedProfileHelloX,
-                    arguments.TelegramUser,
-                    new string[] {
-                        refreshedAuthor.TelegramName
-                    }
-                ),
-                arguments.TelegramCallbackQueryEvent);
             }
             else
             {

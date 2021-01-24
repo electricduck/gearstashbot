@@ -120,8 +120,6 @@ namespace GearstashBot.I18n
             Queued = 37,
             RandomizeQueue = 55,
             RandomizedQueue = 58,
-            RefreshProfile = 42,
-            RefreshedProfileHelloX = 52,
             Retry = 61,
             ServiceNotSupported = 13,
             Sooner = 5,

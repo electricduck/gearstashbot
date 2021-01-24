@@ -129,9 +129,6 @@ namespace GearstashBot.Handlers
                         case "tools_randomizequeue":
                             await ToolsCommandHandler.InvokeRandomizeQueue(arguments);
                             break;
-                        case "tools_refreshprofile":
-                            await ToolsCommandHandler.InvokeRefreshProfile(arguments);
-                            break;
                         case "user_perm":
                             await UserCommandHandler.InvokeSetPermission(arguments);
                             break;

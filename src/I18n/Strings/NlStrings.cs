@@ -54,8 +54,6 @@ namespace GearstashBot.I18n.Strings
             { Localization.Phrase.Queued, "In de wachtrij"}, // GTranslate [En->Nl] 24-Jan-2021
             { Localization.Phrase.RandomizeQueue, "Willekeurige wachtrij"}, // GTranslate [En->Nl] 24-Jan-2021
             { Localization.Phrase.RandomizedQueue, "Gerandomiseerde wachtrij"}, // GTranslate [En->Nl] 24-Jan-2021
-            { Localization.Phrase.RefreshProfile, "Vernieuw profiel" }, // GTranslate [En->Nl] 24-Jan-2021
-            { Localization.Phrase.RefreshedProfileHelloX, "Vernieuwd profiel. Hallo [0]!" }, // GTranslate [En->Nl] 24-Jan-2021
             { Localization.Phrase.Retry, "Herzein" }, // GTranslate [En->Nl] 24-Jan-2021
             { Localization.Phrase.ServiceNotSupported, "Deze service wordt niet ondersteund"}, // GTranslate [En->Nl] 24-Jan-2021
             { Localization.Phrase.Sooner, "Eerder" }, // GTranslate [En->Nl] 24-Jan-2021
