@@ -12,21 +12,28 @@ namespace GearstashBot.Handlers
 {
     public class BotEventHandler
     {
+        private static Regex CallbackRegex = new Regex(@"^([a-z_]{1,100})([:]){0,1}([\/a-zA-Z0-9_:.,-@ ]*)$");
+        private static Regex CommandRegex = new Regex(@"^([\/][a-z]{1,100})([ ])*([\/a-zA-Z0-9_:.,*-@ ]*)$");
+        private static Regex UrlRegex = new Regex(@"(http|https)://([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?");
+
         public static void Bot_OnMessage(object sender, MessageEventArgs telegramMessageEvent)
         {
             Task.Run(() =>
             {
                 CommandHandlerArguments arguments = new CommandHandlerArguments { };
+                string messageText = telegramMessageEvent.Message.Text != null ? telegramMessageEvent.Message.Text.ToString() : "";
+                Match matchedUrl = UrlRegex.Match(messageText);
+
+                if(matchedUrl.Success && !messageText.StartsWith("/"))
+                {
+                    messageText = $"/post {matchedUrl.Groups[0].Value}";
+                }
 
                 try
                 {
-                    if (telegramMessageEvent.Message.Text != null)
+                    if (!String.IsNullOrEmpty(messageText))
                     {
-                        string messageText = telegramMessageEvent.Message.Text.ToString();
-
-                        Regex commandAndArgumentsRegex = new Regex(@"^([\/][a-z]{1,100})([ ])*([\/a-zA-Z0-9_:.,*-@ ]*)$");
-                        Match parsedCommand = commandAndArgumentsRegex.Match(messageText);
-
+                        Match parsedCommand = CommandRegex.Match(messageText);
                         arguments.TelegramUser = TelegramUtilities.GetTelegramUser(telegramMessageEvent);
 
                         if (messageText.StartsWith("/"))
@@ -101,8 +108,7 @@ namespace GearstashBot.Handlers
 
                 try
                 {
-                    Regex commandAndArgumentsRegex = new Regex(@"^([a-z_]{1,100})([:]){0,1}([\/a-zA-Z0-9_:.,-@ ]*)$");
-                    Match parsedCommand = commandAndArgumentsRegex.Match(telegramCallbackQueryEvent.CallbackQuery.Data);
+                    Match parsedCommand = CallbackRegex.Match(telegramCallbackQueryEvent.CallbackQuery.Data);
 
                     arguments.Command = parsedCommand.Groups[1].Value;
                     arguments.CommandArguments = parsedCommand.Groups[3].Value.Split(":");

@@ -19,7 +19,7 @@ namespace GearstashBot
     {
         public static ITelegramBotClient BotClient;
 
-        public static string DefaultConfig = @"{
+        private static string DefaultConfig = @"{
     ""apiKeys"": {
         ""telegram"": ""1234567890:AbC_dEfGhIjKlMnOpQrStUvWxYz""
     },
