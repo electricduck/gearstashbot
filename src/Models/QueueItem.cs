@@ -31,7 +31,6 @@ namespace GearstashBot.Models
 
         public enum QueueStatus
         {
-            Any = 100,
             Created = 0,
             Queued = 2,
             Disputed = 4,
