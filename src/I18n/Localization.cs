@@ -7,6 +7,7 @@ namespace GearstashBot.I18n
 {
     public class Localization
     {
+        // TODO: Use the code from Gearstash to replace this
         public static string GetPhrase(Phrase phrase, string language, string[] replacements = null)
         {
             Dictionary<Phrase, string> phrases = null;
@@ -20,6 +21,9 @@ namespace GearstashBot.I18n
                     break;
                 case "fr":
                     phrases = FrStrings.StringDictionary;
+                    break;
+                case "nl":
+                    phrases = NlStrings.StringDictionary;
                     break;
                 case "en":
                 default:
