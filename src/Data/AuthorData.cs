@@ -227,8 +227,7 @@ namespace GearstashBot.Data
                 {
                     if (!(
                         author.TelegramName == user.Name &&
-                        author.TelegramUsername == user.Username &&
-                        author.TelegramUsernameUpper == user.Username.ToUpper()
+                        author.TelegramUsername == user.Username
                     ))
                     {
                         author.TelegramName = user.Name;
