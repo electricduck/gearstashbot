@@ -294,7 +294,7 @@ namespace GearstashBot.Services
                 switch (queueItem.Status)
                 {
                     case QueueItem.QueueStatus.Queued:
-                        scheduledDateString = GenerateDateStringForAdvancedCaption(scheduledDate, "Scheduled");
+                        //scheduledDateString = GenerateDateStringForAdvancedCaption(scheduledDate, "Scheduled");
                         statusDateString = GenerateDateStringForAdvancedCaption(queueItem.QueuedAt, Localization.GetPhrase(Localization.Phrase.Queued, user));
                         break;
                     case QueueItem.QueueStatus.Deleted:
