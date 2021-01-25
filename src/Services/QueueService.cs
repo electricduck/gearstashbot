@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Bot.Types;
@@ -20,6 +21,8 @@ namespace GearstashBot.Services
             {
                 try
                 {
+                    var postLagSW = new Stopwatch();
+
                     double sleepTimeFromConfig = AppSettings.Config_PostInterval;
                     double sleepTime = 0;
                     int queueCount = QueueData.CountQueuedQueueItems();
@@ -37,6 +40,8 @@ namespace GearstashBot.Services
                         }
                         else
                         {
+                            postLagSW.Start();
+
                             if (continueOnFromPreviousStart)
                             {
                                 if (latestPostedItem != null)
@@ -74,7 +79,10 @@ namespace GearstashBot.Services
                             }
 
                             queueCount = QueueData.CountQueuedQueueItems();
+                            Constants.PostLag = postLagSW.Elapsed;
                         }
+
+                        postLagSW.Reset();
                     }
                 }
                 catch (Exception e)
@@ -274,19 +282,25 @@ namespace GearstashBot.Services
 
             if (advanced)
             {
-                var statusDateString = "";
-                var messageIdString = "";
+                DateTime scheduledDate = queueItem.QueuedAt
+                    .AddMilliseconds(AppSettings.Config_PostInterval)
+                    .AddMilliseconds(Constants.PostLag.Milliseconds);
+
+                string statusDateString = "";
+                string scheduledDateString = "";
+                string messageIdString = "";
 
                 switch (queueItem.Status)
                 {
                     case QueueItem.QueueStatus.Queued:
-                        statusDateString = GenerateStatusDateStringForAdvancedCaption(queueItem.QueuedAt, Localization.GetPhrase(Localization.Phrase.Queued, user));
+                        scheduledDateString = GenerateDateStringForAdvancedCaption(scheduledDate, "Scheduled");
+                        statusDateString = GenerateDateStringForAdvancedCaption(queueItem.QueuedAt, Localization.GetPhrase(Localization.Phrase.Queued, user));
                         break;
                     case QueueItem.QueueStatus.Deleted:
-                        statusDateString = GenerateStatusDateStringForAdvancedCaption(queueItem.DeletedAt, "Deleted");
+                        statusDateString = GenerateDateStringForAdvancedCaption(queueItem.DeletedAt, "Deleted");
                         break;
                     case QueueItem.QueueStatus.Posted:
-                        statusDateString = GenerateStatusDateStringForAdvancedCaption(queueItem.PostedAt, Localization.GetPhrase(Localization.Phrase.Posted, user));
+                        statusDateString = GenerateDateStringForAdvancedCaption(queueItem.PostedAt, Localization.GetPhrase(Localization.Phrase.Posted, user));
                         break;
                 }
 
@@ -307,7 +321,7 @@ namespace GearstashBot.Services
                 string authorNameLink = $"<a href=\"tg://user?id={queueItem.Author.TelegramId}\">{queueItem.Author.TelegramName}</a>";
 
                 string advancedText = $@"—
-📩 <b>{Localization.GetPhrase(Localization.Phrase.Author, user)}:</b> {authorNameLink}{statusDateString}{messageIdString}";
+📩 <b>{Localization.GetPhrase(Localization.Phrase.Author, user)}:</b> {authorNameLink}{statusDateString}{scheduledDateString}{messageIdString}";
 
                 returnModel.CaptionText += $"{Environment.NewLine}{advancedText}";
             }
@@ -315,7 +329,7 @@ namespace GearstashBot.Services
             return returnModel;
         }
 
-        private static string GenerateStatusDateStringForAdvancedCaption(DateTime date, string statusText)
+        private static string GenerateDateStringForAdvancedCaption(DateTime date, string statusText)
         {
             return $"{Environment.NewLine}{GeneratorUtilities.GenerateClockEmoji(date)} <b>{statusText}:</b> <code>{date.ToString("dd-MMM-yy hh:mm:ss zz")}</code>";
         }

@@ -1,3 +1,4 @@
+using System;
 
 namespace GearstashBot.Models
 {
@@ -5,5 +6,6 @@ namespace GearstashBot.Models
     {
         public static int Cats { get; set; }
         public static bool IsPostingDisabled { get; set; }
+        public static TimeSpan PostLag { get; set; }
     }
 }
