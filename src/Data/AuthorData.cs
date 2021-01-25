@@ -86,10 +86,13 @@ namespace GearstashBot.Data
                 {
                     author = new Author
                     {
+                        LastAccessedAt = DateTime.UtcNow,
+                        TelegramDetailsLastUpdatedAt = DateTime.UtcNow,
                         TelegramId = user.Id,
+                        TelegramLanguage = user.Language,
                         TelegramName = user.Name,
                         TelegramUsername = user.Username,
-                        TelegramDetailsLastUpdatedAt = DateTime.UtcNow
+                        TelegramUsernameUpper = user.Username.ToUpper(),
                     };
 
                     db.Authors.Add(author);
@@ -304,11 +307,11 @@ namespace GearstashBot.Data
                         author.TelegramUsername == user.Username
                     ))
                     {
+                        author.TelegramDetailsLastUpdatedAt = DateTime.UtcNow;
                         author.TelegramLanguage = user.Language;
                         author.TelegramName = user.Name;
                         author.TelegramUsername = user.Username;
                         author.TelegramUsernameUpper = user.Username.ToUpper();
-                        author.TelegramDetailsLastUpdatedAt = DateTime.UtcNow;
 
                         db.SaveChanges();
                     }

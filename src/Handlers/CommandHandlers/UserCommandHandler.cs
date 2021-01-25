@@ -216,7 +216,7 @@ namespace GearstashBot.Handlers.CommandHandlers
 
                     foreach (Author authorThatCanManageUser in authorsThatCanManageUsers)
                     {
-                        MessageUtilities.SendSuccessMessage(
+                        MessageUtilities.SendSuccessMessage( // TODO: Set language correctly
                             Localization.GetPhrase(
                                 Localization.Phrase.CreatedNewAuthor,
                                 arguments.TelegramUser,
