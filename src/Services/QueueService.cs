@@ -283,9 +283,9 @@ namespace GearstashBot.Services
 
             if (advanced)
             {
-                DateTime scheduledDate = queueItem.QueuedAt
-                    .AddMilliseconds(AppSettings.Config_PostInterval)
-                    .AddMilliseconds(Constants.PostLag.Milliseconds);
+                //DateTime scheduledDate = queueItem.QueuedAt // what the fuck r u doin
+                //    .AddMilliseconds(AppSettings.Config_PostInterval)
+                //    .AddMilliseconds(Constants.PostLag.Milliseconds);
 
                 string statusDateString = "";
                 string scheduledDateString = "";
