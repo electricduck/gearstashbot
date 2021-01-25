@@ -82,6 +82,7 @@ namespace GearstashBot.Services
                             Constants.PostLag = postLagSW.Elapsed;
                         }
 
+                        postLagSW.Stop();
                         postLagSW.Reset();
                     }
                 }
