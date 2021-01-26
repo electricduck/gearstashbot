@@ -25,7 +25,7 @@ namespace GearstashBot.Handlers.CommandHandlers
                 .Replace("alpine", "Alpine").Replace("debian", "Debian").Replace("elementary", "elementaryOS")
                 .Replace("ubuntu", "Ubuntu");
             string systemOpSysVersion = RuntimeEnvironment.OperatingSystemVersion;
-            string systemTime = DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss zzz");
+            string systemTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss zzz");
             string userId = arguments.TelegramUser.Id.ToString();
             string userLanguageCode = arguments.TelegramUser.Language.ToString();
 

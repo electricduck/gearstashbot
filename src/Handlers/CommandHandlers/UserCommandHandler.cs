@@ -81,8 +81,8 @@ namespace GearstashBot.Handlers.CommandHandlers
                 string notSetText = Localization.GetPhrase(Localization.Phrase.NotSet, arguments.TelegramUser);
 
                 string authorLanguageText = author.TelegramLanguage;
-                string authorLastAccessedText = author.LastAccessedAt.ToString("dd-MMM-yy hh:mm:ss zz");
-                string authorLastUpdatedText = author.TelegramDetailsLastUpdatedAt.ToString("dd-MMM-yy hh:mm:ss zz");
+                string authorLastAccessedText = author.LastAccessedAt.ToString("dd-MMM-yy HH:mm:ss zz");
+                string authorLastUpdatedText = author.TelegramDetailsLastUpdatedAt.ToString("dd-MMM-yy HH:mm:ss zz");
                 string authorLink = $"<a href=\"tg://user?id={authorId}\">{authorId}</a>";
                 string authorNameText = (String.IsNullOrEmpty(author.TelegramName)) ? $"<i>({notSetText})</i>" : author.TelegramName;
                 string authorUsernameText = (String.IsNullOrEmpty(author.TelegramUsername)) ? $"<i>({notSetText})</i>" : author.TelegramUsername;

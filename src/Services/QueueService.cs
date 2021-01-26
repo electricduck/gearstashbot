@@ -146,7 +146,7 @@ namespace GearstashBot.Services
                 if (!failed)
                 {
                     QueueData.SetQueueItemAsPosted(post.Id, postedAt, message.MessageId);
-                    MessageUtilities.PrintSuccessMessage($"Posted #{post.Id} at {postedAt.ToString("yyyy-MM-dd hh:mm:ss zzz")}");
+                    MessageUtilities.PrintSuccessMessage($"Posted #{post.Id} at {postedAt.ToString("yyyy-MM-dd HH:mm:ss zzz")}");
                     return true;
                 }
                 else
@@ -332,7 +332,7 @@ namespace GearstashBot.Services
 
         private static string GenerateDateStringForAdvancedCaption(DateTime date, string statusText)
         {
-            return $"{Environment.NewLine}{GeneratorUtilities.GenerateClockEmoji(date)} <b>{statusText}:</b> <code>{date.ToString("dd-MMM-yy hh:mm:ss zz")}</code>";
+            return $"{Environment.NewLine}{GeneratorUtilities.GenerateClockEmoji(date)} <b>{statusText}:</b> <code>{date.ToString("dd-MMM-yy HH:mm:ss zz")}</code>";
         }
     }
 }

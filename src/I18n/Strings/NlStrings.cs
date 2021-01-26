@@ -15,7 +15,6 @@ namespace GearstashBot.I18n.Strings
             { Localization.Phrase.CannotDeleteTemporarilyDueToLongRunningRequest, "Kan dit item niet verwijderen vanwege een langlopend verzoek. Probeer het over een paar seconden opnieuw."}, // GTranslate [En->Nl] 24-Jan-2021
             { Localization.Phrase.CannotPostTemporarilyDueToLongRunningRequest, "Kan niet posten in de wachtrij vanwege een langlopend verzoek. Probeer het over een paar seconden opnieuw."}, // GTranslate [En->Nl] 24-Jan-2021
             { Localization.Phrase.CannotRemovePermissionFromSelf, "U kunt deze toestemming niet bij uzelf intrekken"}, // GTranslate [En->Nl] 24-Jan-2021
-            { Localization.Phrase.CreatedNewAuthor, "Nieuwe gebruiker heeft de bot gestart, <b>[0]</b> (<code>[1]</code>). Stel rechten in met <code>/user [1]</code>." }, // GTranslate [En->Nl] 24-Jan-2021
             { Localization.Phrase.Delete, "Verwijderen" }, // GTranslate [En->Nl] 24-Jan-2021
             { Localization.Phrase.Deleted, "Verwijderd" }, // GTranslate [En->Nl] 24-Jan-2021
             { Localization.Phrase.DeleteOthers, "Verwijder anderen" }, // GTranslate [En->Nl] 24-Jan-2021

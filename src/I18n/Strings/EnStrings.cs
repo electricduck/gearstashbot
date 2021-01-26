@@ -15,7 +15,7 @@ namespace GearstashBot.I18n.Strings
             { Localization.Phrase.CannotDeleteTemporarilyDueToLongRunningRequest, "Cannot delete this item due to a long-running request. Try again in a few seconds."},
             { Localization.Phrase.CannotPostTemporarilyDueToLongRunningRequest, "Cannot post to the queue due to a long-running request. Try again in a few seconds."},
             { Localization.Phrase.CannotRemovePermissionFromSelf, "You cannot remove this permission from yourself"},
-            { Localization.Phrase.CreatedNewAuthor, "New user has started the bot, <b>[0]</b> (<code>[1]</code>). Set permissions with <code>/user [1]</code>." },
+            { Localization.Phrase.CreatedNewAuthor, "New user has started the bot, <b>[0]</b> (<a href=\"tg://user?id=[1]\">[1]</a>). Set permissions with <code>/user [1]</code>." },
             { Localization.Phrase.Delete, "Delete" },
             { Localization.Phrase.Deleted, "Deleted" },
             { Localization.Phrase.DeleteOthers, "Delete Others" },
