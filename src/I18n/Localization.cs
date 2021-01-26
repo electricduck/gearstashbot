@@ -25,6 +25,9 @@ namespace GearstashBot.I18n
                 case "nl":
                     phrases = NlStrings.StringDictionary;
                     break;
+                case "sk":
+                    phrases = SkStrings.StringDictionary;
+                    break;
                 case "en":
                 default:
                     phrases = defaultPhrases;
