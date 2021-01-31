@@ -26,7 +26,7 @@ namespace GearstashBot.Handlers.CommandHandlers
                     MessageUtilities.SendWarningMessage(
                         Localization.GetPhrase(
                             Localization.Phrase.Announcement,
-                            arguments.TelegramUser,
+                            author.TelegramLanguage,
                             new string[] {
                                 arguments.CommandArgument
                             }
