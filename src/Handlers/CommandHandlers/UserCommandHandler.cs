@@ -132,6 +132,10 @@ namespace GearstashBot.Handlers.CommandHandlers
 
                 switch (permission)
                 {
+                    case "CanAnnounce":
+                        AuthorData.SetAuthorAnnouncePermission(author.TelegramId, setting);
+                        author.CanAnnounce = setting;
+                        break;
                     case "CanDeleteOthers":
                         AuthorData.SetAuthorDeleteOthersPermission(author.TelegramId, setting);
                         author.CanDeleteOthers = setting;
@@ -225,7 +229,8 @@ namespace GearstashBot.Handlers.CommandHandlers
                                     newAuthor.TelegramId.ToString()
                                 }
                             ),
-                        authorThatCanManageUser.TelegramId);
+                            authorThatCanManageUser.TelegramId
+                        );
                     }
                 }
             }
@@ -236,6 +241,7 @@ namespace GearstashBot.Handlers.CommandHandlers
             const string tick = "✔️";
             const string cross = "✖️";
 
+            string canAnnounceStatus = author.CanAnnounce ? tick : cross;
             string canDeleteOthersStatus = author.CanDeleteOthers ? tick : cross;
             string canManageAuthorsStatus = author.CanManageAuthors ? tick : cross;
             string canQueueStatus = author.CanQueue ? tick : cross;
@@ -258,6 +264,10 @@ namespace GearstashBot.Handlers.CommandHandlers
                 new []
                 {
                     InlineKeyboardButton.WithCallbackData($"{canManageAuthorsStatus} {Localization.GetPhrase(Localization.Phrase.ManageUsers, user)}", $"user_perm:{author.TelegramId}:CanManageAuthors:{!author.CanManageAuthors}")
+                },
+                new []
+                {
+                    InlineKeyboardButton.WithCallbackData($"{canAnnounceStatus} {Localization.GetPhrase(Localization.Phrase.Announce, user)}", $"user_perm:{author.TelegramId}:CanAnnounce:{!author.CanAnnounce}")
                 }
             });
         }

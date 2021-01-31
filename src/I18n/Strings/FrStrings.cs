@@ -6,6 +6,7 @@ namespace GearstashBot.I18n.Strings
     {
         public static Dictionary<Localization.Phrase, string> StringDictionary = new Dictionary<Localization.Phrase, string>() {
             { Localization.Phrase.AlreadyBeenQueued, "Cela a déjà été mis en file d'attente" },
+            { Localization.Phrase.Announcement, "<b>Annonce</b><br />[0]" }, // DeepL [En->Fr] 31-Jan-2021
             { Localization.Phrase.Author, "Auteur" },
             { Localization.Phrase.Back, "Retour" },
             { Localization.Phrase.CannotDeleteXFromChannel, "Ne peut pas supprimer le #[0] de la chaîne"},

@@ -17,6 +17,7 @@ namespace GearstashBot.Models
         public string TelegramUsername { get; set; }
         public string TelegramUsernameUpper { get; set; }
 
+        public bool CanAnnounce { get; set; } = false;
         public bool CanDeleteOthers { get; set; } = false;
         [Obsolete] public bool CanFlushQueue { get; set; } = false;
         public bool CanManageAuthors { get; set; } = false;

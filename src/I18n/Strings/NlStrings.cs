@@ -6,6 +6,7 @@ namespace GearstashBot.I18n.Strings
     {
         public static Dictionary<Localization.Phrase, string> StringDictionary = new Dictionary<Localization.Phrase, string>() {
             { Localization.Phrase.AlreadyBeenQueued, "Het staat al in de wachtrij" }, // GTranslate [En->Nl] 24-Jan-2021
+            { Localization.Phrase.Announcement, "<b>Aankondiging</b><br />[0]" }, // ✔️ GTranslate [En->Nl] 31-Jan-2021
             { Localization.Phrase.Author, "Poster" }, // GTranslate [En->Nl] 24-Jan-2021
             { Localization.Phrase.Back, "Terug" }, // GTranslate [En->Nl] 24-Jan-2021
             { Localization.Phrase.CannotDeleteXFromChannel, "Kan #[0] niet verwijderen uit kanaal"}, // GTranslate [En->Nl] 24-Jan-2021

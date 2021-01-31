@@ -8,6 +8,20 @@ namespace GearstashBot.Data
 {
     public class AuthorData
     {
+        public static bool CanAuthorAnnounce(long telegramId)
+        {
+            Author author = GetAuthor(telegramId, false);
+
+            if (author == null)
+            {
+                return false;
+            }
+            else
+            {
+                return author.CanAnnounce;
+            }
+        }
+
         public static bool CanAuthorDeleteOthers(long telegramId)
         {
             Author author = GetAuthor(telegramId, false);
@@ -216,6 +230,20 @@ namespace GearstashBot.Data
                 return db.Authors
                     .Include(a => a.QueueItems)
                     .ToList();
+            }
+        }
+
+        public static void SetAuthorAnnouncePermission(
+            long telegramId,
+            bool canAnnounce
+        )
+        {
+            using (var db = new StashBotDbContext())
+            {
+                Author author = db.Authors
+                    .FirstOrDefault(a => a.TelegramId == telegramId);
+                author.CanAnnounce = canAnnounce;
+                db.SaveChanges();
             }
         }
 

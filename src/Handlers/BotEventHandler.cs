@@ -14,7 +14,7 @@ namespace GearstashBot.Handlers
     public class BotEventHandler
     {
         private static Regex CallbackRegex = new Regex(@"^([a-z_]{1,100})([:]){0,1}([\/a-zA-Z0-9_:.,-@ ]*)$");
-        private static Regex CommandRegex = new Regex(@"^([\/][a-z]{1,100})([ ])*([\/a-zA-Z0-9_:.,*-@ ]*)$");
+        private static Regex CommandRegex = new Regex(@"^([\/][a-z]{1,100})([ ])*(.*?)$");
         private static Regex UrlRegex = new Regex(@"(http|https)://([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?");
 
         public static void Bot_OnMessage(object sender, MessageEventArgs telegramMessageEvent)
@@ -54,6 +54,10 @@ namespace GearstashBot.Handlers
 
                             switch (arguments.Command)
                             {
+                                case "ann":
+                                case "announce":
+                                    AnnounceCommandHandler.Invoke(arguments);
+                                    break;
                                 case "catpls":
                                     CatPlsCommandHandler.Invoke(arguments);
                                     break;

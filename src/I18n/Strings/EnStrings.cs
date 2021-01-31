@@ -6,6 +6,8 @@ namespace GearstashBot.I18n.Strings
     {
         public static Dictionary<Localization.Phrase, string> StringDictionary = new Dictionary<Localization.Phrase, string>() {
             { Localization.Phrase.AlreadyBeenQueued, "This has already been queued" },
+            { Localization.Phrase.Announce, "Announce" },
+            { Localization.Phrase.Announcement, "<b>Announcement</b><br />[0]" },
             { Localization.Phrase.Author, "Poster" },
             { Localization.Phrase.Back, "Back" },
             { Localization.Phrase.CannotDeleteXFromChannel, "Cannot delete #[0] from channel"},

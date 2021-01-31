@@ -70,8 +70,10 @@ namespace GearstashBot.I18n
         }
 
         public enum Phrase
-        {   // Next: 71
+        {   // Next: 73
             AlreadyBeenQueued = 11,
+            Announce = 71,
+            Announcement = 72,
             Author = 40,
             Back = 60,
             CannotDeleteXFromChannel = 22,
