@@ -60,6 +60,7 @@ namespace GearstashBot.I18n.Strings
             { Localization.Phrase.ServiceNotSupported, "This service is not supported"},
             { Localization.Phrase.Sooner, "Sooner" },
             { Localization.Phrase.Soonest, "Soonest" },
+            { Localization.Phrase.SqlRowsUpdated, "[0] rows updated" },
             { Localization.Phrase.Tools, "Tools" },
             { Localization.Phrase.User, "User" },
             { Localization.Phrase.Username, "Username" },

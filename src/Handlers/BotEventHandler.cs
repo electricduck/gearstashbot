@@ -67,6 +67,9 @@ namespace GearstashBot.Handlers
                                 case "post":
                                     PostCommandHandler.Invoke(arguments);
                                     break;
+                                case "sql":
+                                    SqlCommandHandler.Invoke(arguments);
+                                    break;
                                 case "start":
                                     UserCommandHandler.InvokeSetup(arguments);
                                     break;

@@ -36,6 +36,20 @@ namespace GearstashBot.Data
             }
         }
 
+        public static bool CanAuthorExecuteSql(long telegramId)
+        {
+            Author author = GetAuthor(telegramId, false);
+
+            if (author == null)
+            {
+                return false;
+            }
+            else
+            {
+                return author.CanExecuteSql;
+            }
+        }
+
         public static bool CanAuthorManageAuthors(long telegramId)
         {
             Author author = GetAuthor(telegramId, false);
@@ -257,6 +271,20 @@ namespace GearstashBot.Data
                 Author author = db.Authors
                     .FirstOrDefault(a => a.TelegramId == telegramId);
                 author.CanDeleteOthers = canDeleteOthers;
+                db.SaveChanges();
+            }
+        }
+
+        public static void SetAuthorExecuteSqlPermission(
+            long telegramId,
+            bool canExecuteSql
+        )
+        {
+            using (var db = new StashBotDbContext())
+            {
+                Author author = db.Authors
+                    .FirstOrDefault(a => a.TelegramId == telegramId);
+                author.CanExecuteSql = canExecuteSql;
                 db.SaveChanges();
             }
         }

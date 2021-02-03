@@ -70,7 +70,7 @@ namespace GearstashBot.I18n
         }
 
         public enum Phrase
-        {   // Next: 73
+        {   // Next: 74
             AlreadyBeenQueued = 11,
             Announce = 71,
             Announcement = 72,
@@ -126,6 +126,7 @@ namespace GearstashBot.I18n
             ServiceNotSupported = 13,
             Sooner = 5,
             Soonest = 6,
+            SqlRowsUpdated = 73,
             Tools = 45,
             User = 26,
             Username = 28,

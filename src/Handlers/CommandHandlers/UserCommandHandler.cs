@@ -80,7 +80,7 @@ namespace GearstashBot.Handlers.CommandHandlers
 
                 string notSetText = Localization.GetPhrase(Localization.Phrase.NotSet, arguments.TelegramUser);
 
-                string authorLanguageText = author.TelegramLanguage;
+                string authorLanguageText = (String.IsNullOrEmpty(author.TelegramLanguage)) ? $"<i>({notSetText})</i>" : author.TelegramLanguage;
                 string authorLastAccessedText = author.LastAccessedAt.ToString("dd-MMM-yy HH:mm:ss zz");
                 string authorLastUpdatedText = author.TelegramDetailsLastUpdatedAt.ToString("dd-MMM-yy HH:mm:ss zz");
                 string authorLink = $"<a href=\"tg://user?id={authorId}\">{authorId}</a>";
@@ -139,6 +139,10 @@ namespace GearstashBot.Handlers.CommandHandlers
                     case "CanDeleteOthers":
                         AuthorData.SetAuthorDeleteOthersPermission(author.TelegramId, setting);
                         author.CanDeleteOthers = setting;
+                        break;
+                    case "CanExecuteSql":
+                        AuthorData.SetAuthorExecuteSqlPermission(author.TelegramId, setting);
+                        author.CanExecuteSql = setting;
                         break;
                     case "CanManageAuthors":
                         if (author.CanManageAuthors == true && author.TelegramId == arguments.TelegramUser.Id)
@@ -243,6 +247,7 @@ namespace GearstashBot.Handlers.CommandHandlers
 
             string canAnnounceStatus = author.CanAnnounce ? tick : cross;
             string canDeleteOthersStatus = author.CanDeleteOthers ? tick : cross;
+            string canExecuteSqlStatus = author.CanExecuteSql ? tick : cross;
             string canManageAuthorsStatus = author.CanManageAuthors ? tick : cross;
             string canQueueStatus = author.CanQueue ? tick : cross;
             string canRandomizeQueueStatus = author.CanRandomizeQueue ? tick : cross;
@@ -268,6 +273,10 @@ namespace GearstashBot.Handlers.CommandHandlers
                 new []
                 {
                     InlineKeyboardButton.WithCallbackData($"{canAnnounceStatus} {Localization.GetPhrase(Localization.Phrase.Announce, user)}", $"user_perm:{author.TelegramId}:CanAnnounce:{!author.CanAnnounce}")
+                },
+                new []
+                {
+                    InlineKeyboardButton.WithCallbackData($"{canExecuteSqlStatus} Execute SQL", $"user_perm:{author.TelegramId}:CanExecuteSql:{!author.CanExecuteSql}")
                 }
             });
         }

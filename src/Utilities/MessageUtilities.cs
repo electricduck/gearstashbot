@@ -23,7 +23,7 @@ namespace GearstashBot.Utilities
         {
             string errorMessage = errorGuid.ToString();
 
-            if(errorGuid == Guid.Empty)
+            if (errorGuid == Guid.Empty)
             {
                 errorMessage = "Oops!";
             }
@@ -71,30 +71,35 @@ namespace GearstashBot.Utilities
             Console.ForegroundColor = ConsoleColor.White;
         }
 
-        public static void SendErrorMessage(Exception exception, CallbackQueryEventArgs callbackQueryEventArgs)
+        public static void SendErrorMessage(Exception exception, CallbackQueryEventArgs callbackQueryEventArgs, bool fauxError = false)
         {
-            SendErrorMessage(exception, callbackQueryEventArgs.CallbackQuery.Message.Chat.Id);
+            SendErrorMessage(exception, callbackQueryEventArgs.CallbackQuery.Message.Chat.Id, fauxError);
         }
 
-        public static void SendErrorMessage(Exception exception, MessageEventArgs telegramMessageEvent)
+        public static void SendErrorMessage(Exception exception, MessageEventArgs telegramMessageEvent, bool fauxError = false)
         {
-            SendErrorMessage(exception, telegramMessageEvent.Message.Chat.Id);
+            SendErrorMessage(exception, telegramMessageEvent.Message.Chat.Id, fauxError);
         }
 
-        public static void SendErrorMessage(Exception exception, long chatId)
+        public static void SendErrorMessage(Exception exception, long chatId, bool fauxError = false)
         {
             Guid errorGuid = Guid.NewGuid();
+            string message = $"🚫 {exception.Message}";
+
+            if (!fauxError)
+            {
+                PrintErrorMessage(exception, errorGuid);
+                message += $@"{Environment.NewLine}<code>{errorGuid}</code>
+—
+<b>This is an error. Please forward me to {AppSettings.Config_Owner}.</b>"; // TODO: Translate this. Likely have to refactor this code.
+            }
 
             SendTextMessageArguments output = new SendTextMessageArguments
             {
                 ChatId = chatId,
-                Text = $@"🚫 {exception.Message}
-<code>{errorGuid}</code>
-—
-<b>This is an error. Please forward me to {AppSettings.Config_Owner}.</b>"
+                Text = message
             };
 
-            PrintErrorMessage(exception, errorGuid);
             TelegramApiService.SendTextMessage(output, Program.BotClient, null);
         }
 
@@ -177,7 +182,7 @@ namespace GearstashBot.Utilities
 
         private static string RenderEmoji(string emoji)
         {
-            switch(RuntimeEnvironment.OperatingSystemPlatform)
+            switch (RuntimeEnvironment.OperatingSystemPlatform)
             {
                 case Platform.Windows:
                     return $"{emoji} ";
