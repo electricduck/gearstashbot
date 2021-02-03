@@ -80,7 +80,7 @@ namespace GearstashBot.Handlers.CommandHandlers
 
                 string notSetText = Localization.GetPhrase(Localization.Phrase.NotSet, arguments.TelegramUser);
 
-                string authorLanguageText = (String.IsNullOrEmpty(author.TelegramLanguage)) ? $"<i>({notSetText})</i>" : author.TelegramLanguage;
+                string authorLanguageText = (String.IsNullOrEmpty(author.TelegramLanguage)) ? $"<i>({notSetText})</i>" : $"<code>{author.TelegramLanguage}</code>";
                 string authorLastAccessedText = author.LastAccessedAt.ToString("dd-MMM-yy HH:mm:ss zz");
                 string authorLastUpdatedText = author.TelegramDetailsLastUpdatedAt.ToString("dd-MMM-yy HH:mm:ss zz");
                 string authorLink = $"<a href=\"tg://user?id={authorId}\">{authorId}</a>";
@@ -100,7 +100,7 @@ namespace GearstashBot.Handlers.CommandHandlers
 —
 <b>{Localization.GetPhrase(Localization.Phrase.Name, arguments.TelegramUser)}:</b> {authorNameText}
 <b>{Localization.GetPhrase(Localization.Phrase.Username, arguments.TelegramUser)}:</b> {authorUsernameText}
-<b>{Localization.GetPhrase(Localization.Phrase.Language, arguments.TelegramUser)}:</b> <code>{authorLanguageText}</code>
+<b>{Localization.GetPhrase(Localization.Phrase.Language, arguments.TelegramUser)}:</b> {authorLanguageText}
 <b>{Localization.GetPhrase(Localization.Phrase.LastAccessed, arguments.TelegramUser)}:</b> <code>{authorLastAccessedText}</code>
 <b>{Localization.GetPhrase(Localization.Phrase.ProfileUpdated, arguments.TelegramUser)}:</b> <code>{authorLastUpdatedText}</code>
 <b>{Localization.GetPhrase(Localization.Phrase.Posts, arguments.TelegramUser)}:</b> <code>{authorPostCount}</code> (<code>{queuePercentage.ToString("0.00")}%</code>)";
