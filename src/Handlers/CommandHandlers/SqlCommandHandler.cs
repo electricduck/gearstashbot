@@ -22,7 +22,7 @@ namespace GearstashBot.Handlers.CommandHandlers
                 {
                     try
                     {
-                        rowsUpdated = db.Database.ExecuteSqlCommand(arguments.CommandArgument);
+                        rowsUpdated = db.Database.ExecuteSqlRaw(arguments.CommandArgument);
                         hasSucceeded = true;
                     }
                     catch (Exception e)
