@@ -23,7 +23,7 @@ namespace GearstashBot.Services
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = "gallery-dl",
-                    Arguments = $"{args}",
+                    Arguments = $"--clear-cache {args}",
                     RedirectStandardOutput = true,
                     UseShellExecute = false,
                     CreateNoWindow = true,
