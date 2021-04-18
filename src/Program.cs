@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using CommandLine;
 using Microsoft.Extensions.Configuration;
 using Telegram.Bot;
 using GearstashBot.Handlers;
@@ -33,15 +32,8 @@ namespace GearstashBot
     }
 }";
 
-        public class Options
-        {
-            [Option('c', "confdir", Required = false, HelpText = "Location of configuration directory", Default = "config")]
-            public string ConfigDirectory { get; set; }
-        }
-
         static void Main(string[] args)
         {
-            ParseCommandLineArguments(args);
             Console.OutputEncoding = System.Text.Encoding.UTF8;
 
             try
@@ -116,32 +108,22 @@ namespace GearstashBot
             Thread.Sleep(int.MaxValue);
         }
 
-        private static void ParseCommandLineArguments(string[] arguments)
-        {
-            Parser.Default.ParseArguments<Options>(arguments)
-                .WithParsed<Options>(o =>
-                {
-                    AppArguments.ConfigDirectory = o.ConfigDirectory
-                        .Replace("\\", "/"); // TODO: Parse this safer
-                });
-        }
-
         private static void SetupApp()
         {
-            if (!Directory.Exists($"{AppArguments.ConfigDirectory}/"))
+            if (!Directory.Exists($"config/"))
             {
-                Directory.CreateDirectory($"{AppArguments.ConfigDirectory}/");
+                Directory.CreateDirectory($"config/");
             }
 
-            if (!File.Exists($"{AppArguments.ConfigDirectory}/appsettings.json"))
+            if (!File.Exists($"config/appsettings.json"))
             {
-                File.WriteAllText($"{AppArguments.ConfigDirectory}/appsettings.json", DefaultConfig);
-                throw new Exception($"Settings file did not exist. Please edit '{AppArguments.ConfigDirectory}/appsettings.json' and re-run.");
+                File.WriteAllText($"config/appsettings.json", DefaultConfig);
+                throw new Exception($"Settings file did not exist. Please edit 'config/appsettings.json' and re-run.");
             }
 
             IConfiguration configuration = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile($"{AppArguments.ConfigDirectory}/appsettings.json", optional: true, reloadOnChange: false)
+                .AddJsonFile($"config/appsettings.json", optional: true, reloadOnChange: false)
                 .Build();
 
             // TODO: Handle nulls

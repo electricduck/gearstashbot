@@ -9,7 +9,7 @@ namespace GearstashBot
         public DbSet<QueueItem> Queue { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
-            => options.UseSqlite($"Data Source={AppArguments.ConfigDirectory}/gearstashbot.db");
+            => options.UseSqlite($"Data Source=config/gearstashbot.db");
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

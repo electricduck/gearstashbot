@@ -10,14 +10,14 @@ namespace GearstashBot.Utilities
         // TODO: Compare MD5sum of previous backup so we're not creating useless backups
         public static void BackupDatabase()
         {
-            if (!Directory.Exists($"{AppArguments.ConfigDirectory}/backup"))
+            if (!Directory.Exists($"config/backup"))
             {
-                Directory.CreateDirectory($"{AppArguments.ConfigDirectory}/backup");
+                Directory.CreateDirectory($"config/backup");
             }
 
             File.Copy(
-                $"{AppArguments.ConfigDirectory}/gearstashbot.db",
-                $"{AppArguments.ConfigDirectory}/backup/gearstashbot_{DateTime.Now.ToString("yyyyMMddHHmmss")}.db"
+                $"config/gearstashbot.db",
+                $"config/backup/gearstashbot_{DateTime.Now.ToString("yyyyMMddHHmmss")}.db"
             );
         }
 
